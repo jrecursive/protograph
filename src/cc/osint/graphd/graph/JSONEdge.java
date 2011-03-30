@@ -72,9 +72,9 @@ public class JSONEdge<V>
     public int compareTo(Object o) {
         double thisWeight = getWeight();
         double oWeight = ((JSONEdge)o).getWeight();
-        int thisRefWeight = (int) (100000.00 * thisWeight);
-        int oRefWeight = (int) (100000.00 * oWeight);
-        return thisRefWeight - oRefWeight;
+        if (thisWeight == oWeight) return 0;
+        else if (thisWeight > oWeight) return 1;
+        else return -1;
     }
     
 }
