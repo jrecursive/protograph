@@ -302,28 +302,39 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     String val = args[2];
                     log.info("SET: " + key + "." + attr + " -> " + val);
                     
-                    JSONObject obj = gr.get(key);
-                    if (null == obj) {
-                        rsb.append(R_NOT_FOUND);
-                    } else {
-                        String _type = obj.getString("_type");
-                        if (_type.equals("vertex")) {
-                            
-                            JSONVertex jv = gr.getVertex(key);
-                            jv.put(attr, val);
-                            gr.indexObject(key, _type, jv.getJSONObject("data"));
-                            rsb.append(R_DONE);
-                        } else if (_type.equals("edge")) {
-                            
-                            JSONEdge je = gr.getEdge(key);
-                            je.put(attr, val);
-                            gr.indexObject(key, _type, je.asJSONObject().getJSONObject("data"));
-                            rsb.append(R_DONE);
+                    if (attr.startsWith("_") &&
+                        !attr.equals("_weight")) {
+                        rsb.append(R_ERR);
+                        rsb.append(" CANNOT_SET_RESERVED_PROPERTY");
+                    } else {                    
+                        JSONObject obj = gr.get(key);
+                        if (null == obj) {
+                            rsb.append(R_NOT_FOUND);
                         } else {
-                            rsb.append(R_ERR);
-                            rsb.append(" UNKNOWN_OBJECT_TYPE");
+                            String _type = obj.getString("_type");
+                            if (_type.equals("vertex")) {
+                                
+                                JSONVertex jv = gr.getVertex(key);
+                                jv.put(attr, val);
+                                gr.indexObject(key, _type, jv.getJSONObject("data"));
+                                rsb.append(R_DONE);
+                            } else if (_type.equals("edge")) {
+                                
+                                JSONEdge je = gr.getEdge(key);
+                                
+                                je.put(attr, val);
+                                if (attr.equals("_weight")) {
+                                    gr.setEdgeWeight(je, Double.parseDouble(val));
+                                }
+                                
+                                gr.indexObject(key, _type, je.asJSONObject().getJSONObject("data"));
+                                rsb.append(R_DONE);
+                            } else {
+                                rsb.append(R_ERR);
+                                rsb.append(" UNKNOWN_OBJECT_TYPE");
+                            }
                         }
-                    }                
+                    }
                 } else if (cmd.equals(CMD_SPY)) {
                     String key = args[0];
                     

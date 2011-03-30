@@ -102,7 +102,6 @@ public class Graph {
                     Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
         }
         
-        //indexWriter.addDocument(doc);
         indexWriter.updateDocument(new Term(INDEX_KEY_FIELD, key), doc);
         refreshIndex();
     }
@@ -126,7 +125,7 @@ public class Graph {
         Query l_query = qp.parse(query);
         Filter l_filter = new CachingWrapperFilter(new QueryWrapperFilter(l_query));
         
-        TopDocs hits = searcher.search(new MatchAllDocsQuery(), l_filter, 100000); // unlimited?
+        TopDocs hits = searcher.search(new MatchAllDocsQuery(), l_filter, 1000000); // unlimited?
         for (int i = 0; i < hits.scoreDocs.length; i++) {
             int docId = hits.scoreDocs[i].doc;
             Document d = searcher.doc(docId);
@@ -180,5 +179,8 @@ public class Graph {
         return gr.getEdge(fromVertex, toVertex);
     }
     
+    public void setEdgeWeight(JSONEdge je, double weight) throws Exception {
+        gr.setEdgeWeight(je, weight);
+    }
     
 }

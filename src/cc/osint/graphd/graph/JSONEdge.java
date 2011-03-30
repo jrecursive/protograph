@@ -1,10 +1,10 @@
 package cc.osint.graphd.graph;
 
 import org.apache.log4j.Logger;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.json.JSONObject;
 
-public class JSONEdge<V> extends DefaultEdge {
+public class JSONEdge<V> extends DefaultWeightedEdge {
     static Logger log = Logger.getLogger(JSONEdge.class);
 
     private V v1;
