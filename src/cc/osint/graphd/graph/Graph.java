@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jgrapht.DirectedGraph;
+import org.jgrapht.*;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 import org.jgrapht.ext.StringEdgeNameProvider;
@@ -28,7 +28,7 @@ import cc.osint.graphd.graph.*;
 // BASIC PERSISTENCE
 
 public class Graph {
-    private ListenableDirectedGraph<JSONVertex, JSONEdge> gr;
+    private ListenableDirectedWeightedGraph<JSONVertex, JSONEdge> gr;
     private ConcurrentHashMap<String, JSONVertex> vertices;
     
     private IndexWriter indexWriter;
@@ -45,7 +45,7 @@ public class Graph {
         Graph.class.getName());
     
     public Graph() throws Exception {
-        gr = new ListenableDirectedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
+        gr = new ListenableDirectedWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
         vertices = new ConcurrentHashMap<String, JSONVertex>();
         luceneDirectory = new RAMDirectory();
         indexWriter = new IndexWriter(
@@ -90,7 +90,7 @@ public class Graph {
         return key;
     }
     
-    private void indexObject(String key, String type, JSONObject jo) throws Exception {
+    public void indexObject(String key, String type, JSONObject jo) throws Exception {
         Document doc = new Document();
         doc.add(new Field(INDEX_TYPE_FIELD, type,
             Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
@@ -101,7 +101,9 @@ public class Graph {
             doc.add(new Field(k, jo.getString(k),
                     Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
         }
-        indexWriter.addDocument(doc);
+        
+        //indexWriter.addDocument(doc);
+        indexWriter.updateDocument(new Term(INDEX_KEY_FIELD, key), doc);
         refreshIndex();
     }
     
@@ -144,8 +146,14 @@ public class Graph {
         log.info("vTo = " + vTo.toString());
         List<JSONObject> results = new ArrayList<JSONObject>();
         List<JSONEdge> path = DijkstraShortestPath.findPathBetween(gr, vFrom, vTo);
-        for(JSONEdge edge: path) {
-            results.add(edge.asJSONObject());
+        if (null != path) {
+            for(JSONEdge edge: path) {
+                results.add(edge.asJSONObject());
+            }
+        } else {
+            JSONObject errObj = new JSONObject();
+            errObj.put("error", "no_path");
+            results.add(errObj);
         }
         return results;
     }
@@ -160,5 +168,17 @@ public class Graph {
         if (ar.size() == 0) return null;
         return ar.get(0);
     }
+    
+    public JSONVertex getVertex(String key) throws Exception {
+        return vertices.get(key);
+    }
+    
+    public JSONEdge getEdge(String key) throws Exception {
+        JSONObject jsonVertex = get(key);
+        JSONVertex fromVertex = vertices.get(jsonVertex.getString("_fromVertex"));
+        JSONVertex toVertex = vertices.get(jsonVertex.getString("_toVertex"));
+        return gr.getEdge(fromVertex, toVertex);
+    }
+    
     
 }

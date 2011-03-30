@@ -56,10 +56,12 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_EXISTS = "exists";      // key exists?
     final private static String CMD_CVERT = "cvert";        // create vertex
     final private static String CMD_CEDGE = "cedge";        // create edge
+    final private static String CMD_SET = "set";            // set a property on an edge or vertex
     final private static String CMD_DEL = "del";            // delete object (vertex or edge)
     final private static String CMD_GET = "get";            // get object (vertex or edge)
     final private static String CMD_Q = "q";                // query objects by property
     final private static String CMD_SPATH = "spath";        // shortest path between two vertices
+    final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
     
     final private static String R_OK = "ok";                // standard reply
     final private static String R_DONE = "done";            // object stream done
@@ -227,6 +229,10 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     JSONObject jo = null;
                     try {
                         jo = new JSONObject(json);
+                        jo.put("_fromVertex", vFromKey);
+                        jo.put("_toVertex", vToKey);
+                        jo.put("_weight", 1.0);
+                        jo.put("_rel", rel);
                         gr.addEdge(key, jo, vFromKey, vToKey, rel);
                         rsb.append(R_OK);
                         rsb.append(" CMD_CEDGE ");
@@ -289,6 +295,64 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     }
                     rsb.append(R_DONE);
                     
+                // set <key> <attr> <value>
+                } else if (cmd.equals(CMD_SET)) {
+                    String key = args[0];
+                    String attr = args[1];
+                    String val = args[2];
+                    log.info("SET: " + key + "." + attr + " -> " + val);
+                    
+                    JSONObject obj = gr.get(key);
+                    if (null == obj) {
+                        rsb.append(R_NOT_FOUND);
+                    } else {
+                        String _type = obj.getString("_type");
+                        if (_type.equals("vertex")) {
+                            
+                            JSONVertex jv = gr.getVertex(key);
+                            jv.put(attr, val);
+                            gr.indexObject(key, _type, jv);
+                            rsb.append(R_DONE);
+                        } else if (_type.equals("edge")) {
+                            
+                            JSONEdge je = gr.getEdge(key);
+                            je.put(attr, val);
+                            gr.indexObject(key, _type, je.asJSONObject());
+                            rsb.append(R_DONE);
+                        } else {
+                            rsb.append(R_ERR);
+                            rsb.append(" UNKNOWN_OBJECT_TYPE");
+                        }
+                    }                
+                } else if (cmd.equals(CMD_SPY)) {
+                    String key = args[0];
+                    
+                    JSONObject obj = gr.get(key);
+                    if (null == obj) {
+                        rsb.append(R_NOT_FOUND);
+                    } else {
+                        String _type = obj.getString("_type");
+                        if (_type.startsWith("e")) {
+                            JSONEdge je = gr.getEdge(key);
+                            if (null == je) {
+                                rsb.append(R_NOT_FOUND);
+                            } else {
+                                rsb.append(je.asJSONObject().toString(4) + "\n");
+                                rsb.append(R_DONE);
+                            }
+                        } else if (_type.startsWith("v")) {
+                            JSONVertex jv = gr.getVertex(key);
+                            if (null == jv) {
+                                rsb.append(R_NOT_FOUND);
+                            } else {
+                                rsb.append(jv.toString(4) + "\n");
+                                rsb.append(R_DONE);
+                            }
+                        } else {
+                            rsb.append(R_ERR);
+                            rsb.append(" UNKNOWN_OBJECT_TYPE");
+                        }
+                    }                    
                 }
                 
                 // BASIC PERSISTENCE
