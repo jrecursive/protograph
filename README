@@ -128,3 +128,55 @@ kspath a m 3
 {"weight":5.5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e15","_toVertex":"k","_fromVertex":"i","_weight":"2.5","_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
 done
 
+-----
+
+create db4
+use db4
+cvert a {"city":"minneapolis"} 
+ok CMD_CVERT a
+cvert b {"city":"duluth"}
+ok CMD_CVERT b
+cvert c {"city":"rockville"}
+ok CMD_CVERT c
+cedge e1 a b flight-to {"cost": 1000}
+ok CMD_CEDGE e1
+cedge e2 b c flight-to {"cost": 1000}
+ok CMD_CEDGE e2
+cedge e3 a c flight-to {"cost": 1000}
+ok CMD_CEDGE e3
+hc 1
+{'id':'c','city':'rockville'}
+{'id':'b','city':'duluth'}
+{'id':'a','city':'minneapolis'}
+done
+set e2 _weight 5.0
+done
+spy e2
+{
+    "data": {
+        "_fromVertex": "b",
+        "_rel": "flight-to",
+        "_toVertex": "c",
+        "_weight": "5.0",
+        "cost": 1000,
+        "id": "e2"
+    },
+    "rel": "flight-to",
+    "v1": {
+        "city": "duluth",
+        "id": "b"
+    },
+    "v2": {
+        "city": "rockville",
+        "id": "c"
+    }
+}
+done
+hc 2
+{'id':'b','city':'duluth'}
+{'id':'c','city':'rockville'}
+{'id':'a','city':'minneapolis'}
+done
+
+------
+

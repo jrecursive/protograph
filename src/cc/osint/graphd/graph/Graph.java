@@ -79,8 +79,8 @@ public class Graph {
     
     public String addEdge(String key, JSONObject jo, 
         String vKeyFrom, String vKeyTo, String rel) throws Exception {
-        JSONVertex fromVertex = vertices.get(vKeyFrom);
-        JSONVertex toVertex   = vertices.get(vKeyTo);
+        JSONVertex fromVertex = getVertex(vKeyFrom);
+        JSONVertex toVertex   = getVertex(vKeyTo);
         JSONEdge<JSONVertex> je = 
             new JSONEdge<JSONVertex>(fromVertex, toVertex, rel);
         je.put("id", key);
@@ -125,7 +125,7 @@ public class Graph {
         Query l_query = qp.parse(query);
         Filter l_filter = new CachingWrapperFilter(new QueryWrapperFilter(l_query));
         
-        TopDocs hits = searcher.search(new MatchAllDocsQuery(), l_filter, 1000000); // unlimited?
+        TopDocs hits = searcher.search(new MatchAllDocsQuery(), l_filter, 10000); // unlimited?
         for (int i = 0; i < hits.scoreDocs.length; i++) {
             int docId = hits.scoreDocs[i].doc;
             Document d = searcher.doc(docId);
@@ -139,8 +139,8 @@ public class Graph {
     }
     
     public List<JSONObject> getShortestPath(String vFromKey, String vToKey) throws Exception {
-        JSONVertex vFrom = vertices.get(vFromKey);
-        JSONVertex vTo = vertices.get(vToKey);
+        JSONVertex vFrom = getVertex(vFromKey);
+        JSONVertex vTo = getVertex(vToKey);
         log.info("vFrom = " + vFrom.toString());
         log.info("vTo = " + vTo.toString());
         List<JSONObject> results = new ArrayList<JSONObject>();
@@ -174,8 +174,8 @@ public class Graph {
     
     public JSONEdge getEdge(String key) throws Exception {
         JSONObject jsonEdge = get(key);
-        JSONVertex fromVertex = vertices.get(jsonEdge.getString("_fromVertex"));
-        JSONVertex toVertex = vertices.get(jsonEdge.getString("_toVertex"));
+        JSONVertex fromVertex = getVertex(jsonEdge.getString("_fromVertex"));
+        JSONVertex toVertex = getVertex(jsonEdge.getString("_toVertex"));
         return gr.getEdge(fromVertex, toVertex);
     }
     
@@ -211,5 +211,23 @@ public class Graph {
         return results;
     }
     
+    public List<JSONVertex> getHamiltonianCycle() throws Exception {
+        SimpleWeightedGraph<JSONVertex, JSONEdge> swgr = 
+            new SimpleWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
+        for(String vKey: vertices.keySet()) {
+            swgr.addVertex(getVertex(vKey));
+        }
+        for(JSONEdge je: gr.edgeSet()) {
+            double weight = gr.getEdgeWeight(je);
+            swgr.addEdge((JSONVertex) je.getV1(), (JSONVertex) je.getV2(), je);
+            swgr.setEdgeWeight(je, weight);
+        }
+        return HamiltonianCycle.getApproximateOptimalForCompleteGraph(swgr);
+    }
     
 }
+
+
+
+
+

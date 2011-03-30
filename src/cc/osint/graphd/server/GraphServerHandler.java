@@ -60,9 +60,13 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_DEL = "del";            // delete object (vertex or edge)
     final private static String CMD_GET = "get";            // get object (vertex or edge)
     final private static String CMD_Q = "q";                // query objects by property
+    final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
     final private static String CMD_SPATH = "spath";        // shortest path between two vertices
     final private static String CMD_KSPATH = "kspath";      // shortest path between two vertices
-    final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
+    final private static String CMD_HC = "hc";              // hamiltonian cycle "traveling salesman problem"
+    final private static String CMD_EC = "ec";              // eulerian circuit
+    final private static String CMD_EKMF = "ekmf";          // edmonds karp maximum flow
+    final private static String CMD_CN = "cn";              // chromatic number "graph coloring"
     
     final private static String R_OK = "ok";                // standard reply
     final private static String R_DONE = "done";            // object stream done
@@ -70,6 +74,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String R_UNK = "unk";              // unknown request
     final private static String R_NOT_IMPL = "not_impl";    // cmd not implemented
     final private static String R_NOT_FOUND = "not_found";  // object not found
+    final private static String R_NOT_EXIST = "not_exist";  // requested resource does not exist
     
     final private static String ST_DB = "cur_db";           // clientState: current db (via CMD_USE)
     
@@ -284,7 +289,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     }
                     rsb.append(R_DONE);
                 
-                // [DJ] SHORTEST PATH: spath <from> <to>
+                // DIJKSTRA SHORTEST PATH: spath <from> <to>
                 } else if (cmd.equals(CMD_SPATH)) {
                     String vFromKey = args[0];
                     String vToKey = args[1];
@@ -296,7 +301,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     }
                     rsb.append(R_DONE);
                     
-                // set <key> <attr> <value>
+                // SET VERTEX/EDGE ATTRIBUTE: set <key> <attr> <value>
                 } else if (cmd.equals(CMD_SET)) {
                     String key = args[0];
                     String attr = args[1];
@@ -336,6 +341,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                             }
                         }
                     }
+                    
+                // DUMP VERTEX/EDGE: spy <key>
                 } else if (cmd.equals(CMD_SPY)) {
                     String key = args[0];
                     
@@ -365,7 +372,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                             rsb.append(" UNKNOWN_OBJECT_TYPE");
                         }
                     }                    
-
+                
+                // K-SHORTEST-PATHS: kspath <from> <to> <k> <optional:maxHops>
                 } else if (cmd.equals(CMD_KSPATH)) {
                     String vFromKey = args[0];
                     String vToKey = args[1];
@@ -381,6 +389,35 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append("\n");
                     }
                     rsb.append(R_DONE);
+                
+                // HAMILTONIAN CYCLE: 
+                } else if (cmd.equals(CMD_HC)) {
+                    List<JSONVertex> results = gr.getHamiltonianCycle();
+                    if (null == results) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        for(JSONVertex jo: results) {
+                            rsb.append(prepareResult(jo));
+                            rsb.append("\n");
+                        }
+                        rsb.append(R_DONE);
+                    }
+                
+                // EULERIAN CIRCUIT: 
+                } else if (cmd.equals(CMD_EC)) {
+                
+                
+                
+                
+                // EDWARDS KARP MAXIMUM FLOW: 
+                } else if (cmd.equals(CMD_EKMF)) {
+                
+                
+                
+                // CHROMATIC NUMBER: 
+                } else if (cmd.equals(CMD_CN)) {
+                
+                
                 
                 }
                 
