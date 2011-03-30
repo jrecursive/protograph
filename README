@@ -84,6 +84,7 @@ q cost:[200 400]
 done
 q city:hon*
 {"_type":"vertex","_key":"f","city":"honolulu"}
+{"_type":"vertex","_key":"l","city":"hong kong"}
 done
 spath a g
 {"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'e','city':'los angeles'},"data":{"id":"e11","cost":399},"rel":"flight-to"}
