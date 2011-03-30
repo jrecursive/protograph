@@ -62,7 +62,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_Q = "q";                // query objects by property
     final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
     final private static String CMD_SPATH = "spath";        // shortest path between two vertices
-    final private static String CMD_KSPATH = "kspath";      // shortest path between two vertices
+    final private static String CMD_KSPATH = "kspath";      // k-shortest paths between two vertices (w/ opt. maxHops)
     final private static String CMD_HC = "hc";              // hamiltonian cycle "traveling salesman problem"
     final private static String CMD_EC = "ec";              // eulerian circuit
     final private static String CMD_EKMF = "ekmf";          // edmonds karp maximum flow

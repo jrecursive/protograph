@@ -1,11 +1,9 @@
-protograph
-----------
 
-* Introduction
-
-* ...
-
-* Example session
+//
+// [protograph]: under development
+//
+// example sessions
+//
 
 [ ~]# telnet localhost 10101
 Trying 127.0.0.1...
@@ -16,6 +14,9 @@ create db
 ok
 use db
 ok
+
+/* create vertices & edges */
+
 cvert a {"city":"minneapolis"} 
 ok CMD_CVERT a
 cvert b {"city":"boston"}
@@ -66,40 +67,57 @@ cedge e15 i k flight-to {"cost":2000}
 ok CMD_CEDGE e15
 cedge e16 k m flight-to {"cost":2000}
 ok CMD_CEDGE e16
+
+/* shortest path (dijkstra) */
+
 spath a b
 {"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","distance":2014},"rel":"flight-to"}
 done
+
 spath a c
 {"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'d','city':'chicago'},"data":{"id":"e2","distance":780},"rel":"flight-to"}
 {"v1":{'id':'d','city':'chicago'},"v2":{'id':'c','city':'atlanta'},"data":{"id":"e6","cost":320},"rel":"flight-to"}
 done
+
 spath a e
 {"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'e','city':'los angeles'},"data":{"id":"e11","cost":399},"rel":"flight-to"}
 done
+
+/* query vertices & edges */
+
 q cost:[200 400]
-{"_type":"edge","_key":"e6","cost":"320"}
-{"_type":"edge","_key":"e9","cost":"349"}
-{"_type":"edge","_key":"e10","cost":"299"}
-{"_type":"edge","_key":"e11","cost":"399"}
+{"_type":"edge","_fromVertex":"d","_toVertex":"c","_weight":"1.0","_key":"e6","cost":"320","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"f","_toVertex":"g","_weight":"1.0","_key":"e9","cost":"349","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"c","_toVertex":"e","_weight":"1.0","_key":"e10","cost":"299","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"a","_toVertex":"e","_weight":"1.0","_key":"e11","cost":"399","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"i","_toVertex":"j","_weight":"1.0","_key":"e12","cost":"2000","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"j","_toVertex":"k","_weight":"1.0","_key":"e13","cost":"2000","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"k","_toVertex":"m","_weight":"1.0","_key":"e14","cost":"2000","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"i","_toVertex":"k","_weight":"1.0","_key":"e15","cost":"2000","_rel":"flight-to"}
+{"_type":"edge","_fromVertex":"k","_toVertex":"m","_weight":"1.0","_key":"e16","cost":"2000","_rel":"flight-to"}
 done
+
 q city:hon*
 {"_type":"vertex","_key":"f","city":"honolulu"}
 {"_type":"vertex","_key":"l","city":"hong kong"}
 done
-spath a g
-{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'e','city':'los angeles'},"data":{"id":"e11","cost":399},"rel":"flight-to"}
-{"v1":{'id':'e','city':'los angeles'},"v2":{'id':'g','city':'houston'},"data":{"id":"e8","cost":169},"rel":"flight-to"}
-done
+
+/* k-shortest paths */
+
 kspath a m 3
 {"weight":4,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e15","_toVertex":"k","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
 {"weight":5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'j','city':'tokyo'},"data":{"id":"e12","_toVertex":"j","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'j','city':'tokyo'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e13","_toVertex":"k","_fromVertex":"j","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
 done
+
+/* dump attributes of a vertex or edge */
+
 spy m
 {
     "city": "auckland",
     "id": "m"
 }
 done
+
 spy e15
 {
     "data": {
@@ -121,8 +139,14 @@ spy e15
     }
 }
 done
+
+/* set attributes & weights */
+
 set e15 _weight 2.5
 done
+
+/* shortest path changes with changed weight */
+
 kspath a m 3
 {"weight":5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'j','city':'tokyo'},"data":{"id":"e12","_toVertex":"j","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'j','city':'tokyo'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e13","_toVertex":"k","_fromVertex":"j","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
 {"weight":5.5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e15","_toVertex":"k","_fromVertex":"i","_weight":"2.5","_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
@@ -144,13 +168,18 @@ cedge e2 b c flight-to {"cost": 1000}
 ok CMD_CEDGE e2
 cedge e3 a c flight-to {"cost": 1000}
 ok CMD_CEDGE e3
-hc 1
+
+/* hamiltonian cycle */
+
+hc
 {'id':'c','city':'rockville'}
 {'id':'b','city':'duluth'}
 {'id':'a','city':'minneapolis'}
 done
+
 set e2 _weight 5.0
 done
+
 spy e2
 {
     "data": {
@@ -172,7 +201,8 @@ spy e2
     }
 }
 done
-hc 2
+
+hc
 {'id':'b','city':'duluth'}
 {'id':'c','city':'rockville'}
 {'id':'a','city':'minneapolis'}
@@ -188,13 +218,16 @@ cvert b {"city":"duluth"}
 ok CMD_CVERT b
 cvert c {"city":"rockville"}
 ok CMD_CVERT c
-cedge e1 a b flight-to {"cost": 1000}
+cedge e1 a b flight-to {}
 ok CMD_CEDGE e1
-cedge e2 b c flight-to {"cost": 1000}
+cedge e2 b c flight-to {}
 ok CMD_CEDGE e2
-cedge e3 a c flight-to {"cost": 1000}
+cedge e3 a c flight-to {}
 ok CMD_CEDGE e3
-ec 1
+
+/* eulerian circuit */
+
+ec
 {'id':'a','city':'minneapolis'}
 {'id':'c','city':'rockville'}
 {'id':'b','city':'duluth'}
@@ -203,7 +236,7 @@ done
 
 ------
 
-// omitting the "ok ... " replies for brevity ... 
+// omitting the "ok" replies for brevity ... 
 
 create db5
 use db5
@@ -232,6 +265,9 @@ set e6 _weight 2.3
 set e7 _weight 9.3
 set e8 _weight 11.1
 set e9 _weight 1.982
+
+/* edmonds-karp maximum flow */
+
 ekmf a f
 {
     "maximum_flow": {
@@ -252,8 +288,5 @@ done
 
 ------
 
-// continuing previous example... chromatic number: 
-cn 1
-{"chromatic_number": 3}
-done
+/* more to come :) */
 
