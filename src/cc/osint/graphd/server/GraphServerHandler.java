@@ -311,13 +311,13 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                             
                             JSONVertex jv = gr.getVertex(key);
                             jv.put(attr, val);
-                            gr.indexObject(key, _type, jv);
+                            gr.indexObject(key, _type, jv.getJSONObject("data"));
                             rsb.append(R_DONE);
                         } else if (_type.equals("edge")) {
                             
                             JSONEdge je = gr.getEdge(key);
                             je.put(attr, val);
-                            gr.indexObject(key, _type, je.asJSONObject());
+                            gr.indexObject(key, _type, je.asJSONObject().getJSONObject("data"));
                             rsb.append(R_DONE);
                         } else {
                             rsb.append(R_ERR);

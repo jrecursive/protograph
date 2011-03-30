@@ -174,9 +174,9 @@ public class Graph {
     }
     
     public JSONEdge getEdge(String key) throws Exception {
-        JSONObject jsonVertex = get(key);
-        JSONVertex fromVertex = vertices.get(jsonVertex.getString("_fromVertex"));
-        JSONVertex toVertex = vertices.get(jsonVertex.getString("_toVertex"));
+        JSONObject jsonEdge = get(key);
+        JSONVertex fromVertex = vertices.get(jsonEdge.getString("_fromVertex"));
+        JSONVertex toVertex = vertices.get(jsonEdge.getString("_toVertex"));
         return gr.getEdge(fromVertex, toVertex);
     }
     
