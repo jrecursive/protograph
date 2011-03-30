@@ -56,6 +56,16 @@ cedge e10 c e flight-to {"cost":299}
 ok CMD_CEDGE e10
 cedge e11 a e flight-to {"cost":399}
 ok CMD_CEDGE e11
+cedge e12 i j flight-to {"cost":2000}
+ok CMD_CEDGE e12
+cedge e13 j k flight-to {"cost":2000}
+ok CMD_CEDGE e13
+cedge e14 k m flight-to {"cost":2000}
+ok CMD_CEDGE e14
+cedge e15 i k flight-to {"cost":2000}
+ok CMD_CEDGE e15
+cedge e16 k m flight-to {"cost":2000}
+ok CMD_CEDGE e16
 spath a b
 {"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","distance":2014},"rel":"flight-to"}
 done
@@ -89,5 +99,42 @@ done
 spath a g
 {"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'e','city':'los angeles'},"data":{"id":"e11","cost":399},"rel":"flight-to"}
 {"v1":{'id':'e','city':'los angeles'},"v2":{'id':'g','city':'houston'},"data":{"id":"e8","cost":169},"rel":"flight-to"}
+done
+kspath a m 3
+{"weight":4,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e15","_toVertex":"k","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
+{"weight":5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'j','city':'tokyo'},"data":{"id":"e12","_toVertex":"j","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'j','city':'tokyo'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e13","_toVertex":"k","_fromVertex":"j","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
+done
+spy m
+{
+    "city": "auckland",
+    "id": "m"
+}
+done
+spy e15
+{
+    "data": {
+        "_fromVertex": "i",
+        "_rel": "flight-to",
+        "_toVertex": "k",
+        "_weight": 1,
+        "cost": 2000,
+        "id": "e15"
+    },
+    "rel": "flight-to",
+    "v1": {
+        "city": "new york city",
+        "id": "i"
+    },
+    "v2": {
+        "city": "beijing",
+        "id": "k"
+    }
+}
+done
+set e15 _weight 2.5
+done
+kspath a m 3
+{"weight":5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'j','city':'tokyo'},"data":{"id":"e12","_toVertex":"j","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'j','city':'tokyo'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e13","_toVertex":"k","_fromVertex":"j","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
+{"weight":5.5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e15","_toVertex":"k","_fromVertex":"i","_weight":"2.5","_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
 done
 
