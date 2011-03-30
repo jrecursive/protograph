@@ -61,6 +61,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_GET = "get";            // get object (vertex or edge)
     final private static String CMD_Q = "q";                // query objects by property
     final private static String CMD_SPATH = "spath";        // shortest path between two vertices
+    final private static String CMD_KSPATH = "kspath";      // shortest path between two vertices
     final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
     
     final private static String R_OK = "ok";                // standard reply
@@ -364,6 +365,23 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                             rsb.append(" UNKNOWN_OBJECT_TYPE");
                         }
                     }                    
+
+                } else if (cmd.equals(CMD_KSPATH)) {
+                    String vFromKey = args[0];
+                    String vToKey = args[1];
+                    int k = Integer.parseInt(args[2]);
+                    int maxHops = 0;
+                    if (args.length > 3) {
+                        maxHops = Integer.parseInt(args[3]);
+                    }
+                    log.info("getKShortestPaths: " + vFromKey + " -> " + vToKey);
+                    List<JSONObject> results = gr.getKShortestPaths(vFromKey, vToKey, k, maxHops);
+                    for(JSONObject jo: results) {
+                        rsb.append(prepareResult(jo));
+                        rsb.append("\n");
+                    }
+                    rsb.append(R_DONE);
+                
                 }
                 
                 // BASIC PERSISTENCE

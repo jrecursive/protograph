@@ -183,4 +183,33 @@ public class Graph {
         gr.setEdgeWeight(je, weight);
     }
     
+    public List<JSONObject> getKShortestPaths(String vFromKey, String vToKey, int n, int maxHops) throws Exception {
+        KShortestPaths ksp;
+        
+        if (maxHops > 0) {
+            ksp = new KShortestPaths(gr, getVertex(vFromKey), n, maxHops);
+        } else {
+            ksp = new KShortestPaths(gr, getVertex(vFromKey), n);
+        }
+        
+        List<JSONObject> results = new ArrayList<JSONObject>();
+        List<GraphPath<JSONVertex, JSONEdge>> paths = ksp.getPaths(getVertex(vToKey));
+        for(GraphPath<JSONVertex, JSONEdge> gp: paths) {
+            JSONObject result = new JSONObject();
+            JSONArray resultPath = new JSONArray();
+            double pathWeight = gp.getWeight();
+            result.put("weight", pathWeight);
+            List<JSONEdge> path = gp.getEdgeList();
+            for(JSONEdge edge: path) {
+                resultPath.put(edge.asJSONObject());
+            }
+            result.put("path", resultPath);
+            results.add(result);
+        }
+        
+        log.info("paths = " + paths.toString());
+        return results;
+    }
+    
+    
 }
