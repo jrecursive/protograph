@@ -203,3 +203,51 @@ done
 
 ------
 
+// omitting the "ok ... " replies for brevity ... 
+
+create db5
+use db5
+cvert a {"city":"minneapolis"} 
+cvert b {"city":"duluth"}
+cvert c {"city":"rockville"}
+cvert d {"city":"st. paul"}
+cvert e {"city":"chicago"}
+cvert f {"city":"milwaukee"}
+cedge e1 a b flight-to {}
+cedge e2 b c flight-to {}
+cedge e3 b d flight-to {}
+cedge e4 c e flight-to {}
+cedge e5 d e flight-to {}
+cedge e5 d f flight-to {}
+cedge e6 f a flight-to {}
+cedge e7 e b flight-to {}
+cedge e8 d b flight-to {}
+cedge e9 c a bus-to {}
+set e1 _weight 2.0
+set e2 _weight 3.0
+set e3 _weight 0.5
+set e4 _weight 6.3
+set e5 _weight 10.0
+set e6 _weight 2.3
+set e7 _weight 9.3
+set e8 _weight 11.1
+set e9 _weight 1.982
+ekmf a f
+{
+    "maximum_flow": {
+        "flight-to": 0.5,
+        "flight-to": 0,
+        "bus-to": 0,
+        "flight-to": 0.5,
+        "flight-to": 0,
+        "flight-to": 0,
+        "flight-to": 0,
+        "flight-to": 0,
+        "flight-to": 0.5,
+        "flight-to": 0
+    },
+    "maximum_flow_value": 0.5
+}
+done
+
+------

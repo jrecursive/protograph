@@ -418,8 +418,16 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
                 // EDWARDS KARP MAXIMUM FLOW: 
                 } else if (cmd.equals(CMD_EKMF)) {
-                
-                
+                    String vSourceKey = args[0];
+                    String vSinkKey = args[1];
+                    JSONObject flowResult = gr.getEKMF(vSourceKey, vSinkKey);
+                    if (null == flowResult) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(flowResult.toString(4));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
                 
                 // CHROMATIC NUMBER: 
                 } else if (cmd.equals(CMD_CN)) {

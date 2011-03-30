@@ -239,6 +239,18 @@ public class Graph {
         return EulerianCircuit.getEulerianCircuitVertices(swgr);
     }
     
+    public JSONObject getEKMF(String vSourceKey, String vSinkKey) throws Exception {
+        JSONVertex source = getVertex(vSourceKey);
+        JSONVertex sink = getVertex(vSinkKey);
+        EdmondsKarpMaximumFlow<JSONVertex, JSONEdge> ekmf =
+            new EdmondsKarpMaximumFlow<JSONVertex, JSONEdge>(gr);
+        ekmf.calculateMaximumFlow(source, sink);
+        JSONObject result = new JSONObject();
+        result.put("maximum_flow", ekmf.getMaximumFlow());
+        result.put("maximum_flow_value", ekmf.getMaximumFlowValue());
+        return result;
+    }
+    
 }
 
 

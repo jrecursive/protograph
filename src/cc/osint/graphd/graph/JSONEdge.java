@@ -4,7 +4,9 @@ import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.json.JSONObject;
 
-public class JSONEdge<V> extends DefaultWeightedEdge {
+public class JSONEdge<V> 
+    extends DefaultWeightedEdge 
+    implements java.lang.Comparable {
     static Logger log = Logger.getLogger(JSONEdge.class);
 
     private V v1;
@@ -66,5 +68,13 @@ public class JSONEdge<V> extends DefaultWeightedEdge {
     public String toString(int d) throws org.json.JSONException {
         return data.toString(4).replaceAll("\"", "\\\"");
     }
-
+    
+    public int compareTo(Object o) {
+        double thisWeight = getWeight();
+        double oWeight = ((JSONEdge)o).getWeight();
+        int thisRefWeight = (int) (100000.00 * thisWeight);
+        int oRefWeight = (int) (100000.00 * oWeight);
+        return thisRefWeight - oRefWeight;
+    }
+    
 }
