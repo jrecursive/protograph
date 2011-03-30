@@ -180,3 +180,26 @@ done
 
 ------
 
+create db4
+use db4
+cvert a {"city":"minneapolis"} 
+ok CMD_CVERT a
+cvert b {"city":"duluth"}
+ok CMD_CVERT b
+cvert c {"city":"rockville"}
+ok CMD_CVERT c
+cedge e1 a b flight-to {"cost": 1000}
+ok CMD_CEDGE e1
+cedge e2 b c flight-to {"cost": 1000}
+ok CMD_CEDGE e2
+cedge e3 a c flight-to {"cost": 1000}
+ok CMD_CEDGE e3
+ec 1
+{'id':'a','city':'minneapolis'}
+{'id':'c','city':'rockville'}
+{'id':'b','city':'duluth'}
+{'id':'a','city':'minneapolis'}
+done
+
+------
+

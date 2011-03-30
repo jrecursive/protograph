@@ -405,9 +405,16 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
                 // EULERIAN CIRCUIT: 
                 } else if (cmd.equals(CMD_EC)) {
-                
-                
-                
+                    List<JSONVertex> results = gr.getEulerianCircuit();
+                    if (null == results) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        for(JSONVertex jo: results) {
+                            rsb.append(prepareResult(jo));
+                            rsb.append("\n");
+                        }
+                        rsb.append(R_DONE);
+                    }
                 
                 // EDWARDS KARP MAXIMUM FLOW: 
                 } else if (cmd.equals(CMD_EKMF)) {

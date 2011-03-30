@@ -225,6 +225,20 @@ public class Graph {
         return HamiltonianCycle.getApproximateOptimalForCompleteGraph(swgr);
     }
     
+    public List<JSONVertex> getEulerianCircuit() throws Exception {
+        SimpleWeightedGraph<JSONVertex, JSONEdge> swgr = 
+            new SimpleWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
+        for(String vKey: vertices.keySet()) {
+            swgr.addVertex(getVertex(vKey));
+        }
+        for(JSONEdge je: gr.edgeSet()) {
+            double weight = gr.getEdgeWeight(je);
+            swgr.addEdge((JSONVertex) je.getV1(), (JSONVertex) je.getV2(), je);
+            swgr.setEdgeWeight(je, weight);
+        }
+        return EulerianCircuit.getEulerianCircuitVertices(swgr);
+    }
+    
 }
 
 
