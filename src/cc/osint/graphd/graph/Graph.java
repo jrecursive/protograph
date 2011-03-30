@@ -211,7 +211,7 @@ public class Graph {
         return results;
     }
     
-    public List<JSONVertex> getHamiltonianCycle() throws Exception {
+    private SimpleWeightedGraph<JSONVertex, JSONEdge> getSimpleWeightedGraph() throws Exception {
         SimpleWeightedGraph<JSONVertex, JSONEdge> swgr = 
             new SimpleWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
         for(String vKey: vertices.keySet()) {
@@ -222,21 +222,15 @@ public class Graph {
             swgr.addEdge((JSONVertex) je.getV1(), (JSONVertex) je.getV2(), je);
             swgr.setEdgeWeight(je, weight);
         }
-        return HamiltonianCycle.getApproximateOptimalForCompleteGraph(swgr);
+        return swgr;
+    }
+    
+    public List<JSONVertex> getHamiltonianCycle() throws Exception {
+        return HamiltonianCycle.getApproximateOptimalForCompleteGraph(getSimpleWeightedGraph());
     }
     
     public List<JSONVertex> getEulerianCircuit() throws Exception {
-        SimpleWeightedGraph<JSONVertex, JSONEdge> swgr = 
-            new SimpleWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
-        for(String vKey: vertices.keySet()) {
-            swgr.addVertex(getVertex(vKey));
-        }
-        for(JSONEdge je: gr.edgeSet()) {
-            double weight = gr.getEdgeWeight(je);
-            swgr.addEdge((JSONVertex) je.getV1(), (JSONVertex) je.getV2(), je);
-            swgr.setEdgeWeight(je, weight);
-        }
-        return EulerianCircuit.getEulerianCircuitVertices(swgr);
+        return EulerianCircuit.getEulerianCircuitVertices(getSimpleWeightedGraph());
     }
     
     public JSONObject getEKMF(String vSourceKey, String vSinkKey) throws Exception {
@@ -249,6 +243,10 @@ public class Graph {
         result.put("maximum_flow", ekmf.getMaximumFlow());
         result.put("maximum_flow_value", ekmf.getMaximumFlowValue());
         return result;
+    }
+    
+    public int getChromaticNumber() throws Exception {
+        return ChromaticNumber.findGreedyChromaticNumber(getSimpleWeightedGraph());
     }
     
 }

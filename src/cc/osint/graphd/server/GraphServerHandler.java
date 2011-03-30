@@ -431,8 +431,11 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
                 // CHROMATIC NUMBER: 
                 } else if (cmd.equals(CMD_CN)) {
-                
-                
+                    JSONObject result = new JSONObject();
+                    result.put("chromatic_number", gr.getChromaticNumber());
+                    rsb.append(result.toString(4));
+                    rsb.append("\n");
+                    rsb.append(R_DONE);
                 
                 }
                 
