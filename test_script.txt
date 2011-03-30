@@ -1,0 +1,35 @@
+create db
+use db
+cvert a {"city":"minneapolis"} 
+cvert b {"city":"boston"}
+cvert c {"city":"atlanta"}
+cvert d {"city":"chicago"}
+cvert e {"city":"los angeles"}
+cvert f {"city":"honolulu"}
+cvert g {"city":"houston"}
+cvert h {"city":"miami"}
+cvert i {"city":"new york city"}
+cvert j {"city":"tokyo"}
+cvert k {"city":"beijing"}
+cvert l {"city":"hong kong"}
+cvert m {"city":"auckland"}
+cedge e1 a b flight-to {"distance":2014}
+cedge e2 a d flight-to {"distance":780} 
+cedge e3 d e flight-to {"distance":2200}
+cedge e4 e f flight-to {"distance":2600}
+cedge e5 b i bus-route {"cost":46} 
+cedge e6 d c flight-to {"cost":320} 
+cedge e7 e c flight-to {"cost":199}
+cedge e8 e g flight-to {"cost":169}
+cedge e9 f g flight-to {"cost":349}
+cedge e10 c e flight-to {"cost":299}
+cedge e11 a e flight-to {"cost":399}
+cedge e12 i j flight-to {"cost":2000}
+cedge e13 j k flight-to {"cost":2000}
+cedge e14 k m flight-to {"cost":2000}
+cedge e15 i k flight-to {"cost":2000}
+cedge e16 k m flight-to {"cost":2000}
+spath a b
+spath a m
+kspath a m 3
+
