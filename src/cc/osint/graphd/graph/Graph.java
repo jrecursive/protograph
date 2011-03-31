@@ -117,12 +117,24 @@ public class Graph
     
     private void refreshIndex() throws Exception {
         long t0 = System.currentTimeMillis();
+        
         indexWriter.commit();
-        //indexReader = indexWriter.getReader();
-        searcher.close();
-        indexReader.close();
-        indexReader = indexWriter.getReader();
-        searcher = new IndexSearcher(indexReader);
+        IndexReader newReader = indexReader.reopen();
+        if (newReader != indexReader) {
+            searcher.close();
+            indexReader.close();
+            indexReader = newReader;
+            searcher = new IndexSearcher(indexReader);
+        }
+
+        /*
+            indexWriter.commit();
+            searcher.close();
+            indexReader.close();
+            indexReader = indexWriter.getReader();
+            searcher = new IndexSearcher(indexReader);
+        */
+        
         long elapsed = System.currentTimeMillis() - t0;
         log.info("refreshIndex(): " + elapsed + "ms");
     }
