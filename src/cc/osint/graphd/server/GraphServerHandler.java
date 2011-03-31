@@ -125,7 +125,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 response = executeRequest(clientId, request);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                response = R_ERR + " CANNOT_PARSE_REQUEST";
+                response = R_ERR + " " + ex.getMessage();
             }
         }
         
@@ -332,6 +332,12 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     String vToKey = args[1];
                     log.info("SPATH: " + vFromKey + " -> " + vToKey);
                     List<JSONObject> results = gr.getShortestPath(vFromKey, vToKey);
+                    
+                    // TODO: cleaner error handling for "no_path" vs. other errors
+                    //       probably consistently return null from graph algorithm calls
+                    //        (or exception?  or predictable object, e.g., "error": "something"?)
+                    //
+                    
                     for(JSONObject jo: results) {
                         rsb.append(prepareResult(jo));
                         rsb.append("\n");

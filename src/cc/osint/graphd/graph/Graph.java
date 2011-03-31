@@ -238,6 +238,9 @@ public class Graph
         return results;
     }
     
+    // TODO: efficiency.  right now this copies the entire graph into a new one.
+    //       which sucks and is not realistic.  i'd hate to punt on hc/ec though.
+    //
     private SimpleWeightedGraph<JSONVertex, JSONEdge> getSimpleWeightedGraph() throws Exception {
         SimpleWeightedGraph<JSONVertex, JSONEdge> swgr = 
             new SimpleWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
@@ -302,8 +305,6 @@ public class Graph
             final String eventType;
             
             if (e.getType() == GraphVertexChangeEvent.BEFORE_VERTEX_REMOVED) eventType = "before_vertex_removed";
-            else if (e.getType() == GraphVertexChangeEvent.BEFORE_VERTEX_ADDED) eventType = "before_vertex_added";
-            else if (e.getType() == GraphVertexChangeEvent.VERTEX_ADDED) eventType = "vertex_added";
             else if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) eventType = "vertex_removed";
             else eventType = "vertex:unknown_event_type:" + e.getType();
             
@@ -341,8 +342,6 @@ public class Graph
         
             final String eventType;
             if (e.getType() == GraphEdgeChangeEvent.BEFORE_EDGE_REMOVED) eventType = "before_edge_removed";
-            else if (e.getType() == GraphEdgeChangeEvent.BEFORE_EDGE_ADDED) eventType = "before_edge_added";
-            else if (e.getType() == GraphEdgeChangeEvent.EDGE_ADDED) eventType = "edge_added";
             else if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) eventType = "edge_removed";
             else eventType = "edge:unknown_event_type:" + e.getType();
             
