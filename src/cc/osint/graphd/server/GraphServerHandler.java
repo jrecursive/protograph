@@ -67,6 +67,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_EC = "ec";              // eulerian circuit
     final private static String CMD_EKMF = "ekmf";          // edmonds karp maximum flow
     final private static String CMD_CN = "cn";              // chromatic number "graph coloring"
+    final private static String CMD_INCW = "incw";          // increment edge weight
     
     final private static String R_OK = "ok";                // standard reply
     final private static String R_DONE = "done";            // object stream done
@@ -385,6 +386,21 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         }
                     }
                     
+                } else if (cmd.equals(CMD_INCW)) {
+                    String key = args[0];
+                    double w_amt = Double.parseDouble(args[1]);
+                    JSONEdge je = gr.getEdge(key);
+                    if (null == je) {
+                        rsb.append(R_NOT_FOUND);
+                    } else {
+                        double weight = gr.getEdgeWeight(je);
+                        weight += w_amt;
+                        gr.setEdgeWeight(je, weight);
+                        je.put("_weight", "" + weight);
+                        gr.indexObject(key, "edge", je.asJSONObject().getJSONObject("data"));
+                        rsb.append(R_DONE);
+                    }
+
                 // DUMP VERTEX/EDGE: spy <key>
                 } else if (cmd.equals(CMD_SPY)) {
                     String key = args[0];

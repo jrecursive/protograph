@@ -210,6 +210,10 @@ public class Graph
         gr.setEdgeWeight(je, weight);
     }
     
+    public double getEdgeWeight(JSONEdge je) throws Exception {
+        return gr.getEdgeWeight(je);
+    }
+    
     public List<JSONObject> getKShortestPaths(String vFromKey, String vToKey, int n, int maxHops) throws Exception {
         KShortestPaths ksp;
         
