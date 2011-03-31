@@ -327,7 +327,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     }
                     rsb.append(R_DONE);
                 
-                // DIJKSTRA SHORTEST PATH: spath <from> <to>
+                // DIJKSTRA SHORTEST PATH: spath <from> <to> <radius>
                 } else if (cmd.equals(CMD_SPATH)) {
                     String vFromKey = args[0];
                     String vToKey = args[1];
