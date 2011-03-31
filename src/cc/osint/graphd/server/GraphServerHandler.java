@@ -279,8 +279,28 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     String key = args[0];
                     log.info("CMD_DEL: " + key);
                     
-                    rsb.append(R_NOT_IMPL);
-                    
+                    JSONObject obj = gr.get(key);
+                    if (null == obj) {
+                        rsb.append(R_NOT_FOUND);
+                    } else {
+                        String _type = obj.getString("_type");
+                        if (_type.equals("vertex")) {
+                            JSONVertex jv = gr.getVertex(key);
+                            gr.removeVertex(jv);
+                            rsb.append(R_DONE);
+                            
+                        } else if (_type.equals("edge")) {
+                            JSONEdge je = gr.getEdge(key);
+                            gr.removeEdge(je);
+                            rsb.append(R_DONE);
+                        
+                        } else {
+                            rsb.append(R_ERR);
+                            rsb.append(" ");
+                            rsb.append(" UNKNOWN_OBJECT_TYPE");
+                        }
+                    }
+
                 // GET OBJECT: get <key>
                 } else if (cmd.equals(CMD_GET)) {
                     String key = args[0];

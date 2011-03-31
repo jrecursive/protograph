@@ -50,6 +50,11 @@ public class JSONEdge<V>
     public String get(String k) throws Exception {
         return data.getString(k);
     }
+    
+    // TODO: factor out
+    public String getString(String k) throws Exception {
+        return get(k);
+    }
 
     public boolean has(String k) {
         return data.has(k);

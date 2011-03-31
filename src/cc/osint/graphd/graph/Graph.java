@@ -116,11 +116,15 @@ public class Graph
     }
     
     private void refreshIndex() throws Exception {
+        long t0 = System.currentTimeMillis();
         indexWriter.commit();
+        //indexReader = indexWriter.getReader();
         searcher.close();
         indexReader.close();
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
+        long elapsed = System.currentTimeMillis() - t0;
+        log.info("refreshIndex(): " + elapsed + "ms");
     }
     
     @SuppressWarnings("deprecation")
@@ -186,6 +190,20 @@ public class Graph
         JSONVertex fromVertex = getVertex(jsonEdge.getString("_fromVertex"));
         JSONVertex toVertex = getVertex(jsonEdge.getString("_toVertex"));
         return gr.getEdge(fromVertex, toVertex);
+    }
+    
+    public void removeEdge(JSONEdge je) throws Exception {
+        if (gr.removeEdge(je)) {
+            log.info("removeEdge(" + je.getString("id") + "): ok");
+        }
+    }
+    
+    public void removeVertex(JSONVertex jv) throws Exception {
+        if (gr.removeVertex(jv)) {
+            indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, jv.getString("id")));
+            refreshIndex();
+            log.info("removeVertex(" + jv.getString("id") + ")");
+        }
     }
     
     public void setEdgeWeight(JSONEdge je, double weight) throws Exception {
@@ -259,7 +277,10 @@ public class Graph
     }
     
     /*
+     *
      * EVENT LISTENERS
+     *
+     *
     */
     
     // VERTEX SET LISTENER
@@ -275,7 +296,31 @@ public class Graph
         // http://www.jgrapht.org/javadoc/index.html?org/jgrapht/event/GraphVertexChangeEvent.html
         // 
     
-        log.info("vertexRemoved(" + e.toString() + ")");
+        //log.info("vertexRemoved(" + e.toString() + ")");
+        
+        try {
+            final String eventType;
+            
+            if (e.getType() == GraphVertexChangeEvent.BEFORE_VERTEX_REMOVED) eventType = "before_vertex_removed";
+            else if (e.getType() == GraphVertexChangeEvent.BEFORE_VERTEX_ADDED) eventType = "before_vertex_added";
+            else if (e.getType() == GraphVertexChangeEvent.VERTEX_ADDED) eventType = "vertex_added";
+            else if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) eventType = "vertex_removed";
+            else eventType = "vertex:unknown_event_type:" + e.getType();
+            
+            log.info("<event> [vertexRemoved] " + e.getVertex().getString("id") + " -> " + eventType);
+            
+            if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) {
+                JSONVertex jv = e.getVertex();
+                indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, jv.getString("id")));
+                refreshIndex();
+                log.info("<implicit> removeVertex: id [" + jv.getString("id") + "] + index entries");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        // pub client-event message(s)
+        
     }
     
     // EDGE SET LISTENER
@@ -283,12 +328,41 @@ public class Graph
     public void edgeAdded(GraphEdgeChangeEvent<JSONVertex, JSONEdge> e) {
         // http://www.jgrapht.org/javadoc/org/jgrapht/event/GraphEdgeChangeEvent.html
         // INFO: edgeAdded(org.jgrapht.event.GraphEdgeChangeEvent[source=([{'id':'a','city':'minneapolis'}, {'id':'b','city':'duluth'}, {'id':'c','city':'rockville'}], [flight-to=({'id':'a','city':'minneapolis'},{'id':'b','city':'duluth'}), flight-to=({'id':'b','city':'duluth'},{'id':'c','city':'rockville'}), flight-to=({'id':'a','city':'minneapolis'},{'id':'c','city':'rockville'})])])
-    
+        
+        // pub client-event message(s)
+        
         log.info("edgeAdded(" + e.toString() + ")");
     }
 
     public void edgeRemoved(GraphEdgeChangeEvent<JSONVertex, JSONEdge> e) {
         // http://www.jgrapht.org/javadoc/org/jgrapht/event/GraphEdgeChangeEvent.html
+        
+        try {
+        
+            final String eventType;
+            if (e.getType() == GraphEdgeChangeEvent.BEFORE_EDGE_REMOVED) eventType = "before_edge_removed";
+            else if (e.getType() == GraphEdgeChangeEvent.BEFORE_EDGE_ADDED) eventType = "before_edge_added";
+            else if (e.getType() == GraphEdgeChangeEvent.EDGE_ADDED) eventType = "edge_added";
+            else if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) eventType = "edge_removed";
+            else eventType = "edge:unknown_event_type:" + e.getType();
+            
+            log.info("<event> [edgeRemoved] " + e.getEdge().getString("id") + " -> " + eventType);
+            
+            // handle implicit deletions (as a result of removeVertex, et al)
+            if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) {
+            
+                // handle implicitly deleted edges
+                JSONEdge je = e.getEdge();
+                indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, je.getString("id")));
+                refreshIndex();
+                log.info("<implicit> removeEdge: id [" + je.getString("id") + "] + index entries");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        
+        // pub client-event message(s)
         
         log.info("edgeRemoved(" + e.toString() + ")");
     }
