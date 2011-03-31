@@ -38,6 +38,7 @@ public class Graph
     private IndexReader indexReader;
     private Searcher searcher;
     final private RAMDirectory luceneDirectory;
+    final private Analyzer analyzer = new WhitespaceAnalyzer();
     
     final private static String INDEX_TYPE_FIELD = "_type";
     final private static String INDEX_KEY_FIELD = "_key";
@@ -53,7 +54,7 @@ public class Graph
         luceneDirectory = new RAMDirectory();
         indexWriter = new IndexWriter(
             luceneDirectory,
-            new StandardAnalyzer(Version.LUCENE_CURRENT),
+            new StandardAnalyzer(Version.LUCENE_30),
             IndexWriter.MaxFieldLength.LIMITED);
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
@@ -139,28 +140,52 @@ public class Graph
         log.info("refreshIndex(): " + elapsed + "ms");
     }
     
-    @SuppressWarnings("deprecation")
-    public List<JSONObject> query(String query)
-            throws Exception {
-        ArrayList<JSONObject> matches = new ArrayList<JSONObject>();
-        Analyzer analyzer = new WhitespaceAnalyzer();
-        QueryParser qp = new QueryParser(Version.LUCENE_CURRENT,
-                "id", analyzer);
+    public List<JSONObject> query(String queryStr) throws Exception {
+        final List<JSONObject> results = new ArrayList<JSONObject>();
+        QueryParser qp = new QueryParser(Version.LUCENE_30, "id", analyzer);
         qp.setAllowLeadingWildcard(true);
-        Query l_query = qp.parse(query);
-        Filter l_filter = new CachingWrapperFilter(new QueryWrapperFilter(l_query));
+        Query query = qp.parse(queryStr);
+        log.info("query = " + query.toString());
+        Filter filter = new CachingWrapperFilter(new QueryWrapperFilter(query));
+        long start_t = System.currentTimeMillis();
         
-        TopDocs hits = searcher.search(new MatchAllDocsQuery(), l_filter, 10000); // unlimited?
-        for (int i = 0; i < hits.scoreDocs.length; i++) {
-            int docId = hits.scoreDocs[i].doc;
-            Document d = searcher.doc(docId);
-            JSONObject result = new JSONObject();
-            for (Fieldable f : d.getFields()) {
-                result.put(f.name(), d.get(f.name()));
-            }
-            matches.add(result);
-        }
-        return matches;
+        searcher.search(
+            new MatchAllDocsQuery(),
+            filter,
+            new Collector() {
+                private int docBase;
+                IndexReader reader;
+
+                // ignore scorer
+                public void setScorer(Scorer scorer) {
+                }
+                
+                // accept docs out of order
+                public boolean acceptsDocsOutOfOrder() {
+                    return false;
+                }
+                
+                public void collect(int doc) {
+                    try {
+                        Document d = reader.document(doc);
+                        JSONObject result = new JSONObject();
+                        for (Fieldable f : d.getFields()) {
+                            result.put(f.name(), d.get(f.name()));
+                        }
+                        results.add(result);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                
+                public void setNextReader(IndexReader reader, int docBase) {
+                    this.reader = reader;
+                    this.docBase = docBase;
+                }   
+            });
+        long end_t = System.currentTimeMillis();
+        log.info("query: hits.scoreDocs.length = " + results.size() + " (" + (end_t-start_t) + "ms)");
+        return results;
     }
     
     public JSONObject getShortestPath(String vFromKey, String vToKey, double radius) throws Exception {
