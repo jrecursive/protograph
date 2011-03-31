@@ -33,6 +33,7 @@ public class Graph
                VertexSetListener<JSONVertex>,
                TraversalListener<JSONVertex, JSONEdge> {
     private ListenableDirectedWeightedGraph<JSONVertex, JSONEdge> gr;
+    private ConnectivityInspector<JSONVertex, JSONEdge> connectivityInspector;
     private ConcurrentHashMap<String, JSONVertex> vertices;
     
     private IndexWriter indexWriter;
@@ -51,6 +52,7 @@ public class Graph
     
     public Graph() throws Exception {
         gr = new ListenableDirectedWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
+        connectivityInspector = new ConnectivityInspector<JSONVertex, JSONEdge>(gr);
         vertices = new ConcurrentHashMap<String, JSONVertex>();
         luceneDirectory = new RAMDirectory();
         indexWriter = new IndexWriter(
@@ -61,6 +63,8 @@ public class Graph
         searcher = new IndexSearcher(indexReader);
         gr.addVertexSetListener(this);
         gr.addGraphListener(this);
+        gr.addVertexSetListener(connectivityInspector);
+        gr.addGraphListener(connectivityInspector);
     }
     
     private static String generateKey() throws Exception {
@@ -353,6 +357,30 @@ public class Graph
             result.put("cover_set", verts);
             return result;
         }
+    }
+    
+    public JSONObject getConnectedSetByVertex(JSONVertex v) throws Exception {
+        Set<JSONVertex> cset = connectivityInspector.connectedSetOf(v);
+        if (null == cset) return null;
+        JSONObject result = new JSONObject();
+        result.put("connected_set", cset);
+        return result;
+    }
+    
+    public JSONObject getConnectedSets() throws Exception {
+        List<Set<JSONVertex>> csets = connectivityInspector.connectedSets();
+        if (null == csets) return null;
+        JSONObject result = new JSONObject();
+        result.put("connected_sets", csets);
+        return result;
+    }
+    
+    public boolean isConnected() throws Exception {
+        return connectivityInspector.isGraphConnected();
+    }
+    
+    public boolean pathExists(JSONVertex vFrom, JSONVertex vTo) throws Exception {
+        return connectivityInspector.pathExists(vFrom, vTo);
     }
     
     /*

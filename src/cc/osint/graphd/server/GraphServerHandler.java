@@ -71,6 +71,10 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_KMST = "kmst";          // compute (kruskal's) minimum spanning tree
     final private static String CMD_VCG = "vcg";            // vertex cover (greedy)
     final private static String CMD_VC2A = "vc2a";          // vertex cover (2 approximation)
+    final private static String CMD_CSETV = "csetv";        // maximally connected set of V
+    final private static String CMD_CSETS = "csets";        // all maximally connected sets
+    final private static String CMD_ISCON = "iscon";        // is graph connected?
+    final private static String CMD_UPATHEX = "upathex";    // does _any_ *UNDIRECTED* path exist from v0 -> v1?
     
     final private static String R_OK = "ok";                // standard reply
     final private static String R_DONE = "done";            // object stream done
@@ -505,6 +509,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     rsb.append("\n");
                     rsb.append(R_DONE);
                 
+                // KRUSKAL'S MINIMUM SPANNING TREE
                 } else if (cmd.equals(CMD_KMST)) {
                     JSONObject result = gr.getKMST();
                     if (null == result) {
@@ -515,6 +520,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_DONE);
                     }
                 
+                // VERTEX COVER: GREEDY
                 } else if (cmd.equals(CMD_VCG)) {
                     JSONObject result = gr.getGreedyVertexCover();
                     if (null == result) {
@@ -525,6 +531,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_DONE);
                     }
                 
+                // VERTEX COVER: 2-APPROXIMATION
                 } else if (cmd.equals(CMD_VC2A)) {
                     JSONObject result = gr.get2ApproximationVertexCover();
                     if (null == result) {
@@ -535,7 +542,49 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_DONE);
                     }
                 
+                } else if (cmd.equals(CMD_CSETV)) {
+                    String key = args[0];
+                    JSONVertex v = gr.getVertex(key);
+                    if (null == v) {
+                        rsb.append(R_NOT_FOUND);
+                    } else {
+                        JSONObject result = gr.getConnectedSetByVertex(v);
+                        rsb.append(result.toString(4));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
+                
+                } else if (cmd.equals(CMD_CSETS)) {
+                    JSONObject result = gr.getConnectedSets();
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString(4));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
+                
+                } else if (cmd.equals(CMD_ISCON)) {
+                    rsb.append("" + gr.isConnected());
+                    rsb.append("\n");
+                    rsb.append(R_DONE);
+                
+                } else if (cmd.equals(CMD_UPATHEX)) {
+                    JSONVertex vFrom = gr.getVertex(args[0]);
+                    JSONVertex vTo = gr.getVertex(args[1]);
+                    if (null == vFrom ||
+                        null == vTo) {
+                        rsb.append(R_NOT_FOUND);
+                    } else {
+                        rsb.append("" + gr.pathExists(vFrom, vTo));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
+                
                 }
+                
+                
+                
                 
                 // BASIC PERSISTENCE
                 
