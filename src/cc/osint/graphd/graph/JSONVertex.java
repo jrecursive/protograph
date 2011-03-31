@@ -18,8 +18,11 @@ public class JSONVertex extends JSONObject {
     public JSONVertex(String id, JSONObject jo) {
         super();
         try {
-            for(String k: JSONObject.getNames(jo)) {
-                super.put(k, jo.get(k));
+            if (null != jo &&
+                null != JSONObject.getNames(jo)) {
+                for(String k: JSONObject.getNames(jo)) {
+                    super.put(k, jo.get(k));
+                }
             }
             super.put("id", id);
         } catch (Exception ex) {

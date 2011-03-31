@@ -12,6 +12,7 @@ import org.jgrapht.ext.StringEdgeNameProvider;
 import org.jgrapht.ext.StringNameProvider;
 import org.jgrapht.graph.ListenableDirectedGraph;
 import org.jgrapht.alg.*;
+import org.jgrapht.event.*;
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
 import org.apache.lucene.analysis.*;
@@ -27,7 +28,9 @@ import cc.osint.graphd.graph.*;
 
 // BASIC PERSISTENCE
 
-public class Graph {
+public class Graph 
+    implements GraphListener<JSONVertex, JSONEdge>,
+               VertexSetListener<JSONVertex> {
     private ListenableDirectedWeightedGraph<JSONVertex, JSONEdge> gr;
     private ConcurrentHashMap<String, JSONVertex> vertices;
     
@@ -54,6 +57,8 @@ public class Graph {
             IndexWriter.MaxFieldLength.LIMITED);
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
+        gr.addVertexSetListener(this);
+        gr.addGraphListener(this);
     }
     
     private static String generateKey() throws Exception {
@@ -73,12 +78,12 @@ public class Graph {
     }
     
     public String addEdge(JSONObject jo, 
-        String vKeyFrom, String vKeyTo, String rel) throws Exception {
-        return addEdge(generateKey(), jo, vKeyFrom, vKeyTo, rel);
+        String vKeyFrom, String vKeyTo, String rel, double weight) throws Exception {
+        return addEdge(generateKey(), jo, vKeyFrom, vKeyTo, rel, weight);
     }
     
     public String addEdge(String key, JSONObject jo, 
-        String vKeyFrom, String vKeyTo, String rel) throws Exception {
+        String vKeyFrom, String vKeyTo, String rel, double weight) throws Exception {
         JSONVertex fromVertex = getVertex(vKeyFrom);
         JSONVertex toVertex   = getVertex(vKeyTo);
         JSONEdge<JSONVertex> je = 
@@ -86,6 +91,7 @@ public class Graph {
         je.put("id", key);
         je.inherit(jo);
         gr.addEdge(fromVertex, toVertex, je);
+        gr.setEdgeWeight(je, weight);
         indexObject(key, EDGE_TYPE, jo);
         return key;
     }
@@ -97,9 +103,12 @@ public class Graph {
         doc.add(new Field(INDEX_KEY_FIELD, key,
             Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
 
-        for (String k: JSONObject.getNames(jo)) {
-            doc.add(new Field(k, jo.getString(k),
-                    Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
+        if (null != jo &&
+            null != JSONObject.getNames(jo)) {
+            for (String k: JSONObject.getNames(jo)) {
+                doc.add(new Field(k, jo.getString(k),
+                        Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
+            }
         }
         
         indexWriter.updateDocument(new Term(INDEX_KEY_FIELD, key), doc);
@@ -247,6 +256,41 @@ public class Graph {
     
     public int getChromaticNumber() throws Exception {
         return ChromaticNumber.findGreedyChromaticNumber(getSimpleWeightedGraph());
+    }
+    
+    /*
+     * EVENT LISTENERS
+    */
+    
+    // VERTEX SET LISTENER
+    
+    public void vertexAdded(GraphVertexChangeEvent<JSONVertex> e) {
+        // http://www.jgrapht.org/javadoc/index.html?org/jgrapht/event/GraphVertexChangeEvent.html
+        // INFO: vertexAdded(org.jgrapht.event.GraphVertexChangeEvent[source=([{'id':'a','city':'minneapolis'}], [])])
+        
+        log.info("vertexAdded(" + e.toString() + ")");
+    }
+    
+    public void vertexRemoved(GraphVertexChangeEvent<JSONVertex> e) {
+        // http://www.jgrapht.org/javadoc/index.html?org/jgrapht/event/GraphVertexChangeEvent.html
+        // 
+    
+        log.info("vertexRemoved(" + e.toString() + ")");
+    }
+    
+    // EDGE SET LISTENER
+    
+    public void edgeAdded(GraphEdgeChangeEvent<JSONVertex, JSONEdge> e) {
+        // http://www.jgrapht.org/javadoc/org/jgrapht/event/GraphEdgeChangeEvent.html
+        // INFO: edgeAdded(org.jgrapht.event.GraphEdgeChangeEvent[source=([{'id':'a','city':'minneapolis'}, {'id':'b','city':'duluth'}, {'id':'c','city':'rockville'}], [flight-to=({'id':'a','city':'minneapolis'},{'id':'b','city':'duluth'}), flight-to=({'id':'b','city':'duluth'},{'id':'c','city':'rockville'}), flight-to=({'id':'a','city':'minneapolis'},{'id':'c','city':'rockville'})])])
+    
+        log.info("edgeAdded(" + e.toString() + ")");
+    }
+
+    public void edgeRemoved(GraphEdgeChangeEvent<JSONVertex, JSONEdge> e) {
+        // http://www.jgrapht.org/javadoc/org/jgrapht/event/GraphEdgeChangeEvent.html
+        
+        log.info("edgeRemoved(" + e.toString() + ")");
     }
     
 }

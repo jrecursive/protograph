@@ -96,7 +96,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void channelConnected(
             ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        // Send greeting for a new connection.
+        log.info("* connect: " + InetAddress.getLocalHost().getHostName());
         e.getChannel().write(
                 "graphd " + InetAddress.getLocalHost().getHostName() + "\n");
     }
@@ -139,10 +139,16 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         ConcurrentHashMap<String, String> clientState = 
             clientStateMap.get(clientId);
         StringBuffer rsb = new StringBuffer();
-        String cmd = request.substring(0, request.indexOf(" "))
-            .trim().toLowerCase();
-        String[] args = request.substring(request.indexOf(" "))
-            .trim().split(" ");
+        String cmd;
+        String[] args;
+        
+        if (request.indexOf(" ") != -1) {
+            cmd  = request.substring(0, request.indexOf(" ")).trim().toLowerCase();
+            args = request.substring(request.indexOf(" ")).trim().split(" ");
+        } else {
+            cmd = request;
+            args = new String[0];
+        }
         
         // USE GRAPH: use <db>
         if (cmd.equals(CMD_USE)) {
@@ -221,25 +227,36 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     }
                                         
                 // CREATE EDGE: cedge <key> <vFromKey> <vToKey> <rel> <json>
+                // OR:          cedge <key> <vFromKey> <vToKey> <rel> <weight> <json>
                 } else if (cmd.equals(CMD_CEDGE)) {
                     String key = args[0];
                     String vFromKey = args[1];
                     String vToKey = args[2];
                     String rel = args[3];
-                    String json = request.substring(
-                        request.indexOf(" " + rel)+(rel.length()+1)).trim();
+                    double weight = 1.0;
+                    String json;
+                    
+                    if (args[4].charAt(0) == '{') {
+                        json = request.substring(request.indexOf(" " + rel) +
+                            (rel.length()+1)).trim();
+                    } else {
+                        weight = Double.parseDouble(args[4]);
+                        json = request.substring(request.indexOf(" " + args[4]) +
+                            (args[4].length()+1)).trim();
+                    }
+                    
                     log.info("CMD_CEDGE: " + key + ": " +
                         vFromKey + " -> " + vToKey + 
-                        " [" + rel + "]");
+                        " [" + rel + "] " + weight);
                     
                     JSONObject jo = null;
                     try {
                         jo = new JSONObject(json);
                         jo.put("_fromVertex", vFromKey);
                         jo.put("_toVertex", vToKey);
-                        jo.put("_weight", 1.0);
+                        jo.put("_weight", weight);
                         jo.put("_rel", rel);
-                        gr.addEdge(key, jo, vFromKey, vToKey, rel);
+                        gr.addEdge(key, jo, vFromKey, vToKey, rel, weight);
                         rsb.append(R_OK);
                         rsb.append(" CMD_CEDGE ");
                         rsb.append(key);
