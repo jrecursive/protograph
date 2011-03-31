@@ -59,6 +59,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_SET = "set";            // set a property on an edge or vertex
     final private static String CMD_DEL = "del";            // delete object (vertex or edge)
     final private static String CMD_GET = "get";            // get object (vertex or edge)
+    final private static String CMD_INCW = "incw";          // increment edge weight
     final private static String CMD_Q = "q";                // query objects by property
     final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
     final private static String CMD_SPATH = "spath";        // shortest path between two vertices
@@ -67,7 +68,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_EC = "ec";              // eulerian circuit
     final private static String CMD_EKMF = "ekmf";          // edmonds karp maximum flow
     final private static String CMD_CN = "cn";              // chromatic number "graph coloring"
-    final private static String CMD_INCW = "incw";          // increment edge weight
+    final private static String CMD_KMST = "kmst";          // compute (kruskal's) minimum spanning tree
     
     final private static String R_OK = "ok";                // standard reply
     final private static String R_DONE = "done";            // object stream done
@@ -445,10 +446,14 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     }
                     log.info("getKShortestPaths: " + vFromKey + " -> " + vToKey);
                     List<JSONObject> results = gr.getKShortestPaths(vFromKey, vToKey, k, maxHops);
+                    JSONObject result = new JSONObject();
+                    JSONArray paths = new JSONArray();
                     for(JSONObject jo: results) {
-                        rsb.append(prepareResult(jo));
-                        rsb.append("\n");
+                        paths.put(jo);
                     }
+                    result.put("paths", paths);
+                    rsb.append(prepareResult(result));
+                    rsb.append("\n");
                     rsb.append(R_DONE);
                 
                 // HAMILTONIAN CYCLE: 
@@ -497,6 +502,16 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     rsb.append(result.toString(4));
                     rsb.append("\n");
                     rsb.append(R_DONE);
+                
+                } else if (cmd.equals(CMD_KMST)) {
+                    JSONObject result = gr.getKMST();
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString(4));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
                 
                 }
                 

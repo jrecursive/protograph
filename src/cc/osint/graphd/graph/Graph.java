@@ -30,7 +30,8 @@ import cc.osint.graphd.graph.*;
 
 public class Graph 
     implements GraphListener<JSONVertex, JSONEdge>,
-               VertexSetListener<JSONVertex> {
+               VertexSetListener<JSONVertex>,
+               TraversalListener<JSONVertex, JSONEdge> {
     private ListenableDirectedWeightedGraph<JSONVertex, JSONEdge> gr;
     private ConcurrentHashMap<String, JSONVertex> vertices;
     
@@ -118,7 +119,6 @@ public class Graph
     
     private void refreshIndex() throws Exception {
         long t0 = System.currentTimeMillis();
-        
         indexWriter.commit();
         IndexReader newReader = indexReader.reopen();
         if (newReader != indexReader) {
@@ -127,15 +127,6 @@ public class Graph
             indexReader = newReader;
             searcher = new IndexSearcher(indexReader);
         }
-
-        /*
-            indexWriter.commit();
-            searcher.close();
-            indexReader.close();
-            indexReader = indexWriter.getReader();
-            searcher = new IndexSearcher(indexReader);
-        */
-        
         long elapsed = System.currentTimeMillis() - t0;
         log.info("refreshIndex(): " + elapsed + "ms");
     }
@@ -194,10 +185,6 @@ public class Graph
         log.info("vFrom = " + vFrom.toString());
         log.info("vTo = " + vTo.toString());
         List<JSONObject> results = new ArrayList<JSONObject>();
-        
-        // deprecated: for use of radius and richer path information
-        //List<JSONEdge> path = DijkstraShortestPath.findPathBetween(gr, vFrom, vTo);
-        
         DijkstraShortestPath dsp = new DijkstraShortestPath(gr, vFrom, vTo, radius);
         GraphPath<JSONVertex, JSONEdge> path = dsp.getPath();
         if (null == path) {
@@ -329,6 +316,23 @@ public class Graph
         return ChromaticNumber.findGreedyChromaticNumber(getSimpleWeightedGraph());
     }
     
+    public JSONObject getKMST() throws Exception {
+        JSONObject result = new JSONObject();
+        KruskalMinimumSpanningTree<JSONVertex, JSONEdge> kmst = 
+            new KruskalMinimumSpanningTree<JSONVertex, JSONEdge>(gr);
+        if (null == kmst.getEdgeSet()) {
+            return null;
+        } else {
+            List<JSONObject> edges = new ArrayList<JSONObject>();
+            for(JSONEdge edge: kmst.getEdgeSet()) {
+                edges.add(edge.asJSONObject());
+            }
+            result.put("edge_set", edges);
+            result.put("spanning_tree_cost", kmst.getSpanningTreeCost());
+            return result;
+        }
+    }
+    
     /*
      *
      * EVENT LISTENERS
@@ -415,6 +419,30 @@ public class Graph
         
         log.info("edgeRemoved(" + e.toString() + ")");
     }
+    
+    
+    // TRAVERSAL LISTENER
+    
+    public void connectedComponentFinished(ConnectedComponentTraversalEvent e) {
+        log.info("connectedComponentFinished: " + e.toString());
+    }
+    
+    public void connectedComponentStarted(ConnectedComponentTraversalEvent e) {
+        log.info("connectedComponentStarted: " + e.toString());
+    }
+    
+    public void edgeTraversed(EdgeTraversalEvent<JSONVertex, JSONEdge> e) {
+        log.info("edgeTraversed: " + e.toString());
+    }
+    
+    public void vertexFinished(VertexTraversalEvent<JSONVertex> e) {
+        log.info("vertexFinished: " + e.toString());
+    }
+    
+    public void vertexTraversed(VertexTraversalEvent<JSONVertex> e) {
+        log.info("vertexTraversed: " + e.toString());
+    }
+    
     
 }
 
