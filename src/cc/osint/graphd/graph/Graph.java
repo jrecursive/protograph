@@ -151,23 +151,32 @@ public class Graph
         return matches;
     }
     
-    public List<JSONObject> getShortestPath(String vFromKey, String vToKey) throws Exception {
+    public JSONObject getShortestPath(String vFromKey, String vToKey, double radius) throws Exception {
         JSONVertex vFrom = getVertex(vFromKey);
         JSONVertex vTo = getVertex(vToKey);
         log.info("vFrom = " + vFrom.toString());
         log.info("vTo = " + vTo.toString());
         List<JSONObject> results = new ArrayList<JSONObject>();
-        List<JSONEdge> path = DijkstraShortestPath.findPathBetween(gr, vFrom, vTo);
-        if (null != path) {
-            for(JSONEdge edge: path) {
-                results.add(edge.asJSONObject());
-            }
+        
+        // deprecated: for use of radius and richer path information
+        //List<JSONEdge> path = DijkstraShortestPath.findPathBetween(gr, vFrom, vTo);
+        
+        DijkstraShortestPath dsp = new DijkstraShortestPath(gr, vFrom, vTo, radius);
+        GraphPath<JSONVertex, JSONEdge> path = dsp.getPath();
+        if (null == path) {
+            return null;
         } else {
-            JSONObject errObj = new JSONObject();
-            errObj.put("error", "no_path");
-            results.add(errObj);
+            JSONObject result = new JSONObject();
+            List<JSONObject> edges = new ArrayList<JSONObject>();
+            for(JSONEdge edge: path.getEdgeList()) {
+                edges.add(edge.asJSONObject());
+            }
+            result.put("weight", path.getWeight());
+            result.put("edges", edges);
+            result.put("start_vertex", path.getStartVertex());
+            result.put("end_vertex", path.getEndVertex());
+            return result;
         }
-        return results;
     }
     
     public boolean exists(String key) throws Exception {

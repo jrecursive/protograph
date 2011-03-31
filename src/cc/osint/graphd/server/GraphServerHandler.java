@@ -331,19 +331,20 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 } else if (cmd.equals(CMD_SPATH)) {
                     String vFromKey = args[0];
                     String vToKey = args[1];
-                    log.info("SPATH: " + vFromKey + " -> " + vToKey);
-                    List<JSONObject> results = gr.getShortestPath(vFromKey, vToKey);
-                    
-                    // TODO: cleaner error handling for "no_path" vs. other errors
-                    //       probably consistently return null from graph algorithm calls
-                    //        (or exception?  or predictable object, e.g., "error": "something"?)
-                    //
-                    
-                    for(JSONObject jo: results) {
-                        rsb.append(prepareResult(jo));
-                        rsb.append("\n");
+                    double radius = Double.POSITIVE_INFINITY;
+                    if (args.length == 3) {
+                        radius = Double.parseDouble(args[2]);
                     }
-                    rsb.append(R_DONE);
+                    log.info("SPATH: " + vFromKey + " -> " + vToKey + " radius = " + radius);
+                    JSONObject result = gr.getShortestPath(vFromKey, vToKey, radius);
+
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(prepareResult(result));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
                     
                 // SET VERTEX/EDGE ATTRIBUTE: set <key> <attr> <value>
                 } else if (cmd.equals(CMD_SET)) {
@@ -386,6 +387,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         }
                     }
                     
+                // INCREASE EDGE WEIGHT: incw <edge_key> <amount>
                 } else if (cmd.equals(CMD_INCW)) {
                     String key = args[0];
                     double w_amt = Double.parseDouble(args[1]);
