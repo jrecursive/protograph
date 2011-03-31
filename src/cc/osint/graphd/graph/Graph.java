@@ -333,6 +333,28 @@ public class Graph
         }
     }
     
+    public JSONObject getGreedyVertexCover() throws Exception {
+        JSONObject result = new JSONObject();
+        Set<JSONVertex> verts = VertexCovers.findGreedyCover(Graphs.undirectedGraph(gr));
+        if (null == verts) {
+            return null;
+        } else {
+            result.put("cover_set", verts);
+            return result;
+        }
+    }
+    
+    public JSONObject get2ApproximationVertexCover() throws Exception {
+        JSONObject result = new JSONObject();
+        Set<JSONVertex> verts = VertexCovers.find2ApproximationCover(gr);
+        if (null == verts) {
+            return null;
+        } else {
+            result.put("cover_set", verts);
+            return result;
+        }
+    }
+    
     /*
      *
      * EVENT LISTENERS

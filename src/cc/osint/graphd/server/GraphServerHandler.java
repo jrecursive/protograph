@@ -69,6 +69,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_EKMF = "ekmf";          // edmonds karp maximum flow
     final private static String CMD_CN = "cn";              // chromatic number "graph coloring"
     final private static String CMD_KMST = "kmst";          // compute (kruskal's) minimum spanning tree
+    final private static String CMD_VCG = "vcg";            // vertex cover (greedy)
+    final private static String CMD_VC2A = "vc2a";          // vertex cover (2 approximation)
     
     final private static String R_OK = "ok";                // standard reply
     final private static String R_DONE = "done";            // object stream done
@@ -505,6 +507,26 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
                 } else if (cmd.equals(CMD_KMST)) {
                     JSONObject result = gr.getKMST();
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString(4));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
+                
+                } else if (cmd.equals(CMD_VCG)) {
+                    JSONObject result = gr.getGreedyVertexCover();
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString(4));
+                        rsb.append("\n");
+                        rsb.append(R_DONE);
+                    }
+                
+                } else if (cmd.equals(CMD_VC2A)) {
+                    JSONObject result = gr.get2ApproximationVertexCover();
                     if (null == result) {
                         rsb.append(R_NOT_EXIST);
                     } else {
