@@ -583,24 +583,13 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
                 }
                 
-                
-                
-                
                 // BASIC PERSISTENCE
                 
                 // EVENT-SUBSCRIPTION MANAGEMENT
                 
-                // JAVASCRIPT "POINT-OF-VIEW" PREDICATE
+                // JAVASCRIPT "POINT-OF-VIEW" TRAVERSAL
                 
                 // BF SHORTEST PATH
-                
-                // CHROMATIC NUMBER
-                
-                // EK MAX FLOW
-                
-                // HAM CYCLE
-                
-                // MINIMAL VERTEX COVER SET
                 
                 // BK CLIQUE
                 
@@ -618,7 +607,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
         rsb.append("\n");
         
-        log.info("executeRequest: rsb = " + rsb.toString());
+        //log.info("executeRequest: rsb = " + rsb.toString());
         return rsb.toString();
     }
     
