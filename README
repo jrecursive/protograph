@@ -1,8 +1,483 @@
 
 //
-// [protograph]: under development
+// protograph (under development)
 //
-// example sessions
+
+//
+// command list (so far)
+//
+
+CREATE      Create a named directed graph
+            create <name>
+            
+USE         Select a named graph to use
+            use <name>
+            
+DROP        Delete a named graph
+            drop <name>
+            
+BYE         End session & disconnect
+
+CVERT       Create a vertex
+            cvert <key> <json_attrs>
+            
+            cvert a {"city":"minneapolis"} 
+            ok CMD_CVERT a
+            cvert b {"city":"duluth"}
+            ok CMD_CVERT b
+            cvert c {"city":"chicago"}
+            ok CMD_CVERT c
+            cvert d {"city":"austin"}
+            ok CMD_CVERT d
+
+            
+CEDGE       Create an edge between two vertices
+            cedge <key> <from_key> <to_key> <relation> <weight> <json_attrs>
+
+            cedge e1 a b flight-to 1.0 {"seats": 50}
+            ok CMD_CEDGE e1
+            cedge e2 b c flight-to 1.0 {"seats": 50}
+            ok CMD_CEDGE e2
+            cedge e3 b d flight-to 1.0 {"seats": 50}
+            ok CMD_CEDGE e3
+            cedge e4 c a flight-to 1.0 {"seats": 50}
+            ok CMD_CEDGE e4
+            cedge e5 a c private-flight-to 1.0 {"seats":10}
+            ok CMD_CEDGE e5
+            cedge e6 c d private-flight-to 1.0 {"seats":10}
+            ok CMD_CEDGE e6
+
+            
+EXISTS      Test to see if a vertex or edge exists by key
+            exists <key>
+
+            exists e3
+            true
+            exists a
+            true
+            
+GET         Get a JSON representation of a vertex or edge by key
+            get <key>
+
+            get a
+            {"_type":"vertex","_key":"a","city":"minneapolis"}
+            done
+            get e1
+            {"_type":"edge","_fromVertex":"a","_toVertex":"b","_weight":"1.0","_key":"e1","seats":"50","_rel":"flight-to"}
+            done
+            
+SET         Set or clear an attribute of a vertex or edge by key
+            set <key> <attr> <value>
+            set v0 cost 250.00
+
+            set e3 seats 65
+            done
+            get e3
+            {"_type":"edge","_fromVertex":"b","_toVertex":"d","_weight":"1","_key":"e3","seats":"65","_rel":"flight-to"}
+            done
+
+DEL         Delete a vertex or edge by key
+            del <key>
+        
+            del e4
+            done
+            
+Q           Query attributes of vertices and edges by any field
+            q <query>
+            q distance:[2000 TO 3000] AND _type:edge
+    
+            q seats:[60 TO 70] AND _type:edge
+            {"id":"e3","_type":"edge","_fromVertex":"b","_toVertex":"d","_weight":"1","_key":"e3","seats":"65","_rel":"flight-to"}
+            done
+
+INCW        Increment the weight of an edge by key
+            incw <key> <amount>
+
+            incw e1 154.0
+            done
+            incw e2 405.0
+            done
+            incw e3 1178.0
+            done
+            incw e5 355.0
+            done
+            incw e6 976.0
+            done
+            get e1
+            {"id":"e1","_type":"edge","_fromVertex":"a","_toVertex":"b","_weight":"155.0","_key":"e1","seats":"50","_rel":"flight-to"}
+            done
+            
+SPATH       Find the shortest path between two vertices (with optional maximum path length)
+            spath <from_key> <to_key> [radius]
+            
+            spath a d
+            {
+               "weight":1333,
+               "start_vertex":{
+                  'id':'a',
+                  'city':'minneapolis'
+               },
+               "edges":[
+                  {
+                     "v1":{
+                        'id':'a',
+                        'city':'minneapolis'
+                     },
+                     "v2":{
+                        'id':'c',
+                        'city':'chicago'
+                     },
+                     "data":{
+                        "id":"e5",
+                        "_toVertex":"c",
+                        "_fromVertex":"a",
+                        "_weight":"356.0",
+                        "seats":10,
+                        "_rel":"private-flight-to"
+                     },
+                     "rel":"private-flight-to"
+                  },
+                  {
+                     "v1":{
+                        'id':'c',
+                        'city':'chicago'
+                     },
+                     "v2":{
+                        'id':'d',
+                        'city':'austin'
+                     },
+                     "data":{
+                        "id":"e6",
+                        "_toVertex":"d",
+                        "_fromVertex":"c",
+                        "_weight":"977.0",
+                        "seats":10,
+                        "_rel":"private-flight-to"
+                     },
+                     "rel":"private-flight-to"
+                  }
+               ],
+               "end_vertex":{
+                  'id':'d',
+                  'city':'austin'
+               }
+            }
+            done
+
+            
+KSPATH      Find the k-shortest paths between two vertices (with optional maximum path length)
+            kspath <from_key> <to_key> <k> [radius]
+            kspath v0 v3 2 5
+
+            kspath a d 2
+            {
+               "paths":[
+                  {
+                     "weight":1333,
+                     "path":[
+                        {
+                           "v1":{
+                              'id':'a',
+                              'city':'minneapolis'
+                           },
+                           "v2":{
+                              'id':'c',
+                              'city':'chicago'
+                           },
+                           "data":{
+                              "id":"e5",
+                              "_toVertex":"c",
+                              "_fromVertex":"a",
+                              "_weight":"356.0",
+                              "seats":10,
+                              "_rel":"private-flight-to"
+                           },
+                           "rel":"private-flight-to"
+                        },
+                        {
+                           "v1":{
+                              'id':'c',
+                              'city':'chicago'
+                           },
+                           "v2":{
+                              'id':'d',
+                              'city':'austin'
+                           },
+                           "data":{
+                              "id":"e6",
+                              "_toVertex":"d",
+                              "_fromVertex":"c",
+                              "_weight":"977.0",
+                              "seats":10,
+                              "_rel":"private-flight-to"
+                           },
+                           "rel":"private-flight-to"
+                        }
+                     ]
+                  },
+                  {
+                     "weight":1334,
+                     "path":[
+                        {
+                           "v1":{
+                              'id':'a',
+                              'city':'minneapolis'
+                           },
+                           "v2":{
+                              'id':'b',
+                              'city':'duluth'
+                           },
+                           "data":{
+                              "id":"e1",
+                              "_toVertex":"b",
+                              "_fromVertex":"a",
+                              "_weight":"155.0",
+                              "seats":50,
+                              "_rel":"flight-to"
+                           },
+                           "rel":"flight-to"
+                        },
+                        {
+                           "v1":{
+                              'id':'b',
+                              'city':'duluth'
+                           },
+                           "v2":{
+                              'id':'d',
+                              'city':'austin'
+                           },
+                           "data":{
+                              "id":"e3",
+                              "_toVertex":"d",
+                              "_fromVertex":"b",
+                              "_weight":"1179.0",
+                              "seats":"65",
+                              "_rel":"flight-to"
+                           },
+                           "rel":"flight-to"
+                        }
+                     ]
+                  }
+               ]
+            }
+            done
+
+            
+HC          Find the hamiltonian cycle if one exists ("traveling salesman problem")
+
+            hc
+            not_exist
+            cedge e7 d a flight-to 1.0 {"seats":50}
+            ok CMD_CEDGE e7
+            incw e7 1043.0
+            done
+            hc  
+            {'id':'b','city':'duluth'}
+            {'id':'d','city':'austin'}
+            {'id':'c','city':'chicago'}
+            {'id':'a','city':'minneapolis'}
+            done
+            
+EC          Find the eulerian circuit if one exists
+            
+
+EKMF        Calculate Edmonds Karp maximum flow between two vertices
+            ekmf <v0> <v1>
+            
+            ekmf a d
+            {
+                "maximum_flow": {
+                    "flight-to": 155,
+                    "private-flight-to": 356,
+                    "flight-to": 0,
+                    "private-flight-to": 356,
+                    "flight-to": 0,
+                    "flight-to": 155
+                },
+                "maximum_flow_value": 511
+            }
+            done
+
+CN          Compute the chromatic number ("graph coloring")
+
+            cn
+            {"chromatic_number": 4}
+            done
+
+KMST        Compute Kruskal's minimum spanning tree
+            
+            kmst
+            {
+                "edge_set": [
+                    {
+                        "data": {
+                            "_fromVertex": "c",
+                            "_rel": "private-flight-to",
+                            "_toVertex": "d",
+                            "_weight": "977.0",
+                            "id": "e6",
+                            "seats": 10
+                        },
+                        "rel": "private-flight-to",
+                        "v1": {
+                            "city": "chicago",
+                            "id": "c"
+                        },
+                        "v2": {
+                            "city": "austin",
+                            "id": "d"
+                        }
+                    },
+                    {
+                        "data": {
+                            "_fromVertex": "a",
+                            "_rel": "private-flight-to",
+                            "_toVertex": "c",
+                            "_weight": "356.0",
+                            "id": "e5",
+                            "seats": 10
+                        },
+                        "rel": "private-flight-to",
+                        "v1": {
+                            "city": "minneapolis",
+                            "id": "a"
+                        },
+                        "v2": {
+                            "city": "chicago",
+                            "id": "c"
+                        }
+                    },
+                    {
+                        "data": {
+                            "_fromVertex": "a",
+                            "_rel": "flight-to",
+                            "_toVertex": "b",
+                            "_weight": "155.0",
+                            "id": "e1",
+                            "seats": 50
+                        },
+                        "rel": "flight-to",
+                        "v1": {
+                            "city": "minneapolis",
+                            "id": "a"
+                        },
+                        "v2": {
+                            "city": "duluth",
+                            "id": "b"
+                        }
+                    }
+                ],
+                "spanning_tree_cost": 1488
+            }
+            done
+
+VCG         Compute vertex cover set (greedy method)
+
+            vcg
+            {"cover_set": [
+                {
+                    "city": "chicago",
+                    "id": "c"
+                },
+                {
+                    "city": "duluth",
+                    "id": "b"
+                },
+                {
+                    "city": "minneapolis",
+                    "id": "a"
+                }
+            ]}
+            done
+
+VC2A        Compute vertex cover set (2-approximation method)
+
+            vc2a
+            {"cover_set": [
+                {
+                    "city": "austin",
+                    "id": "d"
+                },
+                {
+                    "city": "chicago",
+                    "id": "c"
+                },
+                {
+                    "city": "duluth",
+                    "id": "b"
+                },
+                {
+                    "city": "minneapolis",
+                    "id": "a"
+                }
+            ]}
+            done
+
+CSETV       Compute the maximally connected set for a vertex
+            csetv <key>
+            
+            csetv b
+            {"connected_set": [
+                {
+                    "city": "austin",
+                    "id": "d"
+                },
+                {
+                    "city": "chicago",
+                    "id": "c"
+                },
+                {
+                    "city": "minneapolis",
+                    "id": "a"
+                },
+                {
+                    "city": "duluth",
+                    "id": "b"
+                }
+            ]}
+            done
+
+CSETS       Compute all maximally connected sets
+            
+            csets
+            {"connected_sets": [[
+                {
+                    "city": "austin",
+                    "id": "d"
+                },
+                {
+                    "city": "chicago",
+                    "id": "c"
+                },
+                {
+                    "city": "duluth",
+                    "id": "b"
+                },
+                {
+                    "city": "minneapolis",
+                    "id": "a"
+                }
+            ]]}
+            done
+
+
+ISCON       Returns "true" if graph connected
+
+            iscon
+            true
+            done
+
+
+UPATHEX     Returns "true" if there exists any *UNDIRECTED* path between the two vertices specified
+            upathex <vertex_0> <vertex_1>
+
+            upathex c a
+            true
+            done
+
+
+//
+// more examples
 //
 
 [ ~]# telnet localhost 10101
@@ -160,7 +635,7 @@ cvert a {"city":"minneapolis"}
 ok CMD_CVERT a
 cvert b {"city":"duluth"}
 ok CMD_CVERT b
-cvert c {"city":"rockville"}
+cvert c {"city":"chicago"}
 ok CMD_CVERT c
 cedge e1 a b flight-to {"cost": 1000}
 ok CMD_CEDGE e1
@@ -172,7 +647,7 @@ ok CMD_CEDGE e3
 /* hamiltonian cycle */
 
 hc
-{'id':'c','city':'rockville'}
+{'id':'c','city':'chicago'}
 {'id':'b','city':'duluth'}
 {'id':'a','city':'minneapolis'}
 done
@@ -196,7 +671,7 @@ spy e2
         "id": "b"
     },
     "v2": {
-        "city": "rockville",
+        "city": "chicago",
         "id": "c"
     }
 }
@@ -204,7 +679,7 @@ done
 
 hc
 {'id':'b','city':'duluth'}
-{'id':'c','city':'rockville'}
+{'id':'c','city':'chicago'}
 {'id':'a','city':'minneapolis'}
 done
 
@@ -216,7 +691,7 @@ cvert a {"city":"minneapolis"}
 ok CMD_CVERT a
 cvert b {"city":"duluth"}
 ok CMD_CVERT b
-cvert c {"city":"rockville"}
+cvert c {"city":"chicago"}
 ok CMD_CVERT c
 cedge e1 a b flight-to {}
 ok CMD_CEDGE e1
@@ -229,7 +704,7 @@ ok CMD_CEDGE e3
 
 ec
 {'id':'a','city':'minneapolis'}
-{'id':'c','city':'rockville'}
+{'id':'c','city':'chicago'}
 {'id':'b','city':'duluth'}
 {'id':'a','city':'minneapolis'}
 done
@@ -242,8 +717,8 @@ create db5
 use db5
 cvert a {"city":"minneapolis"} 
 cvert b {"city":"duluth"}
-cvert c {"city":"rockville"}
-cvert d {"city":"st. paul"}
+cvert c {"city":"chicago"}
+cvert d {"city":"austin"}
 cvert e {"city":"chicago"}
 cvert f {"city":"milwaukee"}
 cedge e1 a b flight-to {}
