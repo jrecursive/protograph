@@ -577,13 +577,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (args.length > 3) {
                         maxHops = Integer.parseInt(args[3]);
                     }
-                    List<JSONObject> results = gr.getKShortestPaths(vFromKey, vToKey, k, maxHops);
-                    JSONObject result = new JSONObject();
-                    JSONArray paths = new JSONArray();
-                    for(JSONObject jo: results) {
-                        paths.put(jo);
-                    }
-                    result.put("paths", paths);
+                    JSONObject result = gr.getKShortestPaths(vFromKey, vToKey, k, maxHops);
                     rsb.append(prepareResult(result));
                     rsb.append(NL);
                     rsb.append(R_DONE);
@@ -747,8 +741,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     /* utility methods */
     
     private String prepareResult(JSONObject jo) throws Exception {
-        String s = jo.toString();
-        s = s.replaceAll(NL, SPACE);
-        return s;
+        //String s = jo.toString();
+        //s = s.replaceAll(NL, SPACE);
+        //return s;
+        return jo.toString(4);
     }
 }

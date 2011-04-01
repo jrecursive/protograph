@@ -281,16 +281,19 @@ public class Graph
         if (null == path) {
             return null;
         } else {
-            JSONObject result = new JSONObject();
-            List<JSONObject> edges = new ArrayList<JSONObject>();
             if (path.getEdgeList().size() == 0) return null;
+            JSONObject result = new JSONObject();
+            List<String> edges = new ArrayList<String>();
             for(JSONEdge edge: path.getEdgeList()) {
-                edges.add(edge.asClientJSONObject());
+                edges.add(edge.get(KEY_FIELD));
             }
             result.put("weight", path.getWeight());
             result.put("edges", edges);
-            result.put("start_vertex", path.getStartVertex());
-            result.put("end_vertex", path.getEndVertex());
+            result.put("start_vertex", path.getStartVertex().getString(KEY_FIELD));
+            result.put("end_vertex", path.getEndVertex().getString(KEY_FIELD));
+            if (radius != Double.POSITIVE_INFINITY) {
+                result.put("radius", radius);
+            }
             return result;
         }
     }
@@ -343,31 +346,34 @@ public class Graph
         return gr.getEdgeWeight(je);
     }
     
-    public List<JSONObject> getKShortestPaths(String vFromKey, String vToKey, int n, int maxHops) throws Exception {
+    public JSONObject getKShortestPaths(String vFromKey, String vToKey, int k, int maxHops) throws Exception {
+        JSONObject result = new JSONObject();
+        result.put("k", k);
         KShortestPaths ksp;
-        
         if (maxHops > 0) {
-            ksp = new KShortestPaths(gr, getVertex(vFromKey), n, maxHops);
+            ksp = new KShortestPaths(gr, getVertex(vFromKey), k, maxHops);
+            result.put("max_hops", maxHops);
         } else {
-            ksp = new KShortestPaths(gr, getVertex(vFromKey), n);
+            ksp = new KShortestPaths(gr, getVertex(vFromKey), k);
         }
-        
         List<JSONObject> results = new ArrayList<JSONObject>();
         List<GraphPath<JSONVertex, JSONEdge>> paths = ksp.getPaths(getVertex(vToKey));
         for(GraphPath<JSONVertex, JSONEdge> gp: paths) {
-            JSONObject result = new JSONObject();
+            JSONObject resultObj = new JSONObject();
             JSONArray resultPath = new JSONArray();
             double pathWeight = gp.getWeight();
-            result.put("weight", pathWeight);
+            resultObj.put("weight", pathWeight);
             List<JSONEdge> path = gp.getEdgeList();
             for(JSONEdge edge: path) {
-                resultPath.put(edge.asClientJSONObject());
+                resultPath.put(edge.get(KEY_FIELD));
             }
-            result.put("path", resultPath);
-            results.add(result);
+            resultObj.put("path", resultPath);
+            results.add(resultObj);
         }
-        
-        return results;
+        result.put("start_vertex", vFromKey);
+        result.put("end_vertex", vToKey);
+        result.put("paths", results);
+        return result;
     }
     
     // TODO: efficiency.  right now this copies the entire graph into a new one.
@@ -426,9 +432,9 @@ public class Graph
         if (null == kmst.getEdgeSet()) {
             return null;
         } else {
-            List<JSONObject> edges = new ArrayList<JSONObject>();
+            List<String> edges = new ArrayList<String>();
             for(JSONEdge edge: kmst.getEdgeSet()) {
-                edges.add(edge.asClientJSONObject());
+                edges.add(edge.get(KEY_FIELD));
             }
             result.put("edge_set", edges);
             result.put("spanning_tree_cost", kmst.getSpanningTreeCost());
