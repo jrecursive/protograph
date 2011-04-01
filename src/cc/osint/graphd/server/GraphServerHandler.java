@@ -88,6 +88,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_CSETS = "csets";        // all maximally connected sets
     final private static String CMD_ISCON = "iscon";        // is graph connected?
     final private static String CMD_UPATHEX = "upathex";    // does any UNDIRECTED path exist from v0 -> v1?
+    final private static String CMD_FAMC = "famc";          // Bron Kerosch Clique Finder: find all maximal cliques
+    final private static String CMD_FBMC = "fbmc";          // Bron Kerosch Clique Finder: find biggest maximal cliques
     
     /* protocol responses */
     
@@ -713,6 +715,28 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_DONE);
                     }
                 
+                // Bron Kerosch Clique Finder: find all maximal cliques
+                } else if (cmd.equals(CMD_FAMC)) {
+                    JSONObject result = gr.getAllMaximalCliques();
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString(4));
+                        rsb.append(NL);
+                        rsb.append(R_DONE);
+                    }
+                    
+                // Bron Kerosch Clique Finder: find biggest maximal cliques
+                } else if (cmd.equals(CMD_FBMC)) {
+                    JSONObject result = gr.getBiggestMaximalCliques();
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString(4));
+                        rsb.append(NL);
+                        rsb.append(R_DONE);
+                    }
+                    
                 }
                 
                 // EVENT-SUBSCRIPTION MANAGEMENT

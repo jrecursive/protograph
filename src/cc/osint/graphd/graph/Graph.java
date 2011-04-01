@@ -488,6 +488,40 @@ public class Graph
         return connectivityInspector.pathExists(vFrom, vTo);
     }
     
+    public JSONObject getAllMaximalCliques() throws Exception {
+        BronKerboschCliqueFinder<JSONVertex, JSONEdge> cf = 
+            new BronKerboschCliqueFinder<JSONVertex, JSONEdge>(gr);
+        Collection<Set<JSONVertex>> cliques = cf.getAllMaximalCliques();
+        JSONObject result = new JSONObject();
+        JSONArray cliqueList = new JSONArray();
+        for(Set<JSONVertex> cliqueListSet: cliques) {
+            JSONArray cliqueSet = new JSONArray();
+            for(JSONVertex v: cliqueListSet) {
+                cliqueSet.put(v.get(KEY_FIELD));
+            }
+            cliqueList.put(cliqueSet);
+        }
+        result.put("cliques", cliqueList);
+        return result;
+    }
+
+    public JSONObject getBiggestMaximalCliques() throws Exception {
+        BronKerboschCliqueFinder<JSONVertex, JSONEdge> cf = 
+            new BronKerboschCliqueFinder<JSONVertex, JSONEdge>(gr);
+        Collection<Set<JSONVertex>> cliques = cf.getBiggestMaximalCliques();
+                JSONObject result = new JSONObject();
+        JSONArray cliqueList = new JSONArray();
+        for(Set<JSONVertex> cliqueListSet: cliques) {
+            JSONArray cliqueSet = new JSONArray();
+            for(JSONVertex v: cliqueListSet) {
+                cliqueSet.put(v.get(KEY_FIELD));
+            }
+            cliqueList.put(cliqueSet);
+        }
+        result.put("cliques", cliqueList);
+        return result;
+    }    
+    
     /*
      * STATS
     */
