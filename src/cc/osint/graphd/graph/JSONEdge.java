@@ -8,8 +8,6 @@ public class JSONEdge<V>
     extends DefaultWeightedEdge 
     implements java.lang.Comparable {
     static Logger log = Logger.getLogger(JSONEdge.class);
-    final private static String KEY_FIELD = 
-        cc.osint.graphd.graph.Graph.INDEX_KEY_FIELD;
 
     private V v1;
     private V v2;
@@ -64,9 +62,9 @@ public class JSONEdge<V>
     public JSONObject asJSONObject() throws Exception {
         JSONObject jo = new JSONObject(data.toString());
         JSONObject je = new JSONObject();
-        je.put("v1", v1);
-        je.put("v2", v2);
-        je.put("rel", label);
+        je.put(Graph.EDGE_FROM_FIELD, v1);
+        je.put(Graph.EDGE_TO_FIELD, v2);
+        je.put(Graph.RELATION_FIELD, label);
         je.put("data", jo);
         return je;
     }

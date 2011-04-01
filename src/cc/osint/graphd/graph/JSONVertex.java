@@ -5,13 +5,11 @@ import org.json.JSONObject;
 
 public class JSONVertex extends JSONObject {
     static Logger log = Logger.getLogger(JSONVertex.class);
-    final private static String KEY_FIELD = 
-        cc.osint.graphd.graph.Graph.INDEX_KEY_FIELD;
     
     public JSONVertex(String key) {
         super();
         try {
-            super.put(KEY_FIELD, key);
+            super.put(Graph.INDEX_KEY_FIELD, key);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -26,7 +24,7 @@ public class JSONVertex extends JSONObject {
                     super.put(k, jo.get(k));
                 }
             }
-            super.put(KEY_FIELD, key);
+            super.put(Graph.INDEX_KEY_FIELD, key);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

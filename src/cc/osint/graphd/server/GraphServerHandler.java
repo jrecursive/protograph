@@ -36,8 +36,13 @@ import cc.osint.graphd.graph.*;
 
 @ChannelPipelineCoverage("all")
 public class GraphServerHandler extends SimpleChannelUpstreamHandler {
+    private static final Logger log = Logger.getLogger(
+        GraphServerHandler.class.getName());
 
+    /* name -> graph registry */
     final private static ConcurrentHashMap<String, Graph> dbs;
+
+    /* clientId -> client state registry */
     final private static ConcurrentHashMap<String, 
         ConcurrentHashMap<String, String>> clientStateMap;
     
@@ -47,15 +52,17 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             ConcurrentHashMap<String, String>>();
     }
     
-    private static final Logger log = Logger.getLogger(
-        GraphServerHandler.class.getName());
+    /* protocol commands */
     
     final private static String CMD_GOODBYE = "bye";        // disconnect
     final private static String CMD_USE = "use";            // select graph to use
     final private static String CMD_CREATE = "create";      // create graph
     final private static String CMD_DROP = "drop";          // delete graph
     final private static String CMD_NAMECON = "namecon";    // "name" this connection
-    final private static String CMD_CLSTATE = "clstate";    // dump client status (debug)
+    final private static String CMD_CLSTATE = "clstate";    // dump client state (debug)
+    final private static String CMD_SSTAT = "sstat";        // dump server status (debug)
+    final private static String CMD_GSTAT = "gstat";        // dump graph status (debug)
+    final private static String CMD_LISTG = "listg";        // list names of graphs
     
     final private static String CMD_EXISTS = "exists";      // key exists?
     final private static String CMD_CVERT = "cvert";        // create vertex
@@ -63,9 +70,10 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_SET = "set";            // set a property on an edge or vertex
     final private static String CMD_DEL = "del";            // delete object (vertex or edge)
     final private static String CMD_GET = "get";            // get object (vertex or edge)
-    final private static String CMD_INCW = "incw";          // increment edge weight
     final private static String CMD_Q = "q";                // query objects by property
     final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
+    final private static String CMD_INCW = "incw";          // increment edge weight
+    
     final private static String CMD_SPATH = "spath";        // shortest path between two vertices
     final private static String CMD_KSPATH = "kspath";      // k-shortest paths between two vertices (w/ opt. maxHops)
     final private static String CMD_HC = "hc";              // hamiltonian cycle "traveling salesman problem"
@@ -78,22 +86,34 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_CSETV = "csetv";        // maximally connected set of V
     final private static String CMD_CSETS = "csets";        // all maximally connected sets
     final private static String CMD_ISCON = "iscon";        // is graph connected?
-    final private static String CMD_UPATHEX = "upathex";    // does _any_ *UNDIRECTED* path exist from v0 -> v1?
+    final private static String CMD_UPATHEX = "upathex";    // does any UNDIRECTED path exist from v0 -> v1?
     
-    final private static String R_OK = "ok";                // standard reply
-    final private static String R_DONE = "done";            // object stream done
-    final private static String R_ERR = "err";              // error processing request
-    final private static String R_UNK = "unk";              // unknown request
-    final private static String R_NOT_IMPL = "not_impl";    // cmd not implemented
-    final private static String R_NOT_FOUND = "not_found";  // object not found
-    final private static String R_NOT_EXIST = "not_exist";  // requested resource does not exist
+    /* protocol responses */
+    
+    final private static String R_OK = "-ok";                // standard reply
+    final private static String R_DONE = "-done";            // object stream done
+    final private static String R_ERR = "-err";              // error processing request
+    final private static String R_UNK = "-unk";              // unknown request
+    final private static String R_NOT_IMPL = "-not_impl";    // cmd not implemented
+    final private static String R_NOT_FOUND = "-not_found";  // object not found
+    final private static String R_NOT_EXIST = "-not_exist";  // requested resource does not exist
+    final private static String R_UNKNOWN_OBJECT_TYPE = 
+                                    " unknown_object_type"; // should theoretically never happen; if a get(key)
+                                                            //   returns anything other than edge or vertex
     
     final private static String ST_DB = "cur_db";           // clientState: current db (via CMD_USE)
-    final private static String ST_NAMECON = "name_con";    // clientState: current db (via CMD_USE)
+    final private static String ST_NAMECON = "name_con";    // clientState: connection name (via CMD_USE)
+    
+    final private static String DEFAULT_CONNECTION_NAME =
+                                    "client";               // default connection name
+    
+    /* protocol misc */
+    
+    final private static String NL = "\n";
     
     /* test/experimental */
-    final private static ConcurrentHashMap<String, Channel> clientIdChannelMap;
     
+    final private static ConcurrentHashMap<String, Channel> clientIdChannelMap;
     static {
         clientIdChannelMap = new ConcurrentHashMap<String, Channel>();
     }
@@ -121,11 +141,14 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         log.info("* connect: " + InetAddress.getLocalHost().getHostName());
         String clientId = "" + e.getChannel().getId();
         if (null == clientStateMap.get(clientId)) {
-            clientStateMap.put(clientId,
-                new ConcurrentHashMap<String, String>());
+            ConcurrentHashMap<String, String> clientState = 
+                new ConcurrentHashMap<String, String>();
+            clientState.put(ST_NAMECON, 
+                DEFAULT_CONNECTION_NAME + "-" + clientId);
+            clientStateMap.put(clientId, clientState);
         }
         e.getChannel().write(
-                "graphd " + InetAddress.getLocalHost().getHostName() + " " + clientId + "\n");
+                "graphd " + InetAddress.getLocalHost().getHostName() + " " + clientId + NL);
     }
     
     @Override
@@ -138,7 +161,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         e.getChannel().close();
     }
     
-    /* cmd processors */
+    /* message/command processors */
     
     @Override
     public void messageReceived(
@@ -166,7 +189,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             }
         }
         
-        ChannelFuture future = e.getChannel().write(response.trim() + "\n");
+        ChannelFuture future = e.getChannel().write(response.trim() + NL);
         if (close) {
             future.addListener(ChannelFutureListener.CLOSE);
         }
@@ -220,16 +243,60 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             
         // NAME THIS CONNECTION: namecon <name>
         } else if (cmd.equals(CMD_NAMECON)) {
-            clientState.put(ST_NAMECON, args[0]);
+            clientState.put(ST_NAMECON, args[0] + "-" + clientId);
+            rsb.append(clientState.get(ST_NAMECON));
+            rsb.append(NL);
             rsb.append(R_OK);
             
         // DUMP CLIENT STATE: clstate
         } else if (cmd.equals(CMD_CLSTATE)) {
             JSONObject result = new JSONObject(clientState);
             rsb.append(result.toString(4));
-            rsb.append("\n");
+            rsb.append(NL);
             rsb.append(R_DONE);
             
+        // SERVER STATUS: sstat
+        } else if (cmd.equals(CMD_SSTAT)) {
+            JSONObject result = new JSONObject();
+            
+            JSONObject names = new JSONObject();
+            names.put("TYPE_FIELD", Graph.TYPE_FIELD);
+            names.put("KEY_FIELD", Graph.KEY_FIELD);
+            names.put("WEIGHT_FIELD", Graph.WEIGHT_FIELD);
+            names.put("EDGE_FROM_FIELD", Graph.EDGE_FROM_FIELD);
+            names.put("EDGE_TO_FIELD", Graph.EDGE_TO_FIELD);
+            names.put("RELATION_FIELD", Graph.RELATION_FIELD);
+            names.put("VERTEX_TYPE", Graph.VERTEX_TYPE);
+            names.put("EDGE_TYPE", Graph.EDGE_TYPE);
+            
+            result.put("names", names);
+            
+            rsb.append(result.toString(4));
+            rsb.append(NL);
+            rsb.append(R_DONE);
+        
+        // LIST NAMED GRAPHS
+        } else if (cmd.equals(CMD_LISTG)) {
+            for(String name: dbs.keySet()) {
+                rsb.append(name);
+                rsb.append(NL);
+            }
+            rsb.append(R_DONE);
+        
+        // GRAPH STATUS: gstat <name>
+        } else if (cmd.equals(CMD_GSTAT)) {
+            Graph gr0 = dbs.get(args[0]);
+            if (null == gr0) {
+                rsb.append(R_NOT_EXIST);
+            } else {
+                JSONObject result = new JSONObject();
+                result.put("vertex_count", gr0.numVertices());
+                result.put("edge_count", gr0.numEdges());
+                rsb.append(result.toString(4));
+                rsb.append(NL);
+                rsb.append(R_DONE);
+            }
+        
         } else {
             
             // all remaining operations require a db to be selected (via CMD_USE)
@@ -247,7 +314,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     log.info("CMD_EXISTS: " + key);
                     
                     rsb.append("" + gr.exists(key));
-                    
+                
                 // CREATE VERTEX: cvert <key> <json>
                 } else if (cmd.equals(CMD_CVERT)) {
                     String key = args[0];
@@ -305,7 +372,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         jo = new JSONObject(json);
                         jo.put("_fromVertex", vFromKey);
                         jo.put("_toVertex", vToKey);
-                        jo.put("_weight", weight);
+                        jo.put(Graph.WEIGHT_FIELD, weight);
                         jo.put("_rel", rel);
                         gr.addEdge(key, jo, vFromKey, vToKey, rel, weight);
                         rsb.append(R_OK);
@@ -334,13 +401,13 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == obj) {
                         rsb.append(R_NOT_FOUND);
                     } else {
-                        String _type = obj.getString("_type");
-                        if (_type.equals("vertex")) {
+                        String _type = obj.getString(Graph.TYPE_FIELD);
+                        if (_type.equals(Graph.VERTEX_TYPE)) {
                             JSONVertex jv = gr.getVertex(key);
                             gr.removeVertex(jv);
                             rsb.append(R_DONE);
                             
-                        } else if (_type.equals("edge")) {
+                        } else if (_type.equals(Graph.EDGE_TYPE)) {
                             JSONEdge je = gr.getEdge(key);
                             gr.removeEdge(je);
                             rsb.append(R_DONE);
@@ -348,7 +415,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         } else {
                             rsb.append(R_ERR);
                             rsb.append(" ");
-                            rsb.append(" UNKNOWN_OBJECT_TYPE");
+                            rsb.append(R_UNKNOWN_OBJECT_TYPE);
                         }
                     }
 
@@ -361,7 +428,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_FOUND);
                     } else {
                         rsb.append(prepareResult(jo));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                     
@@ -372,7 +439,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     List<JSONObject> results = gr.query(q);
                     for(JSONObject jo: results) {
                         rsb.append(prepareResult(jo));
-                        rsb.append("\n");
+                        rsb.append(NL);
                     }
                     rsb.append(R_DONE);
                 
@@ -391,7 +458,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_EXIST);
                     } else {
                         rsb.append(prepareResult(result));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                     
@@ -412,7 +479,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     log.info("SET: " + key + "." + attr + " -> " + val);
                     
                     if (attr.startsWith("_") &&
-                        !attr.equals("_weight")) {
+                        !attr.equals(Graph.WEIGHT_FIELD)) {
                         rsb.append(R_ERR);
                         rsb.append(" CANNOT_SET_RESERVED_PROPERTY");
                     } else {                    
@@ -420,8 +487,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         if (null == obj) {
                             rsb.append(R_NOT_FOUND);
                         } else {
-                            String _type = obj.getString("_type");
-                            if (_type.equals("vertex")) {
+                            String _type = obj.getString(Graph.TYPE_FIELD);
+                            if (_type.equals(Graph.VERTEX_TYPE)) {
                                 
                                 JSONVertex jv = gr.getVertex(key);
                                 if (null != val) {
@@ -431,7 +498,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                 }
                                 gr.indexObject(key, _type, jv);
                                 rsb.append(R_DONE);
-                            } else if (_type.equals("edge")) {
+                            } else if (_type.equals(Graph.EDGE_TYPE)) {
                                 
                                 JSONEdge je = gr.getEdge(key);
                                 
@@ -440,7 +507,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                 } else {
                                     je.remove(attr);
                                 }
-                                if (attr.equals("_weight")) {
+                                if (attr.equals(Graph.WEIGHT_FIELD)) {
                                     gr.setEdgeWeight(je, Double.parseDouble(val));
                                 }
                                 
@@ -448,7 +515,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                 rsb.append(R_DONE);
                             } else {
                                 rsb.append(R_ERR);
-                                rsb.append(" UNKNOWN_OBJECT_TYPE");
+                                rsb.append(R_UNKNOWN_OBJECT_TYPE);
                             }
                         }
                     }
@@ -464,8 +531,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         double weight = gr.getEdgeWeight(je);
                         weight += w_amt;
                         gr.setEdgeWeight(je, weight);
-                        je.put("_weight", "" + weight);
-                        gr.indexObject(key, "edge", je.asJSONObject().getJSONObject("data"));
+                        je.put(Graph.WEIGHT_FIELD, "" + weight);
+                        gr.indexObject(key, Graph.EDGE_TYPE, je.asJSONObject().getJSONObject("data"));
                         rsb.append(R_DONE);
                     }
 
@@ -477,26 +544,26 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == obj) {
                         rsb.append(R_NOT_FOUND);
                     } else {
-                        String _type = obj.getString("_type");
-                        if (_type.startsWith("e")) {
+                        String _type = obj.getString(Graph.TYPE_FIELD);
+                        if (_type.equals(Graph.EDGE_TYPE)) {
                             JSONEdge je = gr.getEdge(key);
                             if (null == je) {
                                 rsb.append(R_NOT_FOUND);
                             } else {
-                                rsb.append(je.asJSONObject().toString(4) + "\n");
+                                rsb.append(je.asJSONObject().toString(4) + NL);
                                 rsb.append(R_DONE);
                             }
-                        } else if (_type.startsWith("v")) {
+                        } else if (_type.equals(Graph.VERTEX_TYPE)) {
                             JSONVertex jv = gr.getVertex(key);
                             if (null == jv) {
                                 rsb.append(R_NOT_FOUND);
                             } else {
-                                rsb.append(jv.toString(4) + "\n");
+                                rsb.append(jv.toString(4) + NL);
                                 rsb.append(R_DONE);
                             }
                         } else {
                             rsb.append(R_ERR);
-                            rsb.append(" UNKNOWN_OBJECT_TYPE");
+                            rsb.append(R_UNKNOWN_OBJECT_TYPE);
                         }
                     }                    
                 
@@ -518,7 +585,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     }
                     result.put("paths", paths);
                     rsb.append(prepareResult(result));
-                    rsb.append("\n");
+                    rsb.append(NL);
                     rsb.append(R_DONE);
                 
                 // HAMILTONIAN CYCLE: 
@@ -529,7 +596,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     } else {
                         for(JSONVertex jo: results) {
                             rsb.append(prepareResult(jo));
-                            rsb.append("\n");
+                            rsb.append(NL);
                         }
                         rsb.append(R_DONE);
                     }
@@ -542,7 +609,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     } else {
                         for(JSONVertex jo: results) {
                             rsb.append(prepareResult(jo));
-                            rsb.append("\n");
+                            rsb.append(NL);
                         }
                         rsb.append(R_DONE);
                     }
@@ -556,7 +623,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_EXIST);
                     } else {
                         rsb.append(flowResult.toString(4));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
@@ -565,7 +632,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     JSONObject result = new JSONObject();
                     result.put("chromatic_number", gr.getChromaticNumber());
                     rsb.append(result.toString(4));
-                    rsb.append("\n");
+                    rsb.append(NL);
                     rsb.append(R_DONE);
                 
                 // KRUSKAL'S MINIMUM SPANNING TREE
@@ -575,7 +642,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_EXIST);
                     } else {
                         rsb.append(result.toString(4));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
@@ -586,7 +653,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_EXIST);
                     } else {
                         rsb.append(result.toString(4));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
@@ -597,7 +664,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_EXIST);
                     } else {
                         rsb.append(result.toString(4));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
@@ -609,7 +676,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     } else {
                         JSONObject result = gr.getConnectedSetByVertex(v);
                         rsb.append(result.toString(4));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
@@ -619,13 +686,13 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_EXIST);
                     } else {
                         rsb.append(result.toString(4));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
                 } else if (cmd.equals(CMD_ISCON)) {
                     rsb.append("" + gr.isConnected());
-                    rsb.append("\n");
+                    rsb.append(NL);
                     rsb.append(R_DONE);
                 
                 } else if (cmd.equals(CMD_UPATHEX)) {
@@ -636,7 +703,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_FOUND);
                     } else {
                         rsb.append("" + gr.pathExists(vFrom, vTo));
-                        rsb.append("\n");
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
@@ -664,7 +731,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             rsb.append(cmd);
         }
                 
-        rsb.append("\n");
+        rsb.append(NL);
         
         //log.info("executeRequest: rsb = " + rsb.toString());
         return rsb.toString();
@@ -674,7 +741,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     
     private String prepareResult(JSONObject jo) throws Exception {
         String s = jo.toString();
-        s = s.replaceAll("\n", " ");
+        s = s.replaceAll(NL, " ");
         return s;
     }
     
