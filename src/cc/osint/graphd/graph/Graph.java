@@ -38,7 +38,10 @@ public class Graph
     implements GraphListener<JSONVertex, JSONEdge>,
                VertexSetListener<JSONVertex>,
                TraversalListener<JSONVertex, JSONEdge> {
-               
+
+    private static final Logger log = Logger.getLogger(
+        Graph.class.getName());
+
     /* graph */
     
     private ListenableDirectedWeightedGraph<JSONVertex, JSONEdge> gr;
@@ -53,32 +56,37 @@ public class Graph
     final private RAMDirectory luceneDirectory;
     final private Analyzer analyzer = new WhitespaceAnalyzer();
     
-    /* simulation */
-    
+    /* simulation: process management */
+
     ExecutorService executorService = Executors.newCachedThreadPool();
     PoolFiberFactory poolFiberFactory = new PoolFiberFactory(executorService);
     Channel<JSONObject> globalChannel = new MemoryChannel<JSONObject>();
     Channel<JSONObject> eventChannel = new MemoryChannel<JSONObject>();
     
+    /* simulation: process registry */
+    
+    private IndexWriter p_indexWriter;
+    private IndexReader p_indexReader;
+    private Searcher p_searcher;
+    final private RAMDirectory p_luceneDirectory;
+
     /* statics */
     
     final public static String TYPE_FIELD = "_type";
     final public static String KEY_FIELD = "_key";
     final public static String WEIGHT_FIELD = "_weight";
-    final public static String EDGE_FROM_FIELD = "_v0";
-    final public static String EDGE_TO_FIELD = "_v1";
+    final public static String EDGE_FROM_FIELD = "_source";
+    final public static String EDGE_TO_FIELD = "_target";
     final public static String RELATION_FIELD = "_rel";
-    
+    final public static String DATA_FIELD = "_data";
     final public static String VERTEX_TYPE = "v";
     final public static String EDGE_TYPE = "e";
 
-    private static final Logger log = Logger.getLogger(
-        Graph.class.getName());
-    
     public Graph() throws Exception {
         gr = new ListenableDirectedWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
         connectivityInspector = new ConnectivityInspector<JSONVertex, JSONEdge>(gr);
         vertices = new ConcurrentHashMap<String, JSONVertex>();
+        
         luceneDirectory = new RAMDirectory();
         indexWriter = new IndexWriter(
             luceneDirectory,
@@ -86,6 +94,15 @@ public class Graph
             IndexWriter.MaxFieldLength.LIMITED);
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
+        
+        p_luceneDirectory = new RAMDirectory();
+        p_indexWriter = new IndexWriter(
+            p_luceneDirectory,
+            new StandardAnalyzer(Version.LUCENE_30),
+            IndexWriter.MaxFieldLength.LIMITED);
+        p_indexReader = p_indexWriter.getReader();
+        p_searcher = new IndexSearcher(p_indexReader);
+        
         gr.addVertexSetListener(this);
         gr.addGraphListener(this);
         gr.addVertexSetListener(connectivityInspector);
@@ -160,25 +177,47 @@ public class Graph
         log.info("refreshIndex(): " + elapsed + "ms");
     }
     
-    public List<JSONObject> query(String queryStr) throws Exception {
+    private void p_refreshIndex() throws Exception {
+        long t0 = System.currentTimeMillis();
+        p_indexWriter.commit();
+        IndexReader p_newReader = p_indexReader.reopen();
+        if (p_newReader != p_indexReader) {
+            p_searcher.close();
+            p_indexReader.close();
+            p_indexReader = p_newReader;
+            p_searcher = new IndexSearcher(p_indexReader);
+        }
+        long elapsed = System.currentTimeMillis() - t0;
+        log.info("p_refreshIndex(): " + elapsed + "ms");
+    }
+    
+    public List<JSONObject> queryGraphIndex(String queryStr) throws Exception {
+        return query(searcher, queryStr);
+    }
+    
+    public List<JSONObject> queryProcessIndex(String queryStr) throws Exception {
+        return query(p_searcher, queryStr);
+    }
+    
+    public List<JSONObject> query(Searcher indexSearcher, String queryStr) throws Exception {
+        long start_t = System.currentTimeMillis();
         final List<JSONObject> results = new ArrayList<JSONObject>();
         QueryParser qp = new QueryParser(Version.LUCENE_30, KEY_FIELD, analyzer);
         qp.setAllowLeadingWildcard(true);
         Query query = qp.parse(queryStr);
         log.info("query = " + query.toString());
-        org.apache.lucene.search.Filter filter = new org.apache.lucene.search.CachingWrapperFilter(new QueryWrapperFilter(query));
-        long start_t = System.currentTimeMillis();
+        org.apache.lucene.search.Filter filter = 
+            new org.apache.lucene.search.CachingWrapperFilter(new QueryWrapperFilter(query));
         
-        searcher.search(
+        indexSearcher.search(
             new MatchAllDocsQuery(),
             filter,
             new Collector() {
                 private int docBase;
                 IndexReader reader;
-
-                // ignore scorer
-                public void setScorer(Scorer scorer) {
-                }
+                
+                // ignore scoring
+                public void setScorer(Scorer scorer) { }
                 
                 // accept docs out of order
                 public boolean acceptsDocsOutOfOrder() {
@@ -233,12 +272,12 @@ public class Graph
     }
     
     public boolean exists(String key) throws Exception {
-        List<JSONObject> ar = query(KEY_FIELD + ":\"" + key + "\"");
+        List<JSONObject> ar = queryGraphIndex(KEY_FIELD + ":\"" + key + "\"");
         return ar.size()>0;
     }
     
     public JSONObject get(String key) throws Exception {
-        List<JSONObject> ar = query(KEY_FIELD + ":\"" + key + "\"");
+        List<JSONObject> ar = queryGraphIndex(KEY_FIELD + ":\"" + key + "\"");
         if (ar.size() == 0) return null;
         return ar.get(0);
     }

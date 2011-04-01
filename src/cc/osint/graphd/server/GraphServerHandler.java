@@ -370,10 +370,10 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     JSONObject jo = null;
                     try {
                         jo = new JSONObject(json);
-                        jo.put("_fromVertex", vFromKey);
-                        jo.put("_toVertex", vToKey);
+                        jo.put(Graph.EDGE_FROM_FIELD, vFromKey);
+                        jo.put(Graph.EDGE_TO_FIELD, vToKey);
                         jo.put(Graph.WEIGHT_FIELD, weight);
-                        jo.put("_rel", rel);
+                        jo.put(Graph.RELATION_FIELD, rel);
                         gr.addEdge(key, jo, vFromKey, vToKey, rel, weight);
                         rsb.append(R_OK);
                         rsb.append(" CMD_CEDGE ");
@@ -436,7 +436,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 } else if (cmd.equals(CMD_Q)) {
                     String q = request.substring(request.indexOf(" ")).trim(); // remainder of line past "q "
                     log.info("CMD_Q: " + q);
-                    List<JSONObject> results = gr.query(q);
+                    List<JSONObject> results = gr.queryGraphIndex(q);
                     for(JSONObject jo: results) {
                         rsb.append(prepareResult(jo));
                         rsb.append(NL);
@@ -511,7 +511,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                     gr.setEdgeWeight(je, Double.parseDouble(val));
                                 }
                                 
-                                gr.indexObject(key, _type, je.asJSONObject().getJSONObject("data"));
+                                gr.indexObject(key, _type, je.asJSONObject().getJSONObject(Graph.DATA_FIELD));
                                 rsb.append(R_DONE);
                             } else {
                                 rsb.append(R_ERR);
@@ -532,7 +532,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         weight += w_amt;
                         gr.setEdgeWeight(je, weight);
                         je.put(Graph.WEIGHT_FIELD, "" + weight);
-                        gr.indexObject(key, Graph.EDGE_TYPE, je.asJSONObject().getJSONObject("data"));
+                        gr.indexObject(key, Graph.EDGE_TYPE, je.asJSONObject().getJSONObject(Graph.DATA_FIELD));
                         rsb.append(R_DONE);
                     }
 

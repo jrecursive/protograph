@@ -65,7 +65,7 @@ public class JSONEdge<V>
         je.put(Graph.EDGE_FROM_FIELD, v1);
         je.put(Graph.EDGE_TO_FIELD, v2);
         je.put(Graph.RELATION_FIELD, label);
-        je.put("data", jo);
+        je.put(Graph.DATA_FIELD, jo);
         return je;
     }
 
