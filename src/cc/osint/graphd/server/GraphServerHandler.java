@@ -594,10 +594,14 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == results) {
                         rsb.append(R_NOT_EXIST);
                     } else {
+                        JSONObject res = new JSONObject();
+                        JSONArray cycle = new JSONArray();
                         for(JSONVertex jo: results) {
-                            rsb.append(prepareResult(jo));
-                            rsb.append(NL);
+                            cycle.put(jo);
                         }
+                        res.put("cycle", cycle);
+                        rsb.append(prepareResult(res));
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
@@ -607,10 +611,14 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == results) {
                         rsb.append(R_NOT_EXIST);
                     } else {
+                        JSONObject res = new JSONObject();
+                        JSONArray circuit = new JSONArray();
                         for(JSONVertex jo: results) {
-                            rsb.append(prepareResult(jo));
-                            rsb.append(NL);
+                            circuit.put(jo);
                         }
+                        res.put("circuit", circuit);
+                        rsb.append(prepareResult(res));
+                        rsb.append(NL);
                         rsb.append(R_DONE);
                     }
                 
