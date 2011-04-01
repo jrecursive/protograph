@@ -715,7 +715,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_DONE);
                     }
                 
-                // Bron Kerosch Clique Finder: find all maximal cliques
+                // FIND ALL MAXIMAL CLIQUES: Bron Kerosch Clique Finder
                 } else if (cmd.equals(CMD_FAMC)) {
                     JSONObject result = gr.getAllMaximalCliques();
                     if (null == result) {
@@ -726,7 +726,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_DONE);
                     }
                     
-                // Bron Kerosch Clique Finder: find biggest maximal cliques
+                // FIND BIGGEST MAXIMAL CLIQUES: Bron Kerosch Clique Finder
                 } else if (cmd.equals(CMD_FBMC)) {
                     JSONObject result = gr.getBiggestMaximalCliques();
                     if (null == result) {
