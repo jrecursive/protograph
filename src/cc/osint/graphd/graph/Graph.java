@@ -26,15 +26,26 @@ import org.apache.lucene.util.Version;
 import org.json.*;
 import cc.osint.graphd.graph.*;
 
-// BASIC PERSISTENCE
+import org.jetlang.channels.*;
+import org.jetlang.core.Callback;
+import org.jetlang.core.Disposable;
+import org.jetlang.core.Filter;
+import org.jetlang.fibers.Fiber;
+import org.jetlang.fibers.PoolFiberFactory;
+import org.jetlang.fibers.ThreadFiber;
 
 public class Graph 
     implements GraphListener<JSONVertex, JSONEdge>,
                VertexSetListener<JSONVertex>,
                TraversalListener<JSONVertex, JSONEdge> {
+               
+    /* graph */
+    
     private ListenableDirectedWeightedGraph<JSONVertex, JSONEdge> gr;
     private ConnectivityInspector<JSONVertex, JSONEdge> connectivityInspector;
     private ConcurrentHashMap<String, JSONVertex> vertices;
+    
+    /* indexing */
     
     private IndexWriter indexWriter;
     private IndexReader indexReader;
@@ -42,10 +53,19 @@ public class Graph
     final private RAMDirectory luceneDirectory;
     final private Analyzer analyzer = new WhitespaceAnalyzer();
     
-    final private static String INDEX_TYPE_FIELD = "_type";
-    final private static String INDEX_KEY_FIELD = "_key";
-    final private static String VERTEX_TYPE = "vertex";
-    final private static String EDGE_TYPE = "edge";
+    /* simulation */
+    
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    PoolFiberFactory poolFiberFactory = new PoolFiberFactory(executorService);
+    Channel<JSONObject> globalChannel = new MemoryChannel<JSONObject>();
+    Channel<JSONObject> eventChannel = new MemoryChannel<JSONObject>();
+    
+    /* statics */
+    
+    final static String INDEX_TYPE_FIELD = "_type";
+    final static String INDEX_KEY_FIELD = "_key";
+    final static String VERTEX_TYPE = "vertex";
+    final static String EDGE_TYPE = "edge";
     
     private static final Logger log = Logger.getLogger(
         Graph.class.getName());
@@ -94,7 +114,7 @@ public class Graph
         JSONVertex toVertex   = getVertex(vKeyTo);
         JSONEdge<JSONVertex> je = 
             new JSONEdge<JSONVertex>(fromVertex, toVertex, rel);
-        je.put("id", key);
+        je.put(INDEX_KEY_FIELD, key);
         je.inherit(jo);
         gr.addEdge(fromVertex, toVertex, je);
         gr.setEdgeWeight(je, weight);
@@ -137,11 +157,11 @@ public class Graph
     
     public List<JSONObject> query(String queryStr) throws Exception {
         final List<JSONObject> results = new ArrayList<JSONObject>();
-        QueryParser qp = new QueryParser(Version.LUCENE_30, "id", analyzer);
+        QueryParser qp = new QueryParser(Version.LUCENE_30, INDEX_KEY_FIELD, analyzer);
         qp.setAllowLeadingWildcard(true);
         Query query = qp.parse(queryStr);
         log.info("query = " + query.toString());
-        Filter filter = new CachingWrapperFilter(new QueryWrapperFilter(query));
+        org.apache.lucene.search.Filter filter = new org.apache.lucene.search.CachingWrapperFilter(new QueryWrapperFilter(query));
         long start_t = System.currentTimeMillis();
         
         searcher.search(
@@ -231,15 +251,15 @@ public class Graph
     
     public void removeEdge(JSONEdge je) throws Exception {
         if (gr.removeEdge(je)) {
-            log.info("removeEdge(" + je.getString("id") + "): ok");
+            log.info("removeEdge(" + je.get(INDEX_KEY_FIELD) + "): ok");
         }
     }
     
     public void removeVertex(JSONVertex jv) throws Exception {
         if (gr.removeVertex(jv)) {
-            indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, jv.getString("id")));
+            indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, jv.getString(INDEX_KEY_FIELD)));
             refreshIndex();
-            log.info("removeVertex(" + jv.getString("id") + ")");
+            log.info("removeVertex(" + jv.get(INDEX_KEY_FIELD) + ")");
         }
     }
     
@@ -412,13 +432,13 @@ public class Graph
             else if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) eventType = "vertex_removed";
             else eventType = "vertex:unknown_event_type:" + e.getType();
             
-            log.info("<event> [vertexRemoved] " + e.getVertex().getString("id") + " -> " + eventType);
+            log.info("<event> [vertexRemoved] " + e.getVertex().get(INDEX_KEY_FIELD) + " -> " + eventType);
             
             if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) {
                 JSONVertex jv = e.getVertex();
-                indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, jv.getString("id")));
+                indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, jv.getString(INDEX_KEY_FIELD)));
                 refreshIndex();
-                log.info("<implicit> removeVertex: id [" + jv.getString("id") + "] + index entries");
+                log.info("<implicit> removeVertex: id [" + jv.get(INDEX_KEY_FIELD) + "] + index entries");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -449,16 +469,16 @@ public class Graph
             else if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) eventType = "edge_removed";
             else eventType = "edge:unknown_event_type:" + e.getType();
             
-            log.info("<event> [edgeRemoved] " + e.getEdge().getString("id") + " -> " + eventType);
+            log.info("<event> [edgeRemoved] " + e.getEdge().get(INDEX_KEY_FIELD) + " -> " + eventType);
             
             // handle implicit deletions (as a result of removeVertex, et al)
             if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) {
             
                 // handle implicitly deleted edges
                 JSONEdge je = e.getEdge();
-                indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, je.getString("id")));
+                indexWriter.deleteDocuments(new Term(INDEX_KEY_FIELD, je.get(INDEX_KEY_FIELD)));
                 refreshIndex();
-                log.info("<implicit> removeEdge: id [" + je.getString("id") + "] + index entries");
+                log.info("<implicit> removeEdge: id [" + je.get(INDEX_KEY_FIELD) + "] + index entries");
             }
         } catch (Exception ex) {
             ex.printStackTrace();

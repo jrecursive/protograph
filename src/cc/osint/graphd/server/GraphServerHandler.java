@@ -30,6 +30,7 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.channel.ChannelState;
+import org.jboss.netty.channel.Channel;
 import org.json.*;
 import cc.osint.graphd.graph.*;
 
@@ -53,6 +54,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_USE = "use";            // select graph to use
     final private static String CMD_CREATE = "create";      // create graph
     final private static String CMD_DROP = "drop";          // delete graph
+    final private static String CMD_NAMECON = "namecon";    // "name" this connection
+    final private static String CMD_CLSTATE = "clstate";    // dump client status (debug)
+    
     final private static String CMD_EXISTS = "exists";      // key exists?
     final private static String CMD_CVERT = "cvert";        // create vertex
     final private static String CMD_CEDGE = "cedge";        // create edge
@@ -85,6 +89,16 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String R_NOT_EXIST = "not_exist";  // requested resource does not exist
     
     final private static String ST_DB = "cur_db";           // clientState: current db (via CMD_USE)
+    final private static String ST_NAMECON = "name_con";    // clientState: current db (via CMD_USE)
+    
+    /* test/experimental */
+    final private static ConcurrentHashMap<String, Channel> clientIdChannelMap;
+    
+    static {
+        clientIdChannelMap = new ConcurrentHashMap<String, Channel>();
+    }
+    
+    /* netty handlers */
     
     @Override
     public void handleUpstream(
@@ -105,10 +119,27 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     public void channelConnected(
             ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
         log.info("* connect: " + InetAddress.getLocalHost().getHostName());
+        String clientId = "" + e.getChannel().getId();
+        if (null == clientStateMap.get(clientId)) {
+            clientStateMap.put(clientId,
+                new ConcurrentHashMap<String, String>());
+        }
         e.getChannel().write(
-                "graphd " + InetAddress.getLocalHost().getHostName() + "\n");
+                "graphd " + InetAddress.getLocalHost().getHostName() + " " + clientId + "\n");
     }
-
+    
+    @Override
+    public void exceptionCaught(
+            ChannelHandlerContext ctx, ExceptionEvent e) {
+        log.log(
+                Level.WARNING,
+                "Unexpected exception from downstream.",
+                e.getCause());
+        e.getChannel().close();
+    }
+    
+    /* cmd processors */
+    
     @Override
     public void messageReceived(
         ChannelHandlerContext ctx, MessageEvent e) {
@@ -116,12 +147,10 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         String request = (String) e.getMessage();
         String response;
         boolean close = false;
+        ConcurrentHashMap<String, String> clientState = 
+            clientStateMap.get(clientId);
         
         log.info(clientId + ": " + request);
-        if (null == clientStateMap.get(clientId)) {
-            clientStateMap.put(clientId,
-                new ConcurrentHashMap<String, String>());
-        }
         
         if (request.length() == 0) {
             response = R_OK;
@@ -130,7 +159,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             close = true;
         } else {
             try {
-                response = executeRequest(clientId, request);
+                response = executeRequest(clientId, clientState, request);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 response = R_ERR + " " + ex.getMessage();
@@ -143,9 +172,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         }
     }
     
-    public String executeRequest(String clientId, String request) throws Exception {
-        ConcurrentHashMap<String, String> clientState = 
-            clientStateMap.get(clientId);
+    public String executeRequest(String clientId, 
+                                 ConcurrentHashMap<String, String> clientState, 
+                                 String request) throws Exception {
         StringBuffer rsb = new StringBuffer();
         String cmd;
         String[] args;
@@ -188,6 +217,19 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 dbs.remove(args[0]);
                 rsb.append(R_OK);
             }
+            
+        // NAME THIS CONNECTION: namecon <name>
+        } else if (cmd.equals(CMD_NAMECON)) {
+            clientState.put(ST_NAMECON, args[0]);
+            rsb.append(R_OK);
+            
+        // DUMP CLIENT STATE: clstate
+        } else if (cmd.equals(CMD_CLSTATE)) {
+            JSONObject result = new JSONObject(clientState);
+            rsb.append(result.toString(4));
+            rsb.append("\n");
+            rsb.append(R_DONE);
+            
         } else {
             
             // all remaining operations require a db to be selected (via CMD_USE)
@@ -209,8 +251,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 // CREATE VERTEX: cvert <key> <json>
                 } else if (cmd.equals(CMD_CVERT)) {
                     String key = args[0];
-                    String json = request.substring(
-                        request.indexOf(" " + key)+(key.length()+1)).trim();
+                    String json = request.substring(request.indexOf(" " + key)+
+                        (key.length()+1)).trim(); // remainder of line
+                    
                     log.info("CMD_CVERT: " + key + ": " + json);
                     
                     JSONObject jo = null;
@@ -246,11 +289,11 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     
                     if (args[4].charAt(0) == '{') {
                         json = request.substring(request.indexOf(" " + rel) +
-                            (rel.length()+1)).trim();
+                            (rel.length()+1)).trim(); // remainder of line
                     } else {
                         weight = Double.parseDouble(args[4]);
                         json = request.substring(request.indexOf(" " + args[4]) +
-                            (args[4].length()+1)).trim();
+                            (args[4].length()+1)).trim(); // remainder of line
                     }
                     
                     log.info("CMD_CEDGE: " + key + ": " +
@@ -324,8 +367,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     
                 // QUERY OBJECTS: q <query>
                 } else if (cmd.equals(CMD_Q)) {
-                    String q = request.substring(request.indexOf(" "))
-                        .trim();
+                    String q = request.substring(request.indexOf(" ")).trim(); // remainder of line past "q "
                     log.info("CMD_Q: " + q);
                     List<JSONObject> results = gr.query(q);
                     for(JSONObject jo: results) {
@@ -357,7 +399,16 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 } else if (cmd.equals(CMD_SET)) {
                     String key = args[0];
                     String attr = args[1];
-                    String val = args[2];
+                    String val;
+                    
+                    if (args.length == 2) {
+                        // clear value
+                        val = null;
+                    } else {
+                        val = request.substring(request.indexOf(" " + args[1]) +
+                            (args[1].length()+1)).trim(); // remainder of line
+                    }
+                    
                     log.info("SET: " + key + "." + attr + " -> " + val);
                     
                     if (attr.startsWith("_") &&
@@ -373,14 +424,22 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                             if (_type.equals("vertex")) {
                                 
                                 JSONVertex jv = gr.getVertex(key);
-                                jv.put(attr, val);
-                                gr.indexObject(key, _type, jv.getJSONObject("data"));
+                                if (null != val) {
+                                    jv.put(attr, val);
+                                } else {
+                                    jv.remove(attr);
+                                }
+                                gr.indexObject(key, _type, jv);
                                 rsb.append(R_DONE);
                             } else if (_type.equals("edge")) {
                                 
                                 JSONEdge je = gr.getEdge(key);
                                 
-                                je.put(attr, val);
+                                if (null != val) {
+                                    je.put(attr, val);
+                                } else {
+                                    je.remove(attr);
+                                }
                                 if (attr.equals("_weight")) {
                                     gr.setEdgeWeight(je, Double.parseDouble(val));
                                 }
@@ -611,20 +670,13 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         return rsb.toString();
     }
     
+    /* utility methods */
+    
     private String prepareResult(JSONObject jo) throws Exception {
         String s = jo.toString();
         s = s.replaceAll("\n", " ");
         return s;
     }
-
-    @Override
-    public void exceptionCaught(
-            ChannelHandlerContext ctx, ExceptionEvent e) {
-        log.log(
-                Level.WARNING,
-                "Unexpected exception from downstream.",
-                e.getCause());
-        e.getChannel().close();
-    }
+    
 }
 

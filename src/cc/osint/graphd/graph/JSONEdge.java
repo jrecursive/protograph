@@ -8,6 +8,8 @@ public class JSONEdge<V>
     extends DefaultWeightedEdge 
     implements java.lang.Comparable {
     static Logger log = Logger.getLogger(JSONEdge.class);
+    final private static String KEY_FIELD = 
+        cc.osint.graphd.graph.Graph.INDEX_KEY_FIELD;
 
     private V v1;
     private V v2;
@@ -43,17 +45,16 @@ public class JSONEdge<V>
         data = new JSONObject();
     }
 
-    public void put(String k, String v) throws Exception {
-        data.put(k, v);
-    }
-
     public String get(String k) throws Exception {
         return data.getString(k);
     }
     
-    // TODO: factor out
-    public String getString(String k) throws Exception {
-        return get(k);
+    public void put(String k, String v) throws Exception {
+        data.put(k, v);
+    }
+    
+    public void remove(String k) throws Exception {
+        data.remove(k);
     }
 
     public boolean has(String k) {

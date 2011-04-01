@@ -468,7 +468,7 @@ ISCON       Returns "true" if graph connected
             done
 
 
-UPATHEX     Returns "true" if there exists any *UNDIRECTED* path between the two vertices specified
+UPATHEX     Returns "true" if there exists any UNDIRECTED path between the two vertices specified
             upathex <vertex_0> <vertex_1>
 
             upathex c a

@@ -5,17 +5,19 @@ import org.json.JSONObject;
 
 public class JSONVertex extends JSONObject {
     static Logger log = Logger.getLogger(JSONVertex.class);
-
-    public JSONVertex(String id) {
+    final private static String KEY_FIELD = 
+        cc.osint.graphd.graph.Graph.INDEX_KEY_FIELD;
+    
+    public JSONVertex(String key) {
         super();
         try {
-            super.put("id", id);
+            super.put(KEY_FIELD, key);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
     
-    public JSONVertex(String id, JSONObject jo) {
+    public JSONVertex(String key, JSONObject jo) {
         super();
         try {
             if (null != jo &&
@@ -24,7 +26,7 @@ public class JSONVertex extends JSONObject {
                     super.put(k, jo.get(k));
                 }
             }
-            super.put("id", id);
+            super.put(KEY_FIELD, key);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -33,7 +35,12 @@ public class JSONVertex extends JSONObject {
     public void put(String k, String v) throws Exception {
         super.put(k, v);
     }
-
+    
+    /*
+     * note: remove is implicit since this still
+     *       extends JSONObject
+    */
+    
     public String toString(int d) throws org.json.JSONException {
         return super.toString(4).replaceAll("\"", "\\\"");
     }
@@ -46,9 +53,12 @@ public class JSONVertex extends JSONObject {
             JSONObject jo = new JSONObject(str);
             str = jo.toString();
 
+            /*
             while (str.indexOf("\"") != -1) {
                 str = str.replace("\"", "'");
             }
+            */
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
