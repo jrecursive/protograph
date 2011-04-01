@@ -9,7 +9,7 @@ public class JSONVertex extends JSONObject {
     public JSONVertex(String key) {
         super();
         try {
-            super.put(Graph.INDEX_KEY_FIELD, key);
+            super.put(Graph.KEY_FIELD, key);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -24,7 +24,7 @@ public class JSONVertex extends JSONObject {
                     super.put(k, jo.get(k));
                 }
             }
-            super.put(Graph.INDEX_KEY_FIELD, key);
+            super.put(Graph.KEY_FIELD, key);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

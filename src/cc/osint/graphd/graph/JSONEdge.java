@@ -9,24 +9,34 @@ public class JSONEdge<V>
     implements java.lang.Comparable {
     static Logger log = Logger.getLogger(JSONEdge.class);
 
-    private V v1;
-    private V v2;
+    private V source;
+    private V target;
     private String label;
     private JSONObject data;
 
-    public JSONEdge(V v1, V v2, String label) {
-        this.v1 = v1;
-        this.v2 = v2;
+    public JSONEdge(V source, V target, String label) {
+        this.source = source;
+        this.target = target;
         this.label = label;
         data = new JSONObject();
     }
 
+    // deprecated: use getSource
     public V getV1() {
-        return v1;
+        return source;
     }
 
+    // deprecated: use getTarget
     public V getV2() {
-        return v2;
+        return target;
+    }
+    
+    public V getSource() {
+        return source;
+    }
+    
+    public V getTarget() {
+        return target;
     }
     
     public void inherit(JSONObject jo) throws Exception {
@@ -62,11 +72,37 @@ public class JSONEdge<V>
     public JSONObject asJSONObject() throws Exception {
         JSONObject jo = new JSONObject(data.toString());
         JSONObject je = new JSONObject();
-        je.put(Graph.EDGE_FROM_FIELD, v1);
-        je.put(Graph.EDGE_TO_FIELD, v2);
-        je.put(Graph.RELATION_FIELD, label);
+        je.put(Graph.EDGE_SOURCE_FIELD, ((JSONObject) source).get(Graph.KEY_FIELD));
+        je.put(Graph.EDGE_TARGET_FIELD, ((JSONObject) target).get(Graph.KEY_FIELD));
         je.put(Graph.DATA_FIELD, jo);
         return je;
+    }
+    
+    public JSONObject asClientJSONObject() throws Exception {
+        JSONObject jo = asJSONObject();
+        
+        /*
+         * if the object has a Graph.DATA_FIELD (e.g., "_data"),
+         *    collapse its fields into the containing object
+         *
+         * from the client point of view, the separation is
+         *    irrelevant (it originally was used due to the
+         *    way indexing used to work-- this is no longer
+         *    the case and will probably be factored out)
+         *
+         * TODO: factor out Graph.DATA_FIELD use across the board
+         *
+        */
+        JSONObject jo1 = new JSONObject();
+        JSONObject dataObj = jo.getJSONObject(Graph.DATA_FIELD);
+        for(String k: JSONObject.getNames(dataObj)) {
+            jo1.put(k, dataObj.get(k));
+        }
+        for(String k: JSONObject.getNames(jo)) {
+            if (k.equals(Graph.DATA_FIELD)) continue;
+            jo1.put(k, jo.get(k));
+        }
+        return jo1;
     }
 
     public String toString(int d) throws org.json.JSONException {

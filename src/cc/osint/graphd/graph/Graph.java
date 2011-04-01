@@ -70,17 +70,23 @@ public class Graph
     private Searcher p_searcher;
     final private RAMDirectory p_luceneDirectory;
 
-    /* statics */
+    /* graph object statics */
     
     final public static String TYPE_FIELD = "_type";
     final public static String KEY_FIELD = "_key";
     final public static String WEIGHT_FIELD = "_weight";
-    final public static String EDGE_FROM_FIELD = "_source";
-    final public static String EDGE_TO_FIELD = "_target";
+    final public static String EDGE_SOURCE_FIELD = "_source";
+    final public static String EDGE_TARGET_FIELD = "_target";
     final public static String RELATION_FIELD = "_rel";
     final public static String DATA_FIELD = "_data";
     final public static String VERTEX_TYPE = "v";
     final public static String EDGE_TYPE = "e";
+    
+    /* process object statics */
+    
+    final public static String PID_FIELD = "_pid";
+    
+    /* graph management */
 
     public Graph() throws Exception {
         gr = new ListenableDirectedWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
@@ -160,10 +166,30 @@ public class Graph
         }
         
         indexWriter.updateDocument(new Term(KEY_FIELD, key), doc);
-        refreshIndex();
+        refreshGraphIndex();
     }
     
-    private void refreshIndex() throws Exception {
+    public void indexProcess(JSONObject jo) throws Exception {
+        if (null == jo ||
+            !jo.has(PID_FIELD)) {
+            throw new Exception("process objects require PID_FIELD '" +
+                PID_FIELD + "'");
+        }
+        
+        Document doc = new Document();
+        if (null != jo &&
+            null != JSONObject.getNames(jo)) {
+            for (String k: JSONObject.getNames(jo)) {
+                doc.add(new Field(k, jo.getString(k),
+                        Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
+            }
+        }
+        
+        p_indexWriter.updateDocument(new Term(PID_FIELD, jo.getString(PID_FIELD)), doc);
+        refreshProcessIndex();
+    }
+    
+    private void refreshGraphIndex() throws Exception {
         long t0 = System.currentTimeMillis();
         indexWriter.commit();
         IndexReader newReader = indexReader.reopen();
@@ -174,10 +200,10 @@ public class Graph
             searcher = new IndexSearcher(indexReader);
         }
         long elapsed = System.currentTimeMillis() - t0;
-        log.info("refreshIndex(): " + elapsed + "ms");
+        log.info("refreshIndex: " + elapsed + "ms");
     }
     
-    private void p_refreshIndex() throws Exception {
+    private void refreshProcessIndex() throws Exception {
         long t0 = System.currentTimeMillis();
         p_indexWriter.commit();
         IndexReader p_newReader = p_indexReader.reopen();
@@ -188,7 +214,7 @@ public class Graph
             p_searcher = new IndexSearcher(p_indexReader);
         }
         long elapsed = System.currentTimeMillis() - t0;
-        log.info("p_refreshIndex(): " + elapsed + "ms");
+        log.info("p_refreshIndex: " + elapsed + "ms");
     }
     
     public List<JSONObject> queryGraphIndex(String queryStr) throws Exception {
@@ -205,7 +231,6 @@ public class Graph
         QueryParser qp = new QueryParser(Version.LUCENE_30, KEY_FIELD, analyzer);
         qp.setAllowLeadingWildcard(true);
         Query query = qp.parse(queryStr);
-        log.info("query = " + query.toString());
         org.apache.lucene.search.Filter filter = 
             new org.apache.lucene.search.CachingWrapperFilter(new QueryWrapperFilter(query));
         
@@ -250,8 +275,6 @@ public class Graph
     public JSONObject getShortestPath(String vFromKey, String vToKey, double radius) throws Exception {
         JSONVertex vFrom = getVertex(vFromKey);
         JSONVertex vTo = getVertex(vToKey);
-        log.info("vFrom = " + vFrom.toString());
-        log.info("vTo = " + vTo.toString());
         List<JSONObject> results = new ArrayList<JSONObject>();
         DijkstraShortestPath dsp = new DijkstraShortestPath(gr, vFrom, vTo, radius);
         GraphPath<JSONVertex, JSONEdge> path = dsp.getPath();
@@ -260,8 +283,9 @@ public class Graph
         } else {
             JSONObject result = new JSONObject();
             List<JSONObject> edges = new ArrayList<JSONObject>();
+            if (path.getEdgeList().size() == 0) return null;
             for(JSONEdge edge: path.getEdgeList()) {
-                edges.add(edge.asJSONObject());
+                edges.add(edge.asClientJSONObject());
             }
             result.put("weight", path.getWeight());
             result.put("edges", edges);
@@ -288,25 +312,27 @@ public class Graph
     
     public JSONEdge getEdge(String key) throws Exception {
         JSONObject jsonEdge = get(key);
-        JSONVertex fromVertex = getVertex(jsonEdge.getString(EDGE_FROM_FIELD));
-        JSONVertex toVertex = getVertex(jsonEdge.getString(EDGE_TO_FIELD));
+        JSONVertex fromVertex = getVertex(jsonEdge.getString(EDGE_SOURCE_FIELD));
+        JSONVertex toVertex = getVertex(jsonEdge.getString(EDGE_TARGET_FIELD));
         return gr.getEdge(fromVertex, toVertex);
     }
     
-    public void removeEdge(JSONEdge je) throws Exception {
+    public boolean removeEdge(JSONEdge je) throws Exception {
         if (gr.removeEdge(je)) {
-            log.info("removeEdge(" + je.get(KEY_FIELD) + "): ok");
+            return true;
         }
+        return false;
     }
     
-    public void removeVertex(JSONVertex jv) throws Exception {
+    public boolean removeVertex(JSONVertex jv) throws Exception {
         if (gr.removeVertex(jv)) {
             vertices.remove(jv.getString(KEY_FIELD));
             indexWriter.deleteDocuments(new Term(KEY_FIELD, jv.getString(KEY_FIELD)));
-            refreshIndex();
-            log.info("removeVertex(" + jv.get(KEY_FIELD) + ")");
+            refreshGraphIndex();
             jv = null;
+            return true;
         }
+        return false;
     }
     
     public void setEdgeWeight(JSONEdge je, double weight) throws Exception {
@@ -335,13 +361,12 @@ public class Graph
             result.put("weight", pathWeight);
             List<JSONEdge> path = gp.getEdgeList();
             for(JSONEdge edge: path) {
-                resultPath.put(edge.asJSONObject());
+                resultPath.put(edge.asClientJSONObject());
             }
             result.put("path", resultPath);
             results.add(result);
         }
         
-        log.info("paths = " + paths.toString());
         return results;
     }
     
@@ -356,7 +381,7 @@ public class Graph
         }
         for(JSONEdge je: gr.edgeSet()) {
             double weight = gr.getEdgeWeight(je);
-            swgr.addEdge((JSONVertex) je.getV1(), (JSONVertex) je.getV2(), je);
+            swgr.addEdge((JSONVertex) je.getSource(), (JSONVertex) je.getTarget(), je);
             swgr.setEdgeWeight(je, weight);
         }
         return swgr;
@@ -395,7 +420,7 @@ public class Graph
         } else {
             List<JSONObject> edges = new ArrayList<JSONObject>();
             for(JSONEdge edge: kmst.getEdgeSet()) {
-                edges.add(edge.asJSONObject());
+                edges.add(edge.asClientJSONObject());
             }
             result.put("edge_set", edges);
             result.put("spanning_tree_cost", kmst.getSpanningTreeCost());
@@ -471,81 +496,78 @@ public class Graph
     // VERTEX SET LISTENER
     
     public void vertexAdded(GraphVertexChangeEvent<JSONVertex> e) {
-        // http://www.jgrapht.org/javadoc/index.html?org/jgrapht/event/GraphVertexChangeEvent.html
-        // INFO: vertexAdded(org.jgrapht.event.GraphVertexChangeEvent[source=([{'id':'a','city':'minneapolis'}], [])])
-        
-        log.info("vertexAdded(" + e.toString() + ")");
+        try {
+            // TODO: pub client-event message(s)
+            
+            log.info("[event] vertexAdded: " + e.getVertex().get(KEY_FIELD));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
     
     public void vertexRemoved(GraphVertexChangeEvent<JSONVertex> e) {
-        // http://www.jgrapht.org/javadoc/index.html?org/jgrapht/event/GraphVertexChangeEvent.html
-        // 
-    
-        //log.info("vertexRemoved(" + e.toString() + ")");
-        
         try {
-            final String eventType;
-            
-            if (e.getType() == GraphVertexChangeEvent.BEFORE_VERTEX_REMOVED) eventType = "before_vertex_removed";
-            else if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) eventType = "vertex_removed";
-            else eventType = "vertex:unknown_event_type:" + e.getType();
-            
-            log.info("<event> [vertexRemoved] " + e.getVertex().get(KEY_FIELD) + " -> " + eventType);
-            
             if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) {
                 JSONVertex jv = e.getVertex();
+                vertices.remove(jv.getString(KEY_FIELD));
                 indexWriter.deleteDocuments(new Term(KEY_FIELD, jv.getString(KEY_FIELD)));
-                refreshIndex();
-                log.info("<implicit> removeVertex: id [" + jv.get(KEY_FIELD) + "] + index entries");
+                refreshGraphIndex();
+                
+                // TODO: terminate & de-index process objects for this object
+                
+                log.info("[event] vertexRemoved: " + jv.get(KEY_FIELD));
+            } else {
+                final String eventType;
+                if (e.getType() == GraphVertexChangeEvent.BEFORE_VERTEX_REMOVED) eventType = "before_vertex_removed";
+                else if (e.getType() == GraphVertexChangeEvent.VERTEX_REMOVED) eventType = "vertex_removed";
+                else eventType = "vertex:unknown_event_type:" + e.getType();
+                log.info("[event] vertexRemoved: " + e.getVertex().get(KEY_FIELD) + " -> " + eventType);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         
-        // pub client-event message(s)
+        // TODO: pub client-event message(s)
         
     }
     
     // EDGE SET LISTENER
     
     public void edgeAdded(GraphEdgeChangeEvent<JSONVertex, JSONEdge> e) {
-        // http://www.jgrapht.org/javadoc/org/jgrapht/event/GraphEdgeChangeEvent.html
-        // INFO: edgeAdded(org.jgrapht.event.GraphEdgeChangeEvent[source=([{'id':'a','city':'minneapolis'}, {'id':'b','city':'duluth'}, {'id':'c','city':'rockville'}], [flight-to=({'id':'a','city':'minneapolis'},{'id':'b','city':'duluth'}), flight-to=({'id':'b','city':'duluth'},{'id':'c','city':'rockville'}), flight-to=({'id':'a','city':'minneapolis'},{'id':'c','city':'rockville'})])])
-        
-        // pub client-event message(s)
-        
-        log.info("edgeAdded(" + e.toString() + ")");
+        try {
+            // TODO: pub client-event message(s)
+            
+            log.info("[event] edgeAdded: " + e.getEdge().get(KEY_FIELD));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void edgeRemoved(GraphEdgeChangeEvent<JSONVertex, JSONEdge> e) {
         // http://www.jgrapht.org/javadoc/org/jgrapht/event/GraphEdgeChangeEvent.html
-        
         try {
-        
-            final String eventType;
-            if (e.getType() == GraphEdgeChangeEvent.BEFORE_EDGE_REMOVED) eventType = "before_edge_removed";
-            else if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) eventType = "edge_removed";
-            else eventType = "edge:unknown_event_type:" + e.getType();
-            
-            log.info("<event> [edgeRemoved] " + e.getEdge().get(KEY_FIELD) + " -> " + eventType);
-            
-            // handle implicit deletions (as a result of removeVertex, et al)
+            // handle implicit deletions as a result of side-effects (e.g., removeVertex, etc.)
             if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) {
-            
-                // handle implicitly deleted edges
                 JSONEdge je = e.getEdge();
                 indexWriter.deleteDocuments(new Term(KEY_FIELD, je.get(KEY_FIELD)));
-                refreshIndex();
-                log.info("<implicit> removeEdge: id [" + je.get(KEY_FIELD) + "] + index entries");
+                refreshGraphIndex();
+                
+                // TODO: terminate & de-index process objects for this object
+                
+                log.info("[event] edgeRemoved: " + je.get(KEY_FIELD));
+            } else {
+                final String eventType;
+                if (e.getType() == GraphEdgeChangeEvent.BEFORE_EDGE_REMOVED) eventType = "before_edge_removed";
+                else if (e.getType() == GraphEdgeChangeEvent.EDGE_REMOVED) eventType = "edge_removed";
+                else eventType = "edge:unknown_event_type:" + e.getType();
+                log.info("[event] edgeRemoved: " + e.getEdge().get(KEY_FIELD) + " -> " + eventType);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         
-        // pub client-event message(s)
+        // TODO: pub client-event message(s)
         
-        log.info("edgeRemoved(" + e.toString() + ")");
     }
     
     
