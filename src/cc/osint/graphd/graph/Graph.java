@@ -401,8 +401,16 @@ public class Graph
         EdmondsKarpMaximumFlow<JSONVertex, JSONEdge> ekmf =
             new EdmondsKarpMaximumFlow<JSONVertex, JSONEdge>(gr);
         ekmf.calculateMaximumFlow(source, sink);
+        
         JSONObject result = new JSONObject();
-        result.put("maximum_flow", ekmf.getMaximumFlow());
+        JSONObject flowResult = new JSONObject();
+        Map<JSONEdge, Double> flowMap = ekmf.getMaximumFlow();
+        for(JSONEdge edge: flowMap.keySet()) {
+            double flowValue = (double) flowMap.get(edge);
+            String edgeKey = edge.get(KEY_FIELD);
+            flowResult.put(edgeKey, flowValue);
+        }
+        result.put("flow", flowResult);
         result.put("maximum_flow_value", ekmf.getMaximumFlowValue());
         return result;
     }
