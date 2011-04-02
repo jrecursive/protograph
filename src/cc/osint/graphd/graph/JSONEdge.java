@@ -31,12 +31,12 @@ public class JSONEdge<V>
         return target;
     }
     
-    public V getSource() {
-        return source;
+    public JSONVertex getSource() {
+        return (JSONVertex) source;
     }
     
-    public V getTarget() {
-        return target;
+    public JSONVertex getTarget() {
+        return (JSONVertex) target;
     }
     
     public void inherit(JSONObject jo) throws Exception {

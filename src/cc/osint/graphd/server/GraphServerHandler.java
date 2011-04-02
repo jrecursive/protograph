@@ -91,6 +91,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_FAMC = "famc";          // Bron Kerosch Clique Finder: find all maximal cliques
     final private static String CMD_FBMC = "fbmc";          // Bron Kerosch Clique Finder: find biggest maximal cliques
     
+    final private static String CMD_EMIT = "emit";          // emit a message to a running process
+    
     /* protocol responses */
     
     final private static String R_OK = "-ok";                // standard reply
@@ -736,6 +738,17 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(NL);
                         rsb.append(R_DONE);
                     }
+                
+                // EMIT A MESSAGE TO A RUNNING SIMULATION PROCESS: emit <key> <process_name> <json_msg>
+                } else if (cmd.equals(CMD_EMIT)) {
+                    String key = args[0];
+                    String processName = args[1];
+                    String json = request.substring(request.indexOf(SPACE + processName) +
+                        (processName.length()+1)).trim(); // remainder of line
+                    JSONObject jo = null;
+                    jo = new JSONObject(json);
+                    gr.emit(key, processName, jo);
+                    rsb.append(R_DONE);
                     
                 }
                 

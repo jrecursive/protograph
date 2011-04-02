@@ -24,7 +24,8 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.*;
 import org.apache.lucene.util.Version;
 import org.json.*;
-import cc.osint.graphd.graph.*;
+import cc.osint.graphd.sim.*;
+import cc.osint.graphd.processes.*;
 
 import org.jetlang.channels.*;
 import org.jetlang.core.Callback;
@@ -58,10 +59,11 @@ public class Graph
     
     /* simulation: process management */
 
-    ExecutorService executorService = Executors.newCachedThreadPool();
-    PoolFiberFactory poolFiberFactory = new PoolFiberFactory(executorService);
-    Channel<JSONObject> globalChannel = new MemoryChannel<JSONObject>();
-    Channel<JSONObject> eventChannel = new MemoryChannel<JSONObject>();
+    ExecutorService executorService;
+    PoolFiberFactory fiberFactory;
+    ProcessGroup<JSONVertex, JSONObject> vertexProcesses;
+    ProcessGroup<JSONEdge, JSONObject> edgeProcesses;
+    ProcessGroup<EventObject, JSONObject> graphProcesses;
     
     /* simulation: process registry */
     
@@ -92,7 +94,17 @@ public class Graph
         gr = new ListenableDirectedWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
         connectivityInspector = new ConnectivityInspector<JSONVertex, JSONEdge>(gr);
         vertices = new ConcurrentHashMap<String, JSONVertex>();
+
+        // simulation components
+        executorService = Executors.newCachedThreadPool();
+        fiberFactory = new PoolFiberFactory(executorService);
+        vertexProcesses = 
+            new ProcessGroup<JSONVertex, JSONObject>(this, 
+                                                     "vertex_processors", 
+                                                     executorService,
+                                                     fiberFactory);
         
+        // graph index
         luceneDirectory = new RAMDirectory();
         indexWriter = new IndexWriter(
             luceneDirectory,
@@ -101,6 +113,7 @@ public class Graph
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
         
+        // process index
         p_luceneDirectory = new RAMDirectory();
         p_indexWriter = new IndexWriter(
             p_luceneDirectory,
@@ -109,6 +122,7 @@ public class Graph
         p_indexReader = p_indexWriter.getReader();
         p_searcher = new IndexSearcher(p_indexReader);
         
+        // event handlers
         gr.addVertexSetListener(this);
         gr.addGraphListener(this);
         gr.addVertexSetListener(connectivityInspector);
@@ -119,6 +133,38 @@ public class Graph
         return UUID.randomUUID().toString();
     }
     
+    public void emit(String key, String processName, JSONObject msg) 
+        throws Exception {
+        String _type;
+        if (null != key) {
+            JSONObject obj = get(key);
+            _type = obj.getString(TYPE_FIELD);
+            // TODO: fix this ugly hack
+            if (_type == null) _type = "unknown";
+        } else {
+            _type = null;
+        }
+        
+        if (null == _type) {
+            // XXX HACK
+            // TODO: use process index
+            graphProcesses.publish(key + "-" + processName, msg);
+            
+        } else if (_type.equals(VERTEX_TYPE)) {
+            // XXX HACK
+            // TODO: use process index
+            vertexProcesses.publish(key + "-" + processName, msg);
+            
+        } else if (_type.equals(EDGE_TYPE)) {
+            // XXX HACK
+            // TODO: use process index
+            edgeProcesses.publish(key + "-" + processName, msg);
+            
+        } else {
+            throw new Exception("unknown object " + TYPE_FIELD + "!");
+        }
+    }
+
     public String addVertex(JSONObject jo) throws Exception {
         return addVertex(generateKey(), jo);
     }
@@ -128,6 +174,19 @@ public class Graph
         gr.addVertex(jv);
         vertices.put(key, jv);
         indexObject(key, VERTEX_TYPE, jo);
+        
+        // XXX TESTING
+        //
+        // TODO: index by key : processName : className : ... ?
+        //
+        log.info("starting process...");
+        vertexProcesses.start(key + "-testGraphProcess",
+                              jv,
+                              new TestGraphProcess());
+        log.info("process started");
+        
+        // ^ TODO: process indexing
+        
         return key;
     }
     
@@ -311,6 +370,23 @@ public class Graph
     
     public JSONVertex getVertex(String key) throws Exception {
         return vertices.get(key);
+    }
+    
+    public Set<JSONEdge> getOutgoingEdgesOf(String key) throws Exception {
+        return getOutgoingEdgesOf(getVertex(key));
+    }
+    
+    public Set<JSONEdge> getOutgoingEdgesOf(JSONVertex vertex) throws Exception {
+        return gr.outgoingEdgesOf(vertex);
+    }
+    
+    public Set<JSONVertex> getOutgoingNeighborsOf(JSONVertex vertex) throws Exception {
+        Set<JSONEdge> edges = getOutgoingEdgesOf(vertex);
+        Set<JSONVertex> neighbors = new HashSet<JSONVertex>();
+        for(JSONEdge edge: edges) {
+            neighbors.add(edge.getTarget());
+        }
+        return neighbors;
     }
     
     public JSONEdge getEdge(String key) throws Exception {
