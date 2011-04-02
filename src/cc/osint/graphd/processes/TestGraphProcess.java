@@ -28,6 +28,9 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
                 visited = new JSONObject();
             } else {
                 visited = msg.getJSONObject("visited");
+                if (visited.has(getContext().getString(Graph.KEY_FIELD))) {
+                    log("i've already seen this message!");
+                }
             }
             log(getContext().getString(Graph.KEY_FIELD) + ": msg = " + msg);
             

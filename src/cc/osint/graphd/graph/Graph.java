@@ -327,7 +327,7 @@ public class Graph
                 }   
             });
         long end_t = System.currentTimeMillis();
-        log.info("query: hits.scoreDocs.length = " + results.size() + " (" + (end_t-start_t) + "ms)");
+        //log.info("query: hits.scoreDocs.length = " + results.size() + " (" + (end_t-start_t) + "ms)");
         return results;
     }
     
