@@ -96,7 +96,6 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     /* protocol responses */
     
     final private static String R_OK = "-ok";                // standard reply
-    final private static String R_DONE = "-done";            // object stream done
     final private static String R_ERR = "-err";              // error processing request
     final private static String R_UNK = "-unk";              // unknown request
     final private static String R_NOT_IMPL = "-not_impl";    // cmd not implemented
@@ -263,7 +262,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             JSONObject result = new JSONObject(clientState);
             rsb.append(result.toString(4));
             rsb.append(NL);
-            rsb.append(R_DONE);
+            rsb.append(R_OK);
             
         // SERVER STATUS: sstat
         } else if (cmd.equals(CMD_SSTAT)) {
@@ -283,7 +282,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             
             rsb.append(result.toString(4));
             rsb.append(NL);
-            rsb.append(R_DONE);
+            rsb.append(R_OK);
         
         // LIST NAMED GRAPHS
         } else if (cmd.equals(CMD_LISTG)) {
@@ -291,7 +290,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 rsb.append(name);
                 rsb.append(NL);
             }
-            rsb.append(R_DONE);
+            rsb.append(R_OK);
         
         // GRAPH STATUS: gstat <name>
         } else if (cmd.equals(CMD_GSTAT)) {
@@ -304,7 +303,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 result.put("edge_count", gr0.numEdges());
                 rsb.append(result.toString(4));
                 rsb.append(NL);
-                rsb.append(R_DONE);
+                rsb.append(R_OK);
             }
         
         } else {
@@ -322,7 +321,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 if (cmd.equals(CMD_EXISTS)) {
                     String key = args[0];
                     rsb.append("" + gr.exists(key));
-                    rsb.append(R_DONE);
+                    rsb.append(R_OK);
                 
                 // CREATE VERTEX: cvert <key> <json>
                 } else if (cmd.equals(CMD_CVERT)) {
@@ -333,7 +332,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     try {
                         jo = new JSONObject(json);
                         gr.addVertex(key, jo);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     } catch (org.json.JSONException jsonEx) {
                         jsonEx.printStackTrace();
                         rsb.append(R_ERR);
@@ -372,7 +371,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         jo.put(Graph.WEIGHT_FIELD, weight);
                         jo.put(Graph.RELATION_FIELD, rel);
                         gr.addEdge(key, jo, vFromKey, vToKey, rel, weight);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     } catch (org.json.JSONException jsonEx) {
                         jsonEx.printStackTrace();
                         rsb.append(R_ERR);
@@ -396,12 +395,12 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         if (_type.equals(Graph.VERTEX_TYPE)) {
                             JSONVertex jv = gr.getVertex(key);
                             gr.removeVertex(jv);
-                            rsb.append(R_DONE);
+                            rsb.append(R_OK);
                             
                         } else if (_type.equals(Graph.EDGE_TYPE)) {
                             JSONEdge je = gr.getEdge(key);
                             gr.removeEdge(je);
-                            rsb.append(R_DONE);
+                            rsb.append(R_OK);
                         
                         } else {
                             rsb.append(R_ERR);
@@ -419,7 +418,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     } else {
                         rsb.append(prepareResult(jo));
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                     
                 // QUERY GRAPH OBJECTS: q <query>
@@ -435,7 +434,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     
                     rsb.append(prepareResult(res));
                     rsb.append(NL);
-                    rsb.append(R_DONE);
+                    rsb.append(R_OK);
                     
                 // QUERY PROCESSES: qp <query>
                 } else if (cmd.equals(CMD_QP)) {
@@ -450,7 +449,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     
                     rsb.append(prepareResult(res));
                     rsb.append(NL);
-                    rsb.append(R_DONE);
+                    rsb.append(R_OK);
                 
                 // DIJKSTRA SHORTEST PATH: spath <from> <to> <radius>
                 } else if (cmd.equals(CMD_SPATH)) {
@@ -466,7 +465,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     } else {
                         rsb.append(prepareResult(result));
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                     
                 // SET VERTEX/EDGE ATTRIBUTE: set <key> <attr> <value>
@@ -502,7 +501,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                     jv.remove(attr);
                                 }
                                 gr.indexObject(key, _type, jv);
-                                rsb.append(R_DONE);
+                                rsb.append(R_OK);
                             } else if (_type.equals(Graph.EDGE_TYPE)) {
                                 
                                 JSONEdge je = gr.getEdge(key);
@@ -517,7 +516,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                 }
                                 
                                 gr.indexObject(key, _type, je.asJSONObject().getJSONObject(Graph.DATA_FIELD));
-                                rsb.append(R_DONE);
+                                rsb.append(R_OK);
                             } else {
                                 rsb.append(R_ERR);
                                 rsb.append(R_UNKNOWN_OBJECT_TYPE);
@@ -538,7 +537,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         gr.setEdgeWeight(je, weight);
                         je.put(Graph.WEIGHT_FIELD, "" + weight);
                         gr.indexObject(key, Graph.EDGE_TYPE, je.asJSONObject().getJSONObject(Graph.DATA_FIELD));
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
 
                 // DUMP INTERNAL REPRESENTATION OF VERTEX/EDGE: spy <key>
@@ -556,7 +555,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                 rsb.append(R_NOT_FOUND);
                             } else {
                                 rsb.append(je.asClientJSONObject().toString(4) + NL);
-                                rsb.append(R_DONE);
+                                rsb.append(R_OK);
                             }
                         } else if (_type.equals(Graph.VERTEX_TYPE)) {
                             JSONVertex jv = gr.getVertex(key);
@@ -564,7 +563,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                 rsb.append(R_NOT_FOUND);
                             } else {
                                 rsb.append(jv.toString(4) + NL);
-                                rsb.append(R_DONE);
+                                rsb.append(R_OK);
                             }
                         } else {
                             rsb.append(R_ERR);
@@ -584,7 +583,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     JSONObject result = gr.getKShortestPaths(vFromKey, vToKey, k, maxHops);
                     rsb.append(prepareResult(result));
                     rsb.append(NL);
-                    rsb.append(R_DONE);
+                    rsb.append(R_OK);
                 
                 // HAMILTONIAN CYCLE: hc
                 } else if (cmd.equals(CMD_HC)) {
@@ -600,7 +599,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         res.put("cycle", cycle);
                         rsb.append(prepareResult(res));
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // EULERIAN CIRCUIT: ec
@@ -617,7 +616,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         res.put("circuit", circuit);
                         rsb.append(prepareResult(res));
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // EDWARDS KARP MAXIMUM FLOW: ekmf <from> <to>
@@ -628,18 +627,18 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == flowResult) {
                         rsb.append(R_NOT_EXIST);
                     } else {
-                        rsb.append(flowResult.toString(4));
+                        rsb.append(flowResult.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // CHROMATIC NUMBER: cn
                 } else if (cmd.equals(CMD_CN)) {
                     JSONObject result = new JSONObject();
                     result.put("chromatic_number", gr.getChromaticNumber());
-                    rsb.append(result.toString(4));
+                    rsb.append(result.toString());
                     rsb.append(NL);
-                    rsb.append(R_DONE);
+                    rsb.append(R_OK);
                 
                 // KRUSKAL'S MINIMUM SPANNING TREE: kmst
                 } else if (cmd.equals(CMD_KMST)) {
@@ -647,9 +646,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == result) {
                         rsb.append(R_NOT_EXIST);
                     } else {
-                        rsb.append(result.toString(4));
+                        rsb.append(result.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // VERTEX COVER: GREEDY: vcg
@@ -658,9 +657,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == result) {
                         rsb.append(R_NOT_EXIST);
                     } else {
-                        rsb.append(result.toString(4));
+                        rsb.append(result.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // VERTEX COVER: 2-APPROXIMATION: vc2a
@@ -669,9 +668,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == result) {
                         rsb.append(R_NOT_EXIST);
                     } else {
-                        rsb.append(result.toString(4));
+                        rsb.append(result.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // MAXIMALLY CONNECTED SET BY VERTEX: csetv <key>
@@ -682,9 +681,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_NOT_FOUND);
                     } else {
                         JSONObject result = gr.getConnectedSetByVertex(v);
-                        rsb.append(result.toString(4));
+                        rsb.append(result.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // ALL MAXIMALLY CONNECTED SETS: csets
@@ -693,16 +692,16 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == result) {
                         rsb.append(R_NOT_EXIST);
                     } else {
-                        rsb.append(result.toString(4));
+                        rsb.append(result.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // CONNECTEDNESS TEST: iscon
                 } else if (cmd.equals(CMD_ISCON)) {
                     rsb.append("" + gr.isConnected());
                     rsb.append(NL);
-                    rsb.append(R_DONE);
+                    rsb.append(R_OK);
                 
                 // UNDIRECTED PATH EXISTENCE TEST: upathex <from> <to>
                 } else if (cmd.equals(CMD_UPATHEX)) {
@@ -714,7 +713,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     } else {
                         rsb.append("" + gr.pathExists(vFrom, vTo));
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // FIND ALL MAXIMAL CLIQUES: Bron Kerosch Clique Finder
@@ -723,9 +722,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == result) {
                         rsb.append(R_NOT_EXIST);
                     } else {
-                        rsb.append(result.toString(4));
+                        rsb.append(result.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                     
                 // FIND BIGGEST MAXIMAL CLIQUES: Bron Kerosch Clique Finder
@@ -734,9 +733,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     if (null == result) {
                         rsb.append(R_NOT_EXIST);
                     } else {
-                        rsb.append(result.toString(4));
+                        rsb.append(result.toString());
                         rsb.append(NL);
-                        rsb.append(R_DONE);
+                        rsb.append(R_OK);
                     }
                 
                 // EMIT A MESSAGE TO A RUNNING SIMULATION PROCESS: emit <key> <process_name> <json_msg>
@@ -748,7 +747,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                     JSONObject jo = null;
                     jo = new JSONObject(json);
                     gr.emit(key, processName, jo);
-                    rsb.append(R_DONE);
+                    rsb.append(R_OK);
                     
                 }
                 
@@ -781,6 +780,6 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         //String s = jo.toString();
         //s = s.replaceAll(NL, SPACE);
         //return s;
-        return jo.toString(4);
+        return jo.toString();
     }
 }

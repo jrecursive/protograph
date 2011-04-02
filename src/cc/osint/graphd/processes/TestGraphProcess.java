@@ -29,10 +29,10 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
             } else {
                 visited = msg.getJSONObject("visited");
                 if (visited.has(getContext().getString(Graph.KEY_FIELD))) {
-                    log("i've already seen this message!");
                     return;
                 }
             }
+            visited.put(getContext().getString(Graph.KEY_FIELD), System.nanoTime());
             log(getContext().getString(Graph.KEY_FIELD) + ": msg = " + msg);
             
             // spread like wildfire!
