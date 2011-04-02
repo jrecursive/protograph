@@ -30,6 +30,7 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
                 visited = msg.getJSONObject("visited");
                 if (visited.has(getContext().getString(Graph.KEY_FIELD))) {
                     log("i've already seen this message!");
+                    return;
                 }
             }
             log(getContext().getString(Graph.KEY_FIELD) + ": msg = " + msg);
@@ -41,7 +42,7 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
                 if (visited.has(neighborKey)) {
                     log(">> already visited " + neighborKey + " at " + visited.getString(neighborKey));
                 } else {
-                    visited.put(neighborKey, System.currentTimeMillis());
+                    visited.put(neighborKey, System.nanoTime());
                     msg.put("visited", visited);
                     emit(neighborKey, "testGraphProcess", new JSONObject(msg.toString()));
                 }
