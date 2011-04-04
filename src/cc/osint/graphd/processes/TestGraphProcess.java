@@ -38,6 +38,7 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
             }
             visited.put(getContext().getString(Graph.KEY_FIELD), System.nanoTime());
             msg.put("visited", visited);
+            
             //log(getContext().getString(Graph.KEY_FIELD) + ": msg = " + msg);
             
             

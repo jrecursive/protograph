@@ -549,15 +549,27 @@ public class Graph
         Set<JSONVertex> cset = connectivityInspector.connectedSetOf(v);
         if (null == cset) return null;
         JSONObject result = new JSONObject();
-        result.put("connected_set", cset);
+        List<String> csetKeys = new ArrayList<String>();
+        for(JSONVertex vert: cset) {
+            csetKeys.add(vert.getKey());
+        }
+        result.put("connected_set", csetKeys);
         return result;
     }
     
     public JSONObject getConnectedSets() throws Exception {
         List<Set<JSONVertex>> csets = connectivityInspector.connectedSets();
         if (null == csets) return null;
+        List<Set<String>> csetsKeys = new ArrayList<Set<String>>();
+        for(Set<JSONVertex> cset: csets) {
+            Set<String> csetKeys = new HashSet<String>();
+            for(JSONVertex vert: cset) {
+                csetKeys.add(vert.getKey());
+            }
+            csetsKeys.add(csetKeys);
+        }
         JSONObject result = new JSONObject();
-        result.put("connected_sets", csets);
+        result.put("connected_sets", csetsKeys);
         return result;
     }
     
