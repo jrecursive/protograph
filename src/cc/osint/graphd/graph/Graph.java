@@ -96,7 +96,8 @@ public class Graph
         vertices = new ConcurrentHashMap<String, JSONVertex>();
 
         // simulation components
-        executorService = Executors.newCachedThreadPool();
+        //executorService = Executors.newCachedThreadPool();
+        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
         fiberFactory = new PoolFiberFactory(executorService);
         vertexProcesses = 
             new ProcessGroup<JSONVertex, JSONObject>(this, 

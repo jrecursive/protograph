@@ -49,7 +49,7 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     
     public void publish(M msg) throws Exception {
         channel.publish(msg);
-        log("process: send: " + name + ": " + msg);
+        //log("process: send: " + name + ": " + msg);
     }
     
     public Graph getGraph() {
@@ -65,14 +65,17 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     }
     
     protected void log(String s) {
-        System.out.println("process: " + name + ": " + s);
+        try {
+            Thread t = Thread.currentThread();
+            System.out.println(t.getId() + ": " + name + ": " + s);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
     
     protected void emit(String key, String processName, JSONObject msg) throws Exception {
         getGraph().emit(key, processName, msg);
     }
-    
-    
     
     //
     

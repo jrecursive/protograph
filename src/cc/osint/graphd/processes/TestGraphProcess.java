@@ -37,19 +37,41 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
                 }
             }
             visited.put(getContext().getString(Graph.KEY_FIELD), System.nanoTime());
-            log(getContext().getString(Graph.KEY_FIELD) + ": msg = " + msg);
+            msg.put("visited", visited);
+            //log(getContext().getString(Graph.KEY_FIELD) + ": msg = " + msg);
             
-            // spread like wildfire!
-            Set<JSONVertex> neighbors = getGraph().getOutgoingNeighborsOf(getContext());
-            for(JSONVertex neighbor: neighbors) {
-                String neighborKey = neighbor.getString(Graph.KEY_FIELD);
-                if (visited.has(neighborKey)) {
-                    log(">> already visited " + neighborKey + " at " + visited.getString(neighborKey));
-                } else {
-                    visited.put(neighborKey, System.nanoTime());
-                    msg.put("visited", visited);
-                    emit(neighborKey, "testGraphProcess", new JSONObject(msg.toString()));
+            
+            int msgsSent = 0;
+            if (JSONObject.getNames(visited).length < 4) {
+                // spread like wildfire!
+                Set<JSONVertex> neighbors = getGraph().getOutgoingNeighborsOf(getContext());
+                for(JSONVertex neighbor: neighbors) {
+                    String neighborKey = neighbor.getString(Graph.KEY_FIELD);
+                    if (visited.has(neighborKey)) {
+                        //log(">> already visited " + neighborKey + " at " + visited.getString(neighborKey));
+                    } else {
+                        emit(neighborKey, "testGraphProcess", new JSONObject(msg.toString()));
+                        msgsSent++;
+                    }
                 }
+            }
+            
+            if (msgsSent == 0) {
+                JSONObject visitObj = msg.getJSONObject("visited");
+                String[] pathKeys = JSONObject.getNames(visitObj);;
+                String[] pathKeys1 = new String[pathKeys.length];
+                for(int i=0; i<pathKeys.length; i++) {
+                    pathKeys1[i] = visitObj.getString(pathKeys[i]) + "|" + pathKeys[i];
+                }
+                Arrays.sort(pathKeys1);
+                String p = "";
+                for(String pk: pathKeys1) {
+                    String pk1 = pk.substring(pk.indexOf("|")+1);
+                    p += " -> " + pk1;
+                }
+                log("ENDPOINT: " + p);
+            } else {
+                //log(getContext().getKey() + " -> " + msgsSent);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
