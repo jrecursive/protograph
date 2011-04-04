@@ -40,12 +40,20 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
             msg.put("visited", visited);
             
             //log(getContext().getString(Graph.KEY_FIELD) + ": msg = " + msg);
-            
+            int maxLen = 9999999;
+            if (msg.has("maxlen")) {
+                maxLen = msg.getInt("maxlen");
+            }
             
             int msgsSent = 0;
-            if (JSONObject.getNames(visited).length < 4) {
+            if (JSONObject.getNames(visited).length < maxLen) {
                 // spread like wildfire!
-                Set<JSONVertex> neighbors = getGraph().getOutgoingNeighborsOf(getContext());
+                Set<String> rels = null;
+                if (msg.has("via")) {
+                    rels = new HashSet<String>();
+                    rels.add(msg.getString("via"));
+                }
+                Set<JSONVertex> neighbors = getGraph().getOutgoingNeighborsOf(getContext(), rels);
                 for(JSONVertex neighbor: neighbors) {
                     String neighborKey = neighbor.getString(Graph.KEY_FIELD);
                     if (visited.has(neighborKey)) {

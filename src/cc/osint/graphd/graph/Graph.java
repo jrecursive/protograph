@@ -180,11 +180,11 @@ public class Graph
         //
         // TODO: index by key : processName : className : ... ?
         //
-        log.info("starting process...");
+        //log.info("starting process...");
         vertexProcesses.start(key + "-testGraphProcess",
                               jv,
                               new TestGraphProcess());
-        log.info("process started");
+        //log.info("process started");
         
         // ^ TODO: process indexing
         
@@ -260,7 +260,7 @@ public class Graph
             searcher = new IndexSearcher(indexReader);
         }
         long elapsed = System.currentTimeMillis() - t0;
-        log.info("refreshIndex: " + elapsed + "ms");
+        //log.info("refreshIndex: " + elapsed + "ms");
     }
     
     private void refreshProcessIndex() throws Exception {
@@ -382,10 +382,28 @@ public class Graph
     }
     
     public Set<JSONVertex> getOutgoingNeighborsOf(JSONVertex vertex) throws Exception {
+        Set<String> rels = null;
+        return getOutgoingNeighborsOf(vertex, rels);
+    }
+    
+    public Set<JSONVertex> getOutgoingNeighborsOf(JSONVertex vertex, String rel) throws Exception {
+        Set<String> rels = new HashSet<String>();
+        rels.add(rel);
+        return getOutgoingNeighborsOf(vertex, rels);
+    }
+    
+    public Set<JSONVertex> getOutgoingNeighborsOf(JSONVertex vertex, Set<String> rels) throws Exception {
         Set<JSONEdge> edges = getOutgoingEdgesOf(vertex);
         Set<JSONVertex> neighbors = new HashSet<JSONVertex>();
         for(JSONEdge edge: edges) {
-            neighbors.add(edge.getTarget());
+            if (rels != null) {
+                String edgeRel = edge.get(RELATION_FIELD);
+                if (rels.contains(edgeRel)) {
+                    neighbors.add(edge.getTarget());
+                }
+            } else {
+                neighbors.add(edge.getTarget());
+            }
         }
         return neighbors;
     }
@@ -704,7 +722,7 @@ public class Graph
         try {
             // TODO: pub client-event message(s)
             
-            log.info("[event] vertexAdded: " + e.getVertex().get(KEY_FIELD));
+            //log.info("[event] vertexAdded: " + e.getVertex().get(KEY_FIELD));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -742,7 +760,7 @@ public class Graph
         try {
             // TODO: pub client-event message(s)
             
-            log.info("[event] edgeAdded: " + e.getEdge().get(KEY_FIELD));
+            //log.info("[event] edgeAdded: " + e.getEdge().get(KEY_FIELD));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
