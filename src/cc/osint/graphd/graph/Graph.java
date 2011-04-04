@@ -631,6 +631,41 @@ public class Graph
         return result;
     }
     
+    public JSONObject getGraphCycles() throws Exception {
+        CycleDetector<JSONVertex, JSONEdge> cd = 
+            new CycleDetector<JSONVertex, JSONEdge>(gr);
+        Set<JSONVertex> cycles = cd.findCycles();
+        if (null == cycles) {
+            return null;
+        } else {
+            JSONObject result = new JSONObject();
+            List<String> resultCycles = new ArrayList<String>();
+            for(JSONVertex v: cycles) {
+                resultCycles.add(v.getKey());
+            }
+            result.put("cycles", resultCycles);
+            return result;
+        }
+    }
+
+    public JSONObject getGraphCyclesContainingVertex(JSONVertex v) throws Exception {
+        CycleDetector<JSONVertex, JSONEdge> cd = 
+            new CycleDetector<JSONVertex, JSONEdge>(gr);
+        Set<JSONVertex> cycles = cd.findCyclesContainingVertex(v);
+        if (null == cycles) {
+            return null;
+        } else {
+            JSONObject result = new JSONObject();
+            result.put("vertex", v.getKey());
+            List<String> resultCycles = new ArrayList<String>();
+            for(JSONVertex vert: cycles) {
+                resultCycles.add(vert.getKey());
+            }
+            result.put("cycles", resultCycles);
+            return result;
+        }
+    }
+    
     /*
      * STATS
     */

@@ -52,8 +52,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             ConcurrentHashMap<String, String>>();
     }
     
-    /* protocol commands */
-    
+    /* graph management */
+        
     final private static String CMD_GOODBYE = "bye";        // disconnect
     final private static String CMD_USE = "use";            // select graph to use
     final private static String CMD_CREATE = "create";      // create graph
@@ -63,6 +63,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_SSTAT = "sstat";        // dump server status (debug)
     final private static String CMD_GSTAT = "gstat";        // dump graph status (debug)
     final private static String CMD_LISTG = "listg";        // list names of graphs
+    
+    /* vertex, edge management, querying, attributes */
     
     final private static String CMD_Q = "q";                // query graph objects by property
     final private static String CMD_QP = "qp";              // query processes by property
@@ -74,6 +76,8 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_GET = "get";            // get object (vertex or edge)
     final private static String CMD_SPY = "spy";            // dump JSONVertex or JSONEdge explicitly
     final private static String CMD_INCW = "incw";          // increment edge weight
+    
+    /* analysis */
     
     final private static String CMD_SPATH = "spath";        // shortest path between two vertices
     final private static String CMD_KSPATH = "kspath";      // k-shortest paths between two vertices (w/ opt. maxHops)
@@ -91,10 +95,14 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_FAMC = "famc";          // Bron Kerosch Clique Finder: find all maximal cliques
     final private static String CMD_FBMC = "fbmc";          // Bron Kerosch Clique Finder: find biggest maximal cliques
     final private static String CMD_ASPV = "aspv";          // all shortest paths from V (via Floyd-Warshall)
+    final private static String CMD_GCYC = "gcyc";          // get vertex set for the subgraph of all cycles
+    final private static String CMD_VCYC = "vcyc";          // get vertex set for the subgraph of all cycles that contain V
+    
+    /* simulation */
     
     final private static String CMD_EMIT = "emit";          // emit a message to a running process
     
-    /* protocol responses */
+    /* responses */
     
     final private static String R_OK = "-ok";                // standard reply
     final private static String R_ERR = "-err";              // error processing request
@@ -753,10 +761,29 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(R_OK);
                     }
                 
+                } else if (cmd.equals(CMD_GCYC)) {
+                    JSONObject result = gr.getGraphCycles();
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString());
+                        rsb.append(NL);
+                        rsb.append(R_OK);
+                    }
+
+                } else if (cmd.equals(CMD_VCYC)) {
+                    JSONObject result = gr.getGraphCyclesContainingVertex(
+                        gr.getVertex(args[0]));
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString());
+                        rsb.append(NL);
+                        rsb.append(R_OK);
+                    }
                 
                 /*
-                 * SIMULATION COMMANDS
-                 *
+                 * SIMULATION
                 */
                 
                 // EMIT A MESSAGE TO A RUNNING SIMULATION PROCESS: emit <key> <process_name> <json_msg>
