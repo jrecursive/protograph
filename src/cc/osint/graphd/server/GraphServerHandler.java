@@ -90,6 +90,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     final private static String CMD_UPATHEX = "upathex";    // does any UNDIRECTED path exist from v0 -> v1?
     final private static String CMD_FAMC = "famc";          // Bron Kerosch Clique Finder: find all maximal cliques
     final private static String CMD_FBMC = "fbmc";          // Bron Kerosch Clique Finder: find biggest maximal cliques
+    final private static String CMD_ASPV = "aspv";          // all shortest paths from V (via Floyd-Warshall)
     
     final private static String CMD_EMIT = "emit";          // emit a message to a running process
     
@@ -190,12 +191,15 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             response = R_OK;
             close = true;
         } else {
+            long requestTimeStart = System.currentTimeMillis();
             try {
                 response = executeRequest(clientId, clientState, request);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 response = R_ERR + SPACE + ex.getMessage();
             }
+            long requestTimeElapsed = System.currentTimeMillis() - requestTimeStart;
+            log.info("[" + requestTimeElapsed + "ms]");
         }
         
         ChannelFuture future = e.getChannel().write(response.trim() + NL);
@@ -737,6 +741,23 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                         rsb.append(NL);
                         rsb.append(R_OK);
                     }
+                    
+                } else if (cmd.equals(CMD_ASPV)) {
+                    JSONObject result = gr.getAllShortestPathsFrom(
+                        gr.getVertex(args[0]));
+                    if (null == result) {
+                        rsb.append(R_NOT_EXIST);
+                    } else {
+                        rsb.append(result.toString());
+                        rsb.append(NL);
+                        rsb.append(R_OK);
+                    }
+                
+                
+                /*
+                 * SIMULATION COMMANDS
+                 *
+                */
                 
                 // EMIT A MESSAGE TO A RUNNING SIMULATION PROCESS: emit <key> <process_name> <json_msg>
                 } else if (cmd.equals(CMD_EMIT)) {

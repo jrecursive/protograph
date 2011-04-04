@@ -30,6 +30,14 @@ public class JSONVertex extends JSONObject {
         }
     }
 
+    /*
+     * vertex-specific pre-built "gets"
+    */
+    
+    public String getKey() throws Exception {
+        return getString(Graph.KEY_FIELD);
+    }
+
     public void put(String k, String v) throws Exception {
         super.put(k, v);
     }

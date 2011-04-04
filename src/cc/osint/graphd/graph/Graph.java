@@ -524,7 +524,11 @@ public class Graph
         if (null == verts) {
             return null;
         } else {
-            result.put("cover_set", verts);
+            JSONArray vertKeys = new JSONArray();
+            for(JSONVertex v: verts) {
+                vertKeys.put(v.getKey());
+            }
+            result.put("cover_set", vertKeys);
             return result;
         }
     }
@@ -596,7 +600,36 @@ public class Graph
         }
         result.put("cliques", cliqueList);
         return result;
-    }    
+    }
+    
+    public JSONObject getAllShortestPathsFrom(JSONVertex vFrom) throws Exception {
+        FloydWarshallShortestPaths<JSONVertex, JSONEdge> fwsp = 
+            new FloydWarshallShortestPaths<JSONVertex, JSONEdge>(gr);
+        
+        JSONObject result = new JSONObject();
+        result.put("diameter", fwsp.getDiameter());
+        result.put("shortest_path_count", fwsp.getShortestPathsCount());
+        
+        if (vFrom == null) return result;
+        
+        result.put("source_vertex", vFrom.getKey());
+        List<JSONObject> resultPaths = new ArrayList<JSONObject>();
+        List<GraphPath<JSONVertex, JSONEdge>> paths = fwsp.getShortestPaths(vFrom);
+        for(GraphPath<JSONVertex, JSONEdge> path: paths) {
+            JSONObject resultPath = new JSONObject();
+            List<String> edges = new ArrayList<String>();
+            for(JSONEdge edge: path.getEdgeList()) {
+                edges.add(edge.get(KEY_FIELD));
+            }
+            resultPath.put("weight", path.getWeight());
+            resultPath.put("edges", edges);
+            resultPath.put("start_vertex", path.getStartVertex().getString(KEY_FIELD));
+            resultPath.put("end_vertex", path.getEndVertex().getString(KEY_FIELD));
+            resultPaths.add(resultPath);
+        }
+        result.put("paths", resultPaths);
+        return result;
+    }
     
     /*
      * STATS
