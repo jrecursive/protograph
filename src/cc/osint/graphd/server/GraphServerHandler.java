@@ -227,7 +227,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             cmd  = request.substring(0, request.indexOf(SPACE)).trim().toLowerCase();
             args = request.substring(request.indexOf(SPACE)).trim().split(SPACE);
         } else {
-            cmd = request;
+            cmd = request.trim().toLowerCase();
             args = new String[0];
         }
         

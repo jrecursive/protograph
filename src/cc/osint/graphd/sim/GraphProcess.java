@@ -42,6 +42,7 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     }
     
     public void kill() throws Exception {
+        beforeKill();
         fiber.dispose();
         log("process: kill: " + name);
     }
@@ -70,4 +71,11 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     protected void emit(String key, String processName, JSONObject msg) throws Exception {
         getGraph().emit(key, processName, msg);
     }
+    
+    
+    
+    //
+    
+    protected abstract void beforeKill();
+    
 }

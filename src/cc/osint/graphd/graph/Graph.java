@@ -55,7 +55,7 @@ public class Graph
     private IndexReader indexReader;
     private Searcher searcher;
     final private RAMDirectory luceneDirectory;
-    final private Analyzer analyzer = new WhitespaceAnalyzer();
+    final private Analyzer analyzer = new KeywordAnalyzer();
     
     /* simulation: process management */
 
@@ -220,7 +220,7 @@ public class Graph
             null != JSONObject.getNames(jo)) {
             for (String k: JSONObject.getNames(jo)) {
                 doc.add(new Field(k, jo.getString(k),
-                        Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
+                        Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
             }
         }
         

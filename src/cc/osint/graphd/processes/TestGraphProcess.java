@@ -21,6 +21,10 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
         log("new TestGraphProcess!");
     }
     
+    protected void beforeKill() {
+        log("beforeKill");
+    }
+    
     public void onMessage(JSONObject msg) {
         try {
             JSONObject visited;
