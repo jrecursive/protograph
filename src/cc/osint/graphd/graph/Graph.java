@@ -24,9 +24,6 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.*;
 import org.apache.lucene.util.Version;
 import org.json.*;
-import cc.osint.graphd.sim.*;
-import cc.osint.graphd.processes.*;
-
 import org.jetlang.channels.*;
 import org.jetlang.core.Callback;
 import org.jetlang.core.Disposable;
@@ -34,6 +31,9 @@ import org.jetlang.core.Filter;
 import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.PoolFiberFactory;
 import org.jetlang.fibers.ThreadFiber;
+import cc.osint.graphd.sim.*;
+import cc.osint.graphd.processes.*;
+import cc.osint.graphd.db.*;
 
 public class Graph 
     implements GraphListener<JSONVertex, JSONEdge>,
@@ -45,9 +45,10 @@ public class Graph
 
     /* graph */
     
+    final private String graphName;
     private ListenableDirectedWeightedGraph<JSONVertex, JSONEdge> gr;
     private ConnectivityInspector<JSONVertex, JSONEdge> connectivityInspector;
-    private ConcurrentHashMap<String, JSONVertex> vertices;
+    final private ConcurrentHashMap<String, JSONVertex> vertices;
     
     /* indexing */
     
@@ -59,19 +60,16 @@ public class Graph
     
     /* simulation: process management */
 
-    ExecutorService executorService;
-    PoolFiberFactory fiberFactory;
-    ProcessGroup<JSONVertex, JSONObject> vertexProcesses;
-    ProcessGroup<JSONEdge, JSONObject> edgeProcesses;
-    ProcessGroup<EventObject, JSONObject> graphProcesses;
+    final ExecutorService executorService;
+    final PoolFiberFactory fiberFactory;
+    final ProcessGroup<JSONVertex, JSONObject> vertexProcesses;
+    final ProcessGroup<JSONEdge, JSONObject> edgeProcesses;
+    final ProcessGroup<EventObject, JSONObject> graphProcesses;
     
     /* simulation: process registry */
-    
-    private IndexWriter p_indexWriter;
-    private IndexReader p_indexReader;
-    private Searcher p_searcher;
-    final private RAMDirectory p_luceneDirectory;
 
+    SQLDB processdb;    
+    
     /* graph object statics */
     
     final public static String TYPE_FIELD = "_type";
@@ -90,11 +88,18 @@ public class Graph
     
     /* graph management */
 
-    public Graph() throws Exception {
+    public Graph(String graphName) throws Exception {
+        this.graphName = graphName;
         gr = new ListenableDirectedWeightedGraph<JSONVertex, JSONEdge>(JSONEdge.class);
         connectivityInspector = new ConnectivityInspector<JSONVertex, JSONEdge>(gr);
         vertices = new ConcurrentHashMap<String, JSONVertex>();
-
+        
+        // event handlers
+        gr.addVertexSetListener(this);
+        gr.addGraphListener(this);
+        gr.addVertexSetListener(connectivityInspector);
+        gr.addGraphListener(connectivityInspector);
+        
         // simulation components
         //executorService = Executors.newCachedThreadPool();
         executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
@@ -104,6 +109,16 @@ public class Graph
                                                      "vertex_processors", 
                                                      executorService,
                                                      fiberFactory);
+        edgeProcesses = 
+            new ProcessGroup<JSONEdge, JSONObject>(this, 
+                                                   "edge_processors", 
+                                                   executorService,
+                                                   fiberFactory);
+        graphProcesses = 
+            new ProcessGroup<EventObject, JSONObject>(this, 
+                                                      "graph_processors", 
+                                                      executorService,
+                                                      fiberFactory);
         
         // graph index
         luceneDirectory = new RAMDirectory();
@@ -114,20 +129,7 @@ public class Graph
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
         
-        // process index
-        p_luceneDirectory = new RAMDirectory();
-        p_indexWriter = new IndexWriter(
-            p_luceneDirectory,
-            new StandardAnalyzer(Version.LUCENE_30),
-            IndexWriter.MaxFieldLength.LIMITED);
-        p_indexReader = p_indexWriter.getReader();
-        p_searcher = new IndexSearcher(p_indexReader);
-        
-        // event handlers
-        gr.addVertexSetListener(this);
-        gr.addGraphListener(this);
-        gr.addVertexSetListener(connectivityInspector);
-        gr.addGraphListener(connectivityInspector);
+        processdb = new SQLDB(this.graphName);
     }
     
     private static String generateKey() throws Exception {
@@ -230,23 +232,7 @@ public class Graph
     }
     
     public void indexProcess(JSONObject jo) throws Exception {
-        if (null == jo ||
-            !jo.has(PID_FIELD)) {
-            throw new Exception("process objects require PID_FIELD '" +
-                PID_FIELD + "'");
-        }
-        
-        Document doc = new Document();
-        if (null != jo &&
-            null != JSONObject.getNames(jo)) {
-            for (String k: JSONObject.getNames(jo)) {
-                doc.add(new Field(k, jo.getString(k),
-                        Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
-            }
-        }
-        
-        p_indexWriter.updateDocument(new Term(PID_FIELD, jo.getString(PID_FIELD)), doc);
-        refreshProcessIndex();
+        // todo: process registry
     }
     
     private void refreshGraphIndex() throws Exception {
@@ -263,26 +249,8 @@ public class Graph
         //log.info("refreshIndex: " + elapsed + "ms");
     }
     
-    private void refreshProcessIndex() throws Exception {
-        long t0 = System.currentTimeMillis();
-        p_indexWriter.commit();
-        IndexReader p_newReader = p_indexReader.reopen();
-        if (p_newReader != p_indexReader) {
-            p_searcher.close();
-            p_indexReader.close();
-            p_indexReader = p_newReader;
-            p_searcher = new IndexSearcher(p_indexReader);
-        }
-        long elapsed = System.currentTimeMillis() - t0;
-        log.info("p_refreshIndex: " + elapsed + "ms");
-    }
-    
     public List<JSONObject> queryGraphIndex(String queryStr) throws Exception {
         return query(searcher, queryStr);
-    }
-    
-    public List<JSONObject> queryProcessIndex(String queryStr) throws Exception {
-        return query(p_searcher, queryStr);
     }
     
     public List<JSONObject> query(Searcher indexSearcher, String queryStr) throws Exception {

@@ -205,7 +205,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 rsb.append(GraphServerProtocol.R_ERR);
                 rsb.append(" DB_ALREADY_EXISTS");
             } else {
-                Graph newGraph = new Graph();
+                Graph newGraph = new Graph(args[0]);
                 nameGraphMap.put(args[0], newGraph);
                 WeakReference<Graph> graphRef = 
                     new WeakReference<Graph>(newGraph);

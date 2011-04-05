@@ -137,6 +137,11 @@ public class GraphCommandExecutor implements Runnable {
             }
             return GraphServerProtocol.R_BATCH_OK;
         }
+        
+        /*
+         * graph commands
+         *
+        */
             
         // CREATE VERTEX: cvert <key> <json>
         if (cmd.equals(GraphServerProtocol.CMD_CVERT)) {
@@ -260,6 +265,8 @@ public class GraphCommandExecutor implements Runnable {
         // QUERY PROCESSES: qp <query>
         } else if (cmd.equals(GraphServerProtocol.CMD_QP)) {
             String q = request.substring(request.indexOf(GraphServerProtocol.SPACE)).trim(); // remainder of line past "qp "
+            
+            /*
             List<JSONObject> results = gr.queryProcessIndex(q);
             JSONArray ja = new JSONArray();
             for(JSONObject jo: results) {
@@ -271,6 +278,7 @@ public class GraphCommandExecutor implements Runnable {
             rsb.append(prepareResult(res));
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
+            */
         
         // DIJKSTRA SHORTEST PATH: spath <from> <to> <radius>
         } else if (cmd.equals(GraphServerProtocol.CMD_SPATH)) {
