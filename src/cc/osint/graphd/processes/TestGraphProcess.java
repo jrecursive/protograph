@@ -18,14 +18,26 @@ import cc.osint.graphd.sim.*;
 public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
     
     public TestGraphProcess() {
-        log("new TestGraphProcess!");
+        //log("new TestGraphProcess!");
     }
     
     protected void beforeKill() {
         log("beforeKill");
     }
     
-    public void onMessage(JSONObject msg) {
+    protected void beforeRemoveVertex() {
+        log("beforeRemoveVertex");
+    }
+    
+    protected void beforeRemoveEdge() {
+        log("beforeRemoveEdge");
+    }
+    
+    protected void afterRemoveEdge() {
+        log("afterRemoveEdge");
+    }
+    
+    public void message(JSONObject msg) {
         try {
             JSONObject visited;
             if (!msg.has("visited")) {

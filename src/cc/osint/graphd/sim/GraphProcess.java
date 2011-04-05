@@ -77,8 +77,16 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
         getGraph().emit(key, processName, msg);
     }
     
+    public void onMessage(M msg) {
+        message(msg);
+    }
+    
     //
     
     protected abstract void beforeKill();
+    protected abstract void beforeRemoveVertex();
+    protected abstract void beforeRemoveEdge();
+    protected abstract void afterRemoveEdge();
+    protected abstract void message(M msg);
     
 }
