@@ -128,7 +128,12 @@ public class GraphCommandExecutor implements Runnable {
                             batchRequest,
                             batchCmd,
                             batchArgs);
-                responseChannel.write(batchCmdResponse.trim() + GraphServerProtocol.NL);
+                String responseParts[] = batchCmdResponse.split(GraphServerProtocol.NL);
+                for(String responsePart: responseParts) {
+                    if (responsePart.charAt(0) != '-') {
+                        responseChannel.write(responsePart.trim() + GraphServerProtocol.NL);
+                    }
+                }
             }
             return GraphServerProtocol.R_BATCH_OK;
         }
