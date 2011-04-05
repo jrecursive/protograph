@@ -42,7 +42,8 @@ public class GraphCommandExecutor implements Runnable {
                 }
                 long requestTimeStart = System.currentTimeMillis();
                 response = 
-                    execute(graphCommand.clientId,
+                    execute(graphCommand.responseChannel,
+                            graphCommand.clientId,
                             graphCommand.clientState,
                             graphCommand.request,
                             graphCommand.cmd,
@@ -57,7 +58,8 @@ public class GraphCommandExecutor implements Runnable {
         }
     }
     
-    protected String execute(String clientId, 
+    protected String execute(Channel responseChannel,
+                             String clientId, 
                              ConcurrentHashMap<String, String> clientState, 
                              String request, 
                              String cmd, 
@@ -72,13 +74,9 @@ public class GraphCommandExecutor implements Runnable {
             rsb.append(" REQUIRE_USE_DB");
             return rsb.toString();
         }
-            
-        //String cldb = clientState.get(GraphServerHandler.ST_DB);
-        //Graph gr = dbs.get(cldb);
         
         Graph gr = graphRef.get();
         if (null == gr) {
-            // theoretically this should never happen
             GraphCommand killCmd = new GraphCommand();
             killCmd.poisonPill = true;
             graphCommandQueue.clear();
@@ -86,14 +84,57 @@ public class GraphCommandExecutor implements Runnable {
             return GraphServerProtocol.R_ERR + GraphServerProtocol.SPACE + " GRAPH_NO_LONGER_EXISTS :queue cleared & poison pill sent";
         }
         
-        // OBJECT EXISTS: exists <key>
-        if (cmd.equals(GraphServerProtocol.CMD_EXISTS)) {
-            String key = args[0];
-            rsb.append("" + gr.exists(key));
-            rsb.append(GraphServerProtocol.R_OK);
-        
+        /*
+         * handle dynamic <<query>> expansion, replacement & execution, e.g.
+         * 
+         *   [...] <<_type:v _key:m*>> [...]
+         *
+         * TODO: take the responseChannel direct-send hack out of this and think about
+         *  how to either queue the commands (& add an "echo-batch-ok" or equiv to the tail to
+         *  signify end of the batched command execution) or move this up to the thread loop?
+         *
+        */
+        if (request.indexOf("<<") != -1 &&
+            request.indexOf(">>") != -1) {
+            String query = request.substring(request.indexOf("<<")+2,
+                                             request.indexOf(">>"));
+            String prefix = request.substring(0, request.indexOf("<<")).trim();
+            String suffix = request.substring(request.indexOf(">>")+2).trim();
+            log.info("executing selector: [" + prefix + "] " + query + " [" + suffix + "]:");
+            List<JSONObject> selectorResults = gr.queryGraphIndex(query);
+            for(JSONObject selectorResult: selectorResults) {
+                String batchRequestKey = selectorResult.getString(Graph.KEY_FIELD);
+                String batchRequest = 
+                    prefix + " " +
+                    batchRequestKey + " " +
+                    suffix;
+                String batchCmd;
+                String[] batchArgs;
+                
+                if (batchRequest.indexOf(GraphServerProtocol.SPACE) != -1) {
+                    batchCmd = batchRequest.substring(0, 
+                        batchRequest.indexOf(GraphServerProtocol.SPACE)).trim().toLowerCase();
+                    batchArgs = batchRequest.substring(
+                        batchRequest.indexOf(GraphServerProtocol.SPACE)).trim().split(GraphServerProtocol.SPACE);
+                } else {
+                    batchCmd = batchRequest.trim().toLowerCase();
+                    batchArgs = new String[0];
+                }
+                    
+                String batchCmdResponse =
+                    execute(responseChannel,
+                            clientId, 
+                            clientState, 
+                            batchRequest,
+                            batchCmd,
+                            batchArgs);
+                responseChannel.write(batchCmdResponse.trim() + GraphServerProtocol.NL);
+            }
+            return GraphServerProtocol.R_BATCH_OK;
+        }
+            
         // CREATE VERTEX: cvert <key> <json>
-        } else if (cmd.equals(GraphServerProtocol.CMD_CVERT)) {
+        if (cmd.equals(GraphServerProtocol.CMD_CVERT)) {
             String key = args[0];
             String json = request.substring(request.indexOf(GraphServerProtocol.SPACE + key) +
                 (key.length()+1)).trim(); // remainder of line
@@ -178,6 +219,12 @@ public class GraphCommandExecutor implements Runnable {
                 }
             }
 
+        // OBJECT EXISTS: exists <key>
+        } else if (cmd.equals(GraphServerProtocol.CMD_EXISTS)) {
+            String key = args[0];
+            rsb.append(gr.exists(key) + " " + key);
+            rsb.append(GraphServerProtocol.R_OK);
+        
         // GET OBJECT: get <key>
         } else if (cmd.equals(GraphServerProtocol.CMD_GET)) {
             String key = args[0];

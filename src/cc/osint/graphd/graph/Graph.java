@@ -289,6 +289,7 @@ public class Graph
         long start_t = System.currentTimeMillis();
         final List<JSONObject> results = new ArrayList<JSONObject>();
         QueryParser qp = new QueryParser(Version.LUCENE_30, KEY_FIELD, analyzer);
+        qp.setDefaultOperator(org.apache.lucene.queryParser.QueryParser.Operator.AND);
         qp.setAllowLeadingWildcard(true);
         Query query = qp.parse(queryStr);
         org.apache.lucene.search.Filter filter = 

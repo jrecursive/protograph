@@ -63,6 +63,7 @@ public class GraphServerProtocol {
     final protected static String R_UNKNOWN_OBJECT_TYPE = 
                                     " unknown_object_type"; // should theoretically never happen; if a get(key)
                                                             //   returns anything other than edge or vertex
+    final protected static String R_BATCH_OK = "-batch-ok";    // response at the end of a selector-driven batch of responses
     
     /* protocol misc */
     
