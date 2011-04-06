@@ -621,7 +621,12 @@ public class GraphCommandExecutor implements Runnable {
         } else if (cmd.equals(GraphServerProtocol.CMD_SPROC)) {
             String objKey = args[0];
             String udfKey = args[1];
-            String processName = args[2];
+            String processName;
+            if (args.length == 3) {
+                processName = args[2];
+            } else {
+                processName = objKey + "-" + udfKey;
+            }
             gr.startProcess(objKey, udfKey, processName);
             rsb.append(GraphServerProtocol.R_OK);
         

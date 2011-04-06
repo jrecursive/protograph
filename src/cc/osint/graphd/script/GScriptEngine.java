@@ -51,7 +51,6 @@ public class GScriptEngine {
     }
     
     public Object invoke(String fn, Object... args) throws Exception {
-        //log.info("invoke(" + fn + ", " + args + ")");
         return invocableEngine.invokeFunction(fn, args);
     }
     
@@ -70,6 +69,10 @@ public class GScriptEngine {
 	
 	public String getVMType() {
 	   return this.vmType;
+    }
+    
+    public ScriptEngine getScriptEngine() {
+        return engine;
     }
 	
     public void dumpScriptEngines() throws Exception {
@@ -94,117 +97,6 @@ public class GScriptEngine {
             
             System.out.printf("\tLanguage: %s (%s)\n", 
                 langName, langVersion);
-        }
-    }
-    
-    public void test() throws Exception {
-        
-        //
-        // list available script engines
-        //
-        dumpScriptEngines();
-
-        ScriptEngineManager manager = new ScriptEngineManager();
-        
-        //
-        // quercus/php
-        //
-		
-		/*
-		log.info("\n* testing quercus/php");
-		ScriptEngine engine = manager.getEngineByName("quercus");
-		System.out.println("1 + 1: " + engine.eval("<?php return 1 + 1; ?>"));
-		*/
-				
-		//
-		// rhino/js
-		//
-		log.info("\n* testing rhino/js");
-		engine = manager.getEngineByName("rhino");
-		/*
-		 * or, alternatively:
-		 *    engine = manager.getEngineByExtension("js");
-		 *
-        	*/
-		engine.eval("print('1 + 1: ' + (1+1));");
-		
-		//
-		// define a function in a rhino/js engine &
-		//  subsequently call it from java code
-		//
-		log.info("\n* testing invocableEngine with rhino/js");
-        engine.eval("function twogirls() {\n" +
-                "\tprint('from javascript: twogirls() -> One cup!');\n" +
-                "}\n");
-        Invocable invocableEngine = (Invocable) engine;
-        invocableEngine.invokeFunction("twogirls");
-        
-        List<String> namesList = new ArrayList<String>();
-        namesList.add("Zed");
-        
-        engine.eval("function printNames1(namesList) {" +
-                  "  var x;" +
-                  "  var names = namesList.toArray();" +
-                  "  for(x in names) {" +
-                  "    print(names[x] + '\\n');" +
-                  "  }" +
-                  "}" +
-
-                  "function addName(namesList, name) {" +
-                  "  namesList.add(name);" +
-                  "}");
-        
-        log.info("\n>> calling printNames1(namesList) via invokeFunction: ");
-        invocableEngine.invokeFunction("printNames1", namesList);
-        
-        log.info("\n>> calling addName(namesList, 'Dirk Diggler') via invokeFunction: ");
-        invocableEngine.invokeFunction("addName", namesList, "Dirk Diggler");
-        
-        log.info("\n>> calling printNames1(namesList) via invokeFunction: ");
-        invocableEngine.invokeFunction("printNames1", namesList);
-        
-        //
-        // read javascript from a file & execute it
-        //
-        /*
-        log.info("\n* running file (resource) /vm/bootstrap.js as a stream w/ rhino/js");
-        test_runjs("/vm/bootstrap.js");
-        */
-        
-        //
-        // access java objects from script
-        //
-        log.info("\n* create a java list and access it from script, iterating / printing it, then adding one");
-        namesList = new ArrayList<String>();
-        namesList.add("Jill");
-        namesList.add("Bob");
-        namesList.add("Laureen");
-        namesList.add("Ed");
-        
-        engine.put("namesListKey", namesList);
-        engine.eval("var x;" +
-                  "var names = namesListKey.toArray();" +
-                  "for(x in names) {" +
-                  "  print('from script: ' + names[x] + '\\n');" +
-                  "}" +
-                  "namesListKey.add(\"Dana\");");
-        
-        log.info("\n* print the now modified list from java:");
-        for (String name: namesList) {
-            System.out.println("from java: " + name);
-        }
-    }
-
-    public void test_runjs(String fn) throws Exception {
-        ScriptEngineManager engineMgr = new ScriptEngineManager();
-        ScriptEngine engine = engineMgr.getEngineByName("js");
-        InputStream is = 
-            this.getClass().getResourceAsStream(fn);
-        try {
-            Reader reader = new InputStreamReader(is);
-            engine.eval(reader);
-        } catch (ScriptException ex) {
-            ex.printStackTrace();
         }
     }
 }

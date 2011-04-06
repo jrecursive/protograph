@@ -165,18 +165,13 @@ public class Graph
     public void defineUDF(String udfKey,
                           String udfType,
                           String udfURL) throws Exception {
+        processdb.update("DELETE FROM udfs WHERE udf_key = " +
+            "'" + udfKey + "' AND udf_type = " +
+            "'" + udfType + "'");
         processdb.update("INSERT INTO udfs (udf_key, udf_type, udf_url) VALUES (" +
             "'" + udfKey + "', " +
             "'" + udfType + "', " +
             "'" + udfURL + "')");
-        processdb.update("COMMIT");
-        
-        /*
-        log.info("defineUDF(" +
-            udfKey + ", " + 
-            udfType + ", " + 
-            udfURL + ")");
-        */
     }
     
     public JSONObject getUDFDef(String udfKey) throws Exception {
@@ -224,16 +219,15 @@ public class Graph
             // vertex-process, javascript source
             } else if (udfType.equals("js") ||
                        udfType.equals("javascript")) {
-                       
                 log.info("loading javascript source: " + udfURL);
                 
                 // get vm
                 GScriptEngine scriptEngine = 
-                    vertexProcesses.getScriptEngine("rhino", "udfs/vm_init.js");
+                    vertexProcesses.getScriptEngine("rhino", "udfs/js/vm_init.js");
                 
                 //  check for object in js vm
-                boolean udfExists = (Boolean) scriptEngine.eval("_udf_exists(\"" + udfKey + "\");");
-
+                boolean udfExists = (Boolean) scriptEngine.invoke("_udf_exists", udfKey);
+                
                 //  if doesn't exist:   get script from url
                 //                      eval in engine
                 if (!udfExists) {
@@ -242,14 +236,11 @@ public class Graph
                 }
                 
                 //  create instance of js udf -> pid via "processes['<pid>'] = new [...]"
-                scriptEngine.eval("_udf_instance(\"" + udfKey + "\", \"" + pid + "\");");
-                
-                //  call constructor of instance @ <pid>
-                scriptEngine.eval("_processes[\"" + pid + "\"].constructor();");
-                
-                //  start via vertexProcesses ProcessGroup
                 JavascriptProcess<JSONVertex> jsProcess = 
                     new JavascriptProcess<JSONVertex>(udfKey, pid, scriptEngine);
+                scriptEngine.invoke("_udf_instance", udfKey, pid, jsProcess);
+                
+                //  start via vertexProcesses ProcessGroup
                 vertexProcesses.start(internalName,
                                       jv,
                                       jsProcess);

@@ -21,6 +21,7 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
     private String pid;
     private GScriptEngine scriptEngine;
     private JSONObject udfDef;
+    private ConcurrentHashMap<String, Object> stateMap;
     
     public JavascriptProcess(String key,
                              String pid,
@@ -28,6 +29,7 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
         this.scriptEngine = scriptEngine;
         this.udfDef = udfDef;
         this.pid = pid;
+        stateMap = new ConcurrentHashMap<String, Object>();
     }
     
     protected void beforeKill() {
@@ -62,7 +64,9 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
         try {
             //log("JavascriptProcess: " + pid + ": " + msg.toString());
             // execute function
-            scriptEngine.invoke("_udf_call", pid, "message", msg);
+            Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+            scriptEngine.invoke("_udf_call", pid, "message", msgObj);
+            log("stateMap = " + stateMap.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
             try {
@@ -81,4 +85,22 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
             }
         }
     }
+    
+    public String getPid() {
+        return pid;
+    }
+    
+    public JSONObject getUDFDef() {
+        return udfDef;
+    }
+    
+    public ConcurrentHashMap<String, Object> getState() throws Exception {
+        return stateMap;
+    }
+    
+    @Override
+    public void emit(String key, String processName, JSONObject msg) throws Exception {
+        getGraph().emit(key, processName, msg);
+    }
+
 }

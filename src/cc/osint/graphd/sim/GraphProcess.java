@@ -64,7 +64,7 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
         return name;
     }
     
-    protected void log(String s) {
+    public void log(String s) {
         try {
             Thread t = Thread.currentThread();
             System.out.println(t.getId() + ": " + name + ": " + s);

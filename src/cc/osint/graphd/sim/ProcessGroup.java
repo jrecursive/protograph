@@ -89,6 +89,7 @@ public class ProcessGroup<T, M> {
             scriptEngine = new GScriptEngine(name + "-" + type, type);
             if (initFile != null) {
                 log.info("scriptEngine = " + scriptEngine);
+                scriptEngine.getScriptEngine().put("_udf_script_engine_", scriptEngine);
                 scriptEngine.evalScript(initFile);
             }
             scriptEngineMap.put(type, scriptEngine);
