@@ -13,6 +13,7 @@ public class GraphServerProtocol {
     final protected static String CMD_SSTAT = "sstat";        // dump server status (debug)
     final protected static String CMD_GSTAT = "gstat";        // dump graph status (debug)
     final protected static String CMD_LISTG = "listg";        // list names of graphs
+    final protected static String CMD_EXEC = "exec";          // execute a file of commands
     
     /* vertex, edge management, querying, attributes */
     

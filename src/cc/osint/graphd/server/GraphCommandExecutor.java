@@ -142,7 +142,7 @@ public class GraphCommandExecutor implements Runnable {
          * graph commands
          *
         */
-            
+        
         // CREATE VERTEX: cvert <key> <json>
         if (cmd.equals(GraphServerProtocol.CMD_CVERT)) {
             String key = args[0];

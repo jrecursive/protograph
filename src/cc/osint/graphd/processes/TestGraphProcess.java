@@ -25,15 +25,15 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
         log("beforeKill");
     }
     
-    protected void beforeRemoveVertex() {
+    protected void beforeRemoveVertex(JSONVertex vertex) {
         log("beforeRemoveVertex");
     }
     
-    protected void beforeRemoveEdge() {
+    protected void beforeRemoveEdge(JSONEdge edge) {
         log("beforeRemoveEdge");
     }
     
-    protected void afterRemoveEdge() {
+    protected void afterRemoveEdge(JSONEdge edge) {
         log("afterRemoveEdge");
     }
     

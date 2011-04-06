@@ -77,4 +77,23 @@ public class ProcessGroup<T, M> {
         processMap.get(name).publish(msg);
     }
     
+    public GScriptEngine getScriptEngine(String type) throws Exception {
+        return getScriptEngine(type, null);
+    }
+    
+    public GScriptEngine getScriptEngine(String type, String initFile) 
+        throws Exception {
+        GScriptEngine scriptEngine = scriptEngineMap.get(type);
+        if (scriptEngine == null) {
+            log.info("starting GScriptEngine(" + type + ")");
+            scriptEngine = new GScriptEngine(name + "-" + type, type);
+            if (initFile != null) {
+                log.info("scriptEngine = " + scriptEngine);
+                scriptEngine.evalScript(initFile);
+            }
+            scriptEngineMap.put(type, scriptEngine);
+        }
+        return scriptEngine;
+    }
+    
 }

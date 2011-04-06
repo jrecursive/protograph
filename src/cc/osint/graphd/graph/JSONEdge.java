@@ -57,6 +57,10 @@ public class JSONEdge<V>
         return data.getString(k);
     }
     
+    public String getKey() throws Exception {
+        return data.getString(Graph.KEY_FIELD);
+    }
+    
     public void put(String k, String v) throws Exception {
         data.put(k, v);
     }

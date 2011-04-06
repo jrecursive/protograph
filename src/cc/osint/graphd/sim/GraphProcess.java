@@ -84,9 +84,9 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     //
     
     protected abstract void beforeKill();
-    protected abstract void beforeRemoveVertex();
-    protected abstract void beforeRemoveEdge();
-    protected abstract void afterRemoveEdge();
+    protected abstract void beforeRemoveVertex(JSONVertex vertex);
+    protected abstract void beforeRemoveEdge(JSONEdge edge);
+    protected abstract void afterRemoveEdge(JSONEdge edge);
     protected abstract void message(M msg);
     
 }

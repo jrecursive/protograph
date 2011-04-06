@@ -171,10 +171,12 @@ public class Graph
             "'" + udfURL + "')");
         processdb.update("COMMIT");
         
+        /*
         log.info("defineUDF(" +
             udfKey + ", " + 
             udfType + ", " + 
             udfURL + ")");
+        */
     }
     
     public JSONObject getUDFDef(String udfKey) throws Exception {
@@ -205,7 +207,6 @@ public class Graph
         _type = obj.getString(TYPE_FIELD);
         
         JSONObject udfDef = getUDFDef(udfKey);
-        log.info("udfDef = " + udfDef.toString(4));
         String udfType = udfDef.getString("udf_type");
         String udfURL = udfDef.getString("udf_url");
         String internalName = key + "-" + processName;
@@ -214,6 +215,7 @@ public class Graph
             log.info("start(" + pid + ", " +
                      internalName + ", " +
                      key + ", ...)");
+            JSONVertex jv = getVertex(key);
             
             // vertex-process, explicit (existing) java class
             if (udfType.equals("java")) {
@@ -225,6 +227,32 @@ public class Graph
                        
                 log.info("loading javascript source: " + udfURL);
                 
+                // get vm
+                GScriptEngine scriptEngine = 
+                    vertexProcesses.getScriptEngine("rhino", "udfs/vm_init.js");
+                
+                //  check for object in js vm
+                boolean udfExists = (Boolean) scriptEngine.eval("_udf_exists(\"" + udfKey + "\");");
+
+                //  if doesn't exist:   get script from url
+                //                      eval in engine
+                if (!udfExists) {
+                    log.info("loading udf: " + udfURL);
+                    scriptEngine.evalScript(udfURL);
+                }
+                
+                //  create instance of js udf -> pid via "processes['<pid>'] = new [...]"
+                scriptEngine.eval("_udf_instance(\"" + udfKey + "\", \"" + pid + "\");");
+                
+                //  call constructor of instance @ <pid>
+                scriptEngine.eval("_processes[\"" + pid + "\"].constructor();");
+                
+                //  start via vertexProcesses ProcessGroup
+                JavascriptProcess<JSONVertex> jsProcess = 
+                    new JavascriptProcess<JSONVertex>(udfKey, pid, scriptEngine);
+                vertexProcesses.start(internalName,
+                                      jv,
+                                      jsProcess);
             } else {
                 
                 throw new Exception("unsupported vertex udf type: " + udfType);

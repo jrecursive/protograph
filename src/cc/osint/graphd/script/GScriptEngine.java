@@ -8,6 +8,7 @@ import java.util.concurrent.*;
 import javax.script.*;
 import org.apache.log4j.Logger;
 import org.json.*;
+import cc.osint.graphd.util.*;
 
 public class GScriptEngine {
     static Logger log = Logger.getLogger(GScriptEngine.class);
@@ -21,25 +22,17 @@ public class GScriptEngine {
     ScriptEngine engine = null;
     Invocable invocableEngine = null;
     
-	public GScriptEngine() throws Exception {
-		log.info("GScriptEngine: constructor");
-	}
-	
 	public GScriptEngine(String vm, String vm_type) throws Exception {
         this.vmName = vm;
         this.vmType = vm_type;
-        
-        log.info("GScriptEngine!");
-        //this.dumpScriptEngines();
-        
         log.info("new GScriptEngine(" + vm + ", " + vm_type + ")");
-        log.info("creating script engine [" + this.vmType + "]");
         manager = new ScriptEngineManager();
         engine = manager.getEngineByName(this.vmType);
         try {
             invocableEngine = (Invocable) engine;
             onlyEval = false;
         } catch(Exception ex) {
+            ex.printStackTrace();
             invocableEngine = null;
             onlyEval = true;
         }
@@ -58,7 +51,7 @@ public class GScriptEngine {
     }
     
     public Object invoke(String fn, Object... args) throws Exception {
-        log.info("invoke(" + fn + ", " + args + ")");
+        //log.info("invoke(" + fn + ", " + args + ")");
         return invocableEngine.invokeFunction(fn, args);
     }
     
@@ -67,10 +60,8 @@ public class GScriptEngine {
     }
     
     public Object evalScript(String fn) throws Exception {
-        InputStream is = 
-            this.getClass().getResourceAsStream(fn);
-        Reader reader = new InputStreamReader(is);
-        return engine.eval(reader);
+        File file = new File(fn);
+        return engine.eval(TextFile.get(file.getCanonicalPath()));
     }
 
     public String getVMName() {
@@ -216,14 +207,5 @@ public class GScriptEngine {
             ex.printStackTrace();
         }
     }
-
-	public static void main(String args[]) throws Exception {
-        try {
-            GScriptEngine f = new GScriptEngine();
-            f.test();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-	}
 }
 
