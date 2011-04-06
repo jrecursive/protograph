@@ -102,5 +102,8 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
     public void emit(String key, String processName, JSONObject msg) throws Exception {
         getGraph().emit(key, processName, msg);
     }
-
+    
+    public long nanoTime() {
+        return System.nanoTime();
+    }
 }

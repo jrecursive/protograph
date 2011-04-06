@@ -1,8 +1,6 @@
 
 TestJSGraphProcess = function(_process) {
     this._process = _process;
-    log("TestJSGraphProcess constructor: _process = " + _process);
-    log("TestJSGraphProcess constructor: " + _process.getPid());
 
     this.beforeKill = function() {
         log(this._process.getPid() + ": beforeKill");
@@ -13,22 +11,33 @@ TestJSGraphProcess = function(_process) {
     };
             
     this.beforeRemoveEdge = function(edge) {
-        log(this._process.getPid() + ": beforeRemoveVertex");
+        log(this._process.getPid() + ": beforeRemoveEdge");
     };
             
     this.afterRemoveEdge = function(edge) {
-        log(this._process.getPid() + ": beforeRemoveVertex");
+        log(this._process.getPid() + ": afterRemoveEdge");
     };
             
     this.message = function(msg) {
-        //log("Graph.KEY_FIELD = " + Packages.cc.osint.graphd.graph.Graph.KEY_FIELD);
-        log("this._process = " + this._process);
-        log("msg = " + msg.toString());
-        log("msg.visited = " + msg.visited);
-        if (this._process.getContext().get("_key") != "v2") {
-            _emit(_process, "v2", "v2-proc", {"visited": ["v1"]});
-        } else {
-            log("i am v2");
+        var _key = this._process.getContext().get("_key");
+        if (!msg.visited) msg.visited = {};
+        if (msg.visited[_key]) return;
+        msg.visited[_key] = _process.nanoTime();
+        var sent = 0;
+        var neighbors = _process.getGraph().getOutgoingNeighborsOf(_process.getContext()).toArray();
+        for (var i=0; i<neighbors.length; i++) {
+            var vertex = neighbors[i];
+            log("vertex = " + vertex);
+            if (!msg.visited[vertex.get("_key")]) {
+                _emit(_process, vertex.getKey(), vertex.getKey() + "-proc", msg);
+                msg.visited[vertex.getKey()] = _process.nanoTime();
+                sent++;
+            }
+        }
+        if (sent == 0) {
+            log(this._process.getPid() + ": " +
+                _key + 
+                ": endpoint: " + TAFFY.JSON.stringify(msg.visited));
         }
     };
     
