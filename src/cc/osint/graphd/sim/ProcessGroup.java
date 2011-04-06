@@ -13,6 +13,7 @@ import org.jetlang.fibers.Fiber;
 import org.jetlang.fibers.PoolFiberFactory;
 import org.jetlang.fibers.ThreadFiber;
 import cc.osint.graphd.graph.*;
+import cc.osint.graphd.script.*;
 
 public class ProcessGroup<T, M> {
     static Logger log = Logger.getLogger(ProcessGroup.class);
@@ -22,6 +23,7 @@ public class ProcessGroup<T, M> {
     private ExecutorService executorService;
     private PoolFiberFactory fiberFactory;
     private WeakReference<Graph> graphRef;
+    private ConcurrentHashMap<String, GScriptEngine> scriptEngineMap;
     
     public ProcessGroup(Graph graph,
                         String name,
@@ -32,6 +34,7 @@ public class ProcessGroup<T, M> {
         processMap = new ConcurrentHashMap<String, GraphProcess<T,M>>();
         this.executorService = executorService;
         this.fiberFactory = fiberFactory;
+        scriptEngineMap = new ConcurrentHashMap<String, GScriptEngine>();
         log.info("process group instantiated: " + name);
     }
     

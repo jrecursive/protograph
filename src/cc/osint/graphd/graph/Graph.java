@@ -34,6 +34,7 @@ import org.jetlang.fibers.ThreadFiber;
 import cc.osint.graphd.sim.*;
 import cc.osint.graphd.processes.*;
 import cc.osint.graphd.db.*;
+import cc.osint.graphd.script.*;
 
 public class Graph 
     implements GraphListener<JSONVertex, JSONEdge>,
@@ -82,9 +83,9 @@ public class Graph
     final public static String VERTEX_TYPE = "v";
     final public static String EDGE_TYPE = "e";
     
-    /* process object statics */
+    /* UDF/process statics */
     
-    final public static String PID_FIELD = "_pid";
+    final public static String UDF_TYPE_JS = "js";
     
     /* graph management */
 
@@ -129,11 +130,124 @@ public class Graph
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
         
+        // process registry
         processdb = new SQLDB(this.graphName);
+        try {
+            processdb.update("CREATE TABLE processes (" +
+                "id INTEGER IDENTITY, " +
+                "pid VARCHAR(256), " +           // system-assigned process id
+                "process_key VARCHAR(256), " +   // user-supplied process key for instance of udf
+                "udf_key VARCHAR(256), " +       // internal key for udf data (see table udfs)
+                "obj_type VARCHAR(10), " +       // e.g. "e" (edge), "v" (vertex), "e" (event), ...
+                "obj_key VARCHAR(1024) " +       // e.g. "root", "FRA", ... 
+                ")");
+            
+            processdb.update("CREATE TABLE udfs (" +
+                "id INTEGER IDENTITY, " +
+                "udf_key VARCHAR(256), " +       // user-specified unique key for this udf
+                "udf_type VARCHAR(256), " +      // "javascript", "php", "jruby", etc..
+                "udf_url VARCHAR(1024) " +       // either code or bytecode, depending on udf_type impl
+                ")");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
     
     private static String generateKey() throws Exception {
         return UUID.randomUUID().toString();
+    }
+    
+    //
+    // UDF management
+    //
+    
+    public void defineUDF(String udfKey,
+                          String udfType,
+                          String udfURL) throws Exception {
+        processdb.update("INSERT INTO udfs (udf_key, udf_type, udf_url) VALUES (" +
+            "'" + udfKey + "', " +
+            "'" + udfType + "', " +
+            "'" + udfURL + "')");
+        processdb.update("COMMIT");
+        
+        log.info("defineUDF(" +
+            udfKey + ", " + 
+            udfType + ", " + 
+            udfURL + ")");
+    }
+    
+    public JSONObject getUDFDef(String udfKey) throws Exception {
+        return processdb.query("SELECT udf_key, udf_type, udf_url FROM udfs WHERE " +
+                                         "udf_key = '" + udfKey + "'")
+                        .getJSONArray("results")
+                        .getJSONObject(0);
+    }
+    
+    public JSONObject queryUDFs(String query) throws Exception {
+        return processdb.query(query);
+    }
+    
+    //
+    // process management
+    //
+    
+    public void startProcess(String key, 
+                             String udfKey,
+                             String processName) throws Exception {
+        String pid = generateKey();
+        String _type;
+        JSONObject obj = get(key);
+        if (obj == null ||
+            !obj.has(TYPE_FIELD)) {
+            throw new Exception("unknown object at key " + key);
+        }
+        _type = obj.getString(TYPE_FIELD);
+        
+        JSONObject udfDef = getUDFDef(udfKey);
+        log.info("udfDef = " + udfDef.toString(4));
+        String udfType = udfDef.getString("udf_type");
+        String udfURL = udfDef.getString("udf_url");
+        String internalName = key + "-" + processName;
+        
+        if (_type.equals(VERTEX_TYPE)) {
+            log.info("start(" + pid + ", " +
+                     internalName + ", " +
+                     key + ", ...)");
+            
+            // vertex-process, explicit (existing) java class
+            if (udfType.equals("java")) {
+                log.info("reflecting java class: " + udfURL);
+                
+            // vertex-process, javascript source
+            } else if (udfType.equals("js") ||
+                       udfType.equals("javascript")) {
+                       
+                log.info("loading javascript source: " + udfURL);
+                
+            } else {
+                
+                throw new Exception("unsupported vertex udf type: " + udfType);
+            }
+            
+            /*
+            JSONVertex jv = getVertex(key);
+            vertexProcesses.start(pid,
+                                  key + "-" + processName,
+                                  jv,
+                                  vertexProcessor);
+            */
+        /*
+        } else if (_type.equals(EDGE_TYPE)) {
+            JSONEdge je = getEdge(key);
+            edgeProcesses.start(pid,
+                                key + "-" + processName,
+                                je,
+                                edgeProcessor);
+        */
+        } else {
+            throw new Exception("object type '" + _type + "' not implemented [" + key + "]");
+        }
     }
     
     public void emit(String key, String processName, JSONObject msg) 
@@ -167,6 +281,10 @@ public class Graph
             throw new Exception("unknown object " + TYPE_FIELD + "!");
         }
     }
+    
+    //
+    // graph manipulation
+    //
 
     public String addVertex(JSONObject jo) throws Exception {
         return addVertex(generateKey(), jo);
@@ -177,19 +295,6 @@ public class Graph
         gr.addVertex(jv);
         vertices.put(key, jv);
         indexObject(key, VERTEX_TYPE, jo);
-        
-        // XXX TESTING
-        //
-        // TODO: index by key : processName : className : ... ?
-        //
-        //log.info("starting process...");
-        vertexProcesses.start(key + "-testGraphProcess",
-                              jv,
-                              new TestGraphProcess());
-        //log.info("process started");
-        
-        // ^ TODO: process indexing
-        
         return key;
     }
     
@@ -229,10 +334,6 @@ public class Graph
         
         indexWriter.updateDocument(new Term(KEY_FIELD, key), doc);
         refreshGraphIndex();
-    }
-    
-    public void indexProcess(JSONObject jo) throws Exception {
-        // todo: process registry
     }
     
     private void refreshGraphIndex() throws Exception {

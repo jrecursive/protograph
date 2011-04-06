@@ -603,6 +603,28 @@ public class GraphCommandExecutor implements Runnable {
          * SIMULATION
         */
         
+        } else if (cmd.equals(GraphServerProtocol.CMD_UDFQ)) {
+            String sql = request.substring(request.indexOf(GraphServerProtocol.SPACE)+1);
+            rsb.append(gr.queryUDFs(sql).toString(4));
+            rsb.append(GraphServerProtocol.NL);
+            rsb.append(GraphServerProtocol.R_OK);
+        
+        // DEFINE A UDF
+        } else if (cmd.equals(GraphServerProtocol.CMD_DEFINE_UDF)) {
+            String udfKey = args[0];
+            String udfType = args[1];
+            String udfURL = args[2];
+            gr.defineUDF(udfKey, udfType, udfURL);
+            rsb.append(GraphServerProtocol.R_OK);
+            
+        // START A UDF-BACKED PROCESS
+        } else if (cmd.equals(GraphServerProtocol.CMD_SPROC)) {
+            String objKey = args[0];
+            String udfKey = args[1];
+            String processName = args[2];
+            gr.startProcess(objKey, udfKey, processName);
+            rsb.append(GraphServerProtocol.R_OK);
+        
         // EMIT A MESSAGE TO A RUNNING SIMULATION PROCESS: emit <key> <process_name> <json_msg>
         } else if (cmd.equals(GraphServerProtocol.CMD_EMIT)) {
             String key = args[0];

@@ -50,7 +50,10 @@ public class GraphServerProtocol {
     
     /* simulation */
     
-    final protected static String CMD_EMIT = "emit";          // emit a message to a running process
+    final protected static String CMD_UDFQ = "udfq";                // query internal udf definitions
+    final protected static String CMD_DEFINE_UDF = "define_udf";    // define_udf <udf_key> <udf_type> <udf_data_url>
+    final protected static String CMD_SPROC = "sproc";              // start process: sproc <key> <udf_key> <process_name>
+    final protected static String CMD_EMIT = "emit";                // emit a message to a running process: emit <key> <process_name> <json>
     
     /* responses */
     
