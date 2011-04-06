@@ -67,9 +67,12 @@ public class Graph
     final ProcessGroup<JSONEdge, JSONObject> edgeProcesses;
     final ProcessGroup<EventObject, JSONObject> graphProcesses;
     
-    /* simulation: process registry */
-
-    SQLDB processdb;    
+    /* simulation: udf & process registry */
+    
+    private IndexWriter simIndexWriter;
+    private IndexReader simIndexReader;
+    private Searcher simSearcher;
+    final private RAMDirectory simLuceneDirectory;
     
     /* graph object statics */
     
@@ -131,26 +134,13 @@ public class Graph
         searcher = new IndexSearcher(indexReader);
         
         // process registry
-        processdb = new SQLDB(this.graphName);
-        try {
-            processdb.update("CREATE TABLE processes (" +
-                "id INTEGER IDENTITY, " +
-                "pid VARCHAR(256), " +           // system-assigned process id
-                "process_key VARCHAR(256), " +   // user-supplied process key for instance of udf
-                "udf_key VARCHAR(256), " +       // internal key for udf data (see table udfs)
-                "obj_type VARCHAR(10), " +       // e.g. "e" (edge), "v" (vertex), "e" (event), ...
-                "obj_key VARCHAR(1024) " +       // e.g. "root", "FRA", ... 
-                ")");
-            
-            processdb.update("CREATE TABLE udfs (" +
-                "id INTEGER IDENTITY, " +
-                "udf_key VARCHAR(256), " +       // user-specified unique key for this udf
-                "udf_type VARCHAR(256), " +      // "javascript", "php", "jruby", etc..
-                "udf_url VARCHAR(1024) " +       // either code or bytecode, depending on udf_type impl
-                ")");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        simLuceneDirectory = new RAMDirectory();
+        simIndexWriter = new IndexWriter(
+            simLuceneDirectory,
+            new StandardAnalyzer(Version.LUCENE_30),
+            IndexWriter.MaxFieldLength.LIMITED);
+        simIndexReader = simIndexWriter.getReader();
+        simSearcher = new IndexSearcher(simIndexReader);
 
     }
     
@@ -164,25 +154,22 @@ public class Graph
     
     public void defineUDF(String udfKey,
                           String udfType,
-                          String udfURL) throws Exception {
-        processdb.update("DELETE FROM udfs WHERE udf_key = " +
-            "'" + udfKey + "' AND udf_type = " +
-            "'" + udfType + "'");
-        processdb.update("INSERT INTO udfs (udf_key, udf_type, udf_url) VALUES (" +
-            "'" + udfKey + "', " +
-            "'" + udfType + "', " +
-            "'" + udfURL + "')");
+                          String udfFn) throws Exception {
+        JSONObject udfDef = new JSONObject();
+        udfDef.put("udf_type", udfType);
+        udfDef.put("udf_fn", udfFn);
+        indexSimObject(udfKey, "udf", udfDef);
     }
     
     public JSONObject getUDFDef(String udfKey) throws Exception {
-        return processdb.query("SELECT udf_key, udf_type, udf_url FROM udfs WHERE " +
-                                         "udf_key = '" + udfKey + "'")
-                        .getJSONArray("results")
-                        .getJSONObject(0);
+        return querySimIndex(TYPE_FIELD + ":udf " + 
+                             KEY_FIELD + ":" + udfKey).get(0);
     }
     
     public JSONObject queryUDFs(String query) throws Exception {
-        return processdb.query(query);
+        JSONObject result = new JSONObject();
+        result.put("results", querySimIndex(query));
+        return result;
     }
     
     //
@@ -202,8 +189,11 @@ public class Graph
         _type = obj.getString(TYPE_FIELD);
         
         JSONObject udfDef = getUDFDef(udfKey);
+        
+        log.info("udfDef = " + udfDef.toString(4));
+        
         String udfType = udfDef.getString("udf_type");
-        String udfURL = udfDef.getString("udf_url");
+        String udfFn = udfDef.getString("udf_fn");
         String internalName = key + "-" + processName;
         
         if (_type.equals(VERTEX_TYPE)) {
@@ -214,48 +204,27 @@ public class Graph
             
             // vertex-process, explicit (existing) java class
             if (udfType.equals("java")) {
-                log.info("reflecting java class: " + udfURL);
+                log.info("reflecting java class: " + udfFn);
                 
             // vertex-process, javascript source
             } else if (udfType.equals("js") ||
                        udfType.equals("javascript")) {
-                log.info("loading javascript source: " + udfURL);
-                
-                // get vm
+                log.info("loading javascript source: " + udfFn);
                 GScriptEngine scriptEngine = 
                     vertexProcesses.getScriptEngine("rhino", "udfs/js/vm_init.js");
-                
-                //  check for object in js vm
                 boolean udfExists = (Boolean) scriptEngine.invoke("_udf_exists", udfKey);
-                
-                //  if doesn't exist:   get script from url
-                //                      eval in engine
                 if (!udfExists) {
-                    log.info("loading udf: " + udfURL);
-                    scriptEngine.evalScript(udfURL);
+                    log.info("loading udf: " + udfFn);
+                    scriptEngine.evalScript(udfFn);
                 }
-                
-                //  create instance of js udf -> pid via "processes['<pid>'] = new [...]"
                 JavascriptProcess<JSONVertex> jsProcess = 
                     new JavascriptProcess<JSONVertex>(udfKey, pid, scriptEngine);
                 scriptEngine.invoke("_udf_instance", udfKey, pid, jsProcess);
-                
-                //  start via vertexProcesses ProcessGroup
-                vertexProcesses.start(internalName,
-                                      jv,
-                                      jsProcess);
+                vertexProcesses.start(internalName, jv, jsProcess);
             } else {
                 
                 throw new Exception("unsupported vertex udf type: " + udfType);
             }
-            
-            /*
-            JSONVertex jv = getVertex(key);
-            vertexProcesses.start(pid,
-                                  key + "-" + processName,
-                                  jv,
-                                  vertexProcessor);
-            */
         /*
         } else if (_type.equals(EDGE_TYPE)) {
             JSONEdge je = getEdge(key);
@@ -354,6 +323,25 @@ public class Graph
         indexWriter.updateDocument(new Term(KEY_FIELD, key), doc);
         refreshGraphIndex();
     }
+
+    public void indexSimObject(String key, String type, JSONObject jo) throws Exception {
+        Document doc = new Document();
+        doc.add(new Field(TYPE_FIELD, type,
+            Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+        doc.add(new Field(KEY_FIELD, key,
+            Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+
+        if (null != jo &&
+            null != JSONObject.getNames(jo)) {
+            for (String k: JSONObject.getNames(jo)) {
+                doc.add(new Field(k, jo.getString(k),
+                        Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
+        }
+        
+        simIndexWriter.updateDocument(new Term(KEY_FIELD, key), doc);
+        refreshSimIndex();
+    }
     
     private void refreshGraphIndex() throws Exception {
         long t0 = System.currentTimeMillis();
@@ -366,11 +354,29 @@ public class Graph
             searcher = new IndexSearcher(indexReader);
         }
         long elapsed = System.currentTimeMillis() - t0;
-        //log.info("refreshIndex: " + elapsed + "ms");
+        //log.info("refreshGraphIndex: " + elapsed + "ms");
+    }
+
+    private void refreshSimIndex() throws Exception {
+        long t0 = System.currentTimeMillis();
+        simIndexWriter.commit();
+        IndexReader newReader = simIndexReader.reopen();
+        if (newReader != simIndexReader) {
+            simSearcher.close();
+            simIndexReader.close();
+            simIndexReader = newReader;
+            simSearcher = new IndexSearcher(simIndexReader);
+        }
+        long elapsed = System.currentTimeMillis() - t0;
+        //log.info("refreshSimIndex: " + elapsed + "ms");
     }
     
     public List<JSONObject> queryGraphIndex(String queryStr) throws Exception {
         return query(searcher, queryStr);
+    }
+    
+    public List<JSONObject> querySimIndex(String queryStr) throws Exception {
+        return query(simSearcher, queryStr);
     }
     
     public List<JSONObject> query(Searcher indexSearcher, String queryStr) throws Exception {
