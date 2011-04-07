@@ -38,20 +38,22 @@ public class ProcessGroup<T, M> {
         log.info("process group instantiated: " + name);
     }
     
-    public void start(String name,
+    public void start(String pid,
+                      String name,
                       T context,
-                      GraphProcess<T,M> callback)
+                      GraphProcess<T,M> graphProcess)
         throws Exception {
         Fiber fiber = fiberFactory.create();
         fiber.start();
         Channel<M> channel = new MemoryChannel<M>();
-        callback.setup(graphRef,
-                       context,
-                       name,
-                       fiber,
-                       channel);
-        channel.subscribe(fiber, callback);
-        processMap.put(name, callback);
+        graphProcess.setup(pid,
+                           graphRef,
+                           context,
+                           name,
+                           fiber,
+                           channel);
+        channel.subscribe(fiber, graphProcess);
+        processMap.put(name, graphProcess);
     }
     
     public GraphProcess<T, M> getProcess(String name) throws Exception {

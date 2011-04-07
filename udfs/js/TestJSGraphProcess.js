@@ -29,7 +29,7 @@ TestJSGraphProcess = function(_process) {
             var vertex = neighbors[i];
             log("vertex = " + vertex);
             if (!msg.visited[vertex.get("_key")]) {
-                _emit(_process, vertex.getKey(), vertex.getKey() + "-proc", msg);
+                _emit(_process, vertex.getKey(), vertex.getKey() + "-TestJSGraphProcess", msg);
                 msg.visited[vertex.getKey()] = _process.nanoTime();
                 sent++;
             }

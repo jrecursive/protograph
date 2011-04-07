@@ -26,12 +26,15 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     private Channel<M> channel = null;
     private WeakReference<T> contextRef = null;
     private WeakReference<Graph> graphRef = null;
+    private String pid = null;
     
-    protected void setup(WeakReference<Graph> graphRef,
+    protected void setup(String pid,
+                         WeakReference<Graph> graphRef,
                          T context,
                          String name,
                          Fiber fiber, 
                          Channel channel) {
+        this.pid = pid;
         this.name = name;
         this.fiber = fiber;
         this.channel = channel;
@@ -44,6 +47,7 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     public void kill() throws Exception {
         beforeKill();
         fiber.dispose();
+        fiber = null;
         log("process: kill: " + name);
     }
     
@@ -64,6 +68,10 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
         return name;
     }
     
+    public Channel<M> getChannel() {
+        return channel;
+    }
+    
     public void log(String s) {
         try {
             Thread t = Thread.currentThread();
@@ -79,6 +87,10 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     
     public void onMessage(M msg) {
         message(msg);
+    }
+    
+    public String getPid() {
+        return pid;
     }
     
     //

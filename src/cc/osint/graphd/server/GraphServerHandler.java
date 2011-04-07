@@ -32,8 +32,12 @@ import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.channel.ChannelState;
 import org.jboss.netty.channel.Channel;
+import org.jetlang.channels.MemoryChannel;
+import org.jetlang.fibers.Fiber;
+import org.jetlang.fibers.PoolFiberFactory;
 import org.json.*;
 import cc.osint.graphd.graph.*;
+import cc.osint.graphd.processes.*;
 
 @ChannelPipelineCoverage("all")
 public class GraphServerHandler extends SimpleChannelUpstreamHandler {
@@ -46,6 +50,36 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         nameGraphMap = new ConcurrentHashMap<String, Graph>();
     }
 
+    /* name -> GraphCommandExecutor registry */
+    final private static 
+        ConcurrentHashMap<String, GraphCommandExecutor> graphCommandExecutorMap;
+    static {
+        graphCommandExecutorMap = 
+            new ConcurrentHashMap<String, GraphCommandExecutor>();
+    }
+    
+    /* executors */
+    final private static ExecutorService graphCommandExecutorService;
+    final private static ExecutorService inboundChannelExecutorService;
+    static {
+        graphCommandExecutorService = Executors.newCachedThreadPool();
+        inboundChannelExecutorService = Executors.newCachedThreadPool();
+    }
+    
+    /* inboundChannel fiberFactory */
+    final private static PoolFiberFactory fiberFactory;
+    static {
+        fiberFactory = new PoolFiberFactory(inboundChannelExecutorService);
+    }
+    
+    /* clientId -> inboundChannel registry */
+    final private static ConcurrentHashMap<String, 
+        WeakReference<InboundChannelProcess>> inboundChannelMap;
+    static {
+        inboundChannelMap = new ConcurrentHashMap<String, 
+            WeakReference<InboundChannelProcess>>();
+    }
+    
     /* clientId -> client state registry */
     final private static ConcurrentHashMap<String, 
         ConcurrentHashMap<String, String>> clientStateMap;
@@ -53,35 +87,21 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         clientStateMap = new ConcurrentHashMap<String, 
             ConcurrentHashMap<String, String>>();
     }
-    
-    /* name -> GraphCommandExecutor registry & executor */
-    final private static 
-        ConcurrentHashMap<String, GraphCommandExecutor> graphCommandExecutorMap;
-    static {
-        graphCommandExecutorMap = 
-            new ConcurrentHashMap<String, GraphCommandExecutor>();
-    }
-    final private static ExecutorService graphCommandExecutorService;
-    static {
-        graphCommandExecutorService = Executors.newCachedThreadPool();
-    }
-    
+
     /* client id -> netty channel registry */
     final private static ConcurrentHashMap<String, Channel> clientIdChannelMap;
     static {
         clientIdChannelMap = new ConcurrentHashMap<String, Channel>();
     }
-    
+        
     /* clientStateMap keys */
-    
     final protected static String ST_DB = "cur_db";           // clientState: current db (via CMD_USE)
     final protected static String ST_NAMECON = "name_con";    // clientState: connection name (via CMD_USE)
     
     /* defaults */
     
-    final protected static String DEFAULT_CONNECTION_NAME =
-                                    "client";               // default connection name
-        
+    final protected static String DEFAULT_CONNECTION_NAME = "client";   // default connection name
+    
     /* netty handlers */
     
     @Override
@@ -99,6 +119,13 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
                 clientStateMap.remove(clientId);
                 clientIdChannelMap.remove(clientId);
+                InboundChannelProcess inboundChannelProcess = 
+                    inboundChannelMap.get(clientId).get();
+                if (null != inboundChannelProcess) {
+                    inboundChannelProcess.kill();
+                    inboundChannelProcess = null;
+                }
+                inboundChannelMap.remove(clientId);
                 
                 log.info("DISCONNECTED: " + clientId);
             } else {
@@ -119,6 +146,22 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 DEFAULT_CONNECTION_NAME + "-" + clientId);
             clientStateMap.put(clientId, clientState);
             clientIdChannelMap.put(clientId, e.getChannel());
+            
+            /*
+             * start "client fiber & channel" & connect them
+            */
+            Fiber fiber = fiberFactory.create();
+            fiber.start();
+            org.jetlang.channels.Channel<JSONObject> inboundChannel = 
+                new MemoryChannel<JSONObject>();
+            InboundChannelProcess inboundChannelProcess = 
+                new InboundChannelProcess(clientId,
+                                          fiber,
+                                          inboundChannel,       // jetlang channel
+                                          e.getChannel());      // netty channel
+            inboundChannelMap.put(clientId, 
+                new WeakReference<InboundChannelProcess>(inboundChannelProcess));
+            inboundChannel.subscribe(fiber, inboundChannelProcess);
         }
         e.getChannel().write(
                 "graphd " + 
@@ -210,7 +253,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 WeakReference<Graph> graphRef = 
                     new WeakReference<Graph>(newGraph);
                 GraphCommandExecutor graphCommandExecutor = 
-                    new GraphCommandExecutor(args[0], graphRef);
+                    new GraphCommandExecutor(args[0], 
+                                             graphRef, 
+                                             inboundChannelMap);
                 graphCommandExecutorService.execute(graphCommandExecutor);
                 graphCommandExecutorMap.put(args[0], graphCommandExecutor);
                 
@@ -300,13 +345,14 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             graphCommand.poisonPill = false;
             
             graphCommandExecutorMap.get(
-                clientState.get(GraphServerHandler.ST_DB)).queue(graphCommand);
+                clientState.get(GraphServerHandler.ST_DB))
+                    .queue(graphCommand);
             
             // a null return value indicates it's been queued for execution
             // by the appropriate GraphCommandExecutor
             return null;
         }
-                
+        
         // unknown request
         if (rsb.toString().equals("")) {
             log.info("GraphServerProtocol.R_UNK: " + cmd);

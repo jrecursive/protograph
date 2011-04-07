@@ -1,6 +1,7 @@
 package cc.osint.graphd.graph;
 
 import java.lang.*;
+import java.lang.ref.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Level;
@@ -61,11 +62,14 @@ public class Graph
     
     /* simulation: process management */
 
-    final ExecutorService executorService;
-    final PoolFiberFactory fiberFactory;
-    final ProcessGroup<JSONVertex, JSONObject> vertexProcesses;
-    final ProcessGroup<JSONEdge, JSONObject> edgeProcesses;
-    final ProcessGroup<EventObject, JSONObject> graphProcesses;
+    final private ExecutorService executorService;
+    final private PoolFiberFactory fiberFactory;
+    final private ProcessGroup<JSONVertex, JSONObject> vertexProcesses;
+    final private ProcessGroup<JSONEdge, JSONObject> edgeProcesses;
+    final private ProcessGroup<EventObject, JSONObject> graphProcesses;
+    
+    /* endpoint channel management */
+    final private ProcessGroup<String, JSONObject> endpointChannelProcesses;
     
     /* simulation: udf & process registry */
     
@@ -83,8 +87,11 @@ public class Graph
     final public static String EDGE_TARGET_FIELD = "_target";
     final public static String RELATION_FIELD = "_rel";
     final public static String DATA_FIELD = "_data";
+    final public static String GRAPH_TYPE = "g";
     final public static String VERTEX_TYPE = "v";
     final public static String EDGE_TYPE = "e";
+    final public static String PROCESS_TYPE = "p";
+    final public static String CHANNEL_TYPE = "c";
     
     /* UDF/process statics */
     
@@ -105,8 +112,9 @@ public class Graph
         gr.addGraphListener(connectivityInspector);
         
         // simulation components
-        //executorService = Executors.newCachedThreadPool();
-        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
+        //executorService = 
+        //    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
+        executorService = Executors.newCachedThreadPool();
         fiberFactory = new PoolFiberFactory(executorService);
         vertexProcesses = 
             new ProcessGroup<JSONVertex, JSONObject>(this, 
@@ -123,6 +131,11 @@ public class Graph
                                                       "graph_processors", 
                                                       executorService,
                                                       fiberFactory);
+        endpointChannelProcesses = 
+            new ProcessGroup<String, JSONObject>(this, 
+                                                 "endpoint_channel_processors", 
+                                                 executorService,
+                                                 fiberFactory);
         
         // graph index
         luceneDirectory = new RAMDirectory();
@@ -166,47 +179,37 @@ public class Graph
                              KEY_FIELD + ":" + udfKey).get(0);
     }
     
-    public JSONObject queryUDFs(String query) throws Exception {
-        JSONObject result = new JSONObject();
-        result.put("results", querySimIndex(query));
-        return result;
-    }
-    
     //
     // process management
     //
     
-    public void startProcess(String key, 
+    public String startProcess(String key, 
                              String udfKey,
                              String processName) throws Exception {
-        String pid = generateKey();
-        String _type;
-        JSONObject obj = get(key);
-        if (obj == null ||
-            !obj.has(TYPE_FIELD)) {
-            throw new Exception("unknown object at key " + key);
+        JSONObject obj = getGraphObject(key);
+        if (obj == null || !obj.has(TYPE_FIELD)) {
+            throw new Exception("startProcess: unknown or nonexistent graph object at " +
+                                KEY_FIELD + ":" + key);
         }
-        _type = obj.getString(TYPE_FIELD);
-        
+        String pid = generateKey();
+        String _type = obj.getString(TYPE_FIELD);
         JSONObject udfDef = getUDFDef(udfKey);
-        
-        log.info("udfDef = " + udfDef.toString(4));
-        
         String udfType = udfDef.getString("udf_type");
         String udfFn = udfDef.getString("udf_fn");
-        String internalName = key + "-" + processName;
+        
+        // instanceName ties the object key (a vertex or edge) to
+        //  a specific instance of this process
+        String instanceName = key + "-" + processName;
         
         if (_type.equals(VERTEX_TYPE)) {
-            log.info("start(" + pid + ", " +
-                     internalName + ", " +
-                     key + ", ...)");
             JSONVertex jv = getVertex(key);
             
             // vertex-process, explicit (existing) java class
             if (udfType.equals("java")) {
                 log.info("reflecting java class: " + udfFn);
+                throw new Exception("java reflection unimplemented");
                 
-            // vertex-process, javascript source
+            // vertex-process, javascript engine
             } else if (udfType.equals("js") ||
                        udfType.equals("javascript")) {
                 log.info("loading javascript source: " + udfFn);
@@ -218,11 +221,20 @@ public class Graph
                     scriptEngine.evalScript(udfFn);
                 }
                 JavascriptProcess<JSONVertex> jsProcess = 
-                    new JavascriptProcess<JSONVertex>(udfKey, pid, scriptEngine);
+                    new JavascriptProcess<JSONVertex>(pid, scriptEngine);
                 scriptEngine.invoke("_udf_instance", udfKey, pid, jsProcess);
-                vertexProcesses.start(internalName, jv, jsProcess);
-            } else {
+                vertexProcesses.start(pid, instanceName, jv, jsProcess);
                 
+                JSONObject simObj = new JSONObject();
+                simObj.put("instance_name", instanceName);
+                simObj.put("udf_key", udfKey);
+                simObj.put("obj_key", key);
+                simObj.put("obj_type", VERTEX_TYPE);
+                simObj.put("start_time", System.currentTimeMillis());
+                indexSimObject(pid, PROCESS_TYPE, simObj);
+                return pid;
+                
+            } else {
                 throw new Exception("unsupported vertex udf type: " + udfType);
             }
         /*
@@ -240,40 +252,113 @@ public class Graph
     
     public void emit(String key, String processName, JSONObject msg) 
         throws Exception {
-        String _type;
-        if (null != key) {
-            JSONObject obj = get(key);
-            _type = obj.getString(TYPE_FIELD);
-            // TODO: fix this ugly hack
-            if (_type == null) _type = "unknown";
-        } else {
-            _type = null;
-        }
+        emitByQuery(TYPE_FIELD + ":" + PROCESS_TYPE + 
+                    " instance_name:" + key + "-" + processName, 
+                    msg);
+    }
+    
+    public void emitByPid(String pid, JSONObject msg) throws Exception {
+        emitByQuery(TYPE_FIELD + ":" + PROCESS_TYPE + 
+                    " pid:" + pid, 
+                    msg);
+    }
         
-        if (null == _type) {
-            // XXX HACK
-            // TODO: use process index
-            graphProcesses.publish(key + "-" + processName, msg);
+    public void emitByQuery(String query, JSONObject msg)
+        throws Exception {
+        List<JSONObject> simObjs = querySimIndex(query);
+        for(JSONObject simObj: simObjs) {
+            String _type = simObj.getString(TYPE_FIELD);
+            String instanceName = simObj.getString("instance_name");
             
-        } else if (_type.equals(VERTEX_TYPE)) {
-            // XXX HACK
-            // TODO: use process index
-            vertexProcesses.publish(key + "-" + processName, msg);
+            if (_type.equals(GRAPH_TYPE)) {
+                graphProcesses.publish(instanceName, msg);
+                
+            } else if (_type.equals(VERTEX_TYPE)) {
+                vertexProcesses.publish(instanceName, msg);
+                
+            } else if (_type.equals(EDGE_TYPE)) {
+                edgeProcesses.publish(instanceName, msg);
             
-        } else if (_type.equals(EDGE_TYPE)) {
-            // XXX HACK
-            // TODO: use process index
-            edgeProcesses.publish(key + "-" + processName, msg);
+            } else if (_type.equals(CHANNEL_TYPE)) {
+                endpointChannelProcesses.publish(instanceName, msg);
             
-        } else {
-            throw new Exception("unknown object " + TYPE_FIELD + "!");
+            } else {
+                throw new Exception("unknown object type " + 
+                                    TYPE_FIELD + ": " + _type);
+            }
         }
+    }
+    
+    //
+    // endpoint channel management & broadcast
+    //
+    public String createEndpointChannel(String channelName)
+        throws Exception {
+        String pid = generateKey();
+        EndpointChannelProcess endpointProcess = 
+            new EndpointChannelProcess();
+        endpointChannelProcesses.start(pid,
+                                       channelName, 
+                                       channelName, 
+                                       endpointProcess);
+        JSONObject simObj = new JSONObject();
+        simObj.put("name", channelName);
+        simObj.put("start_time", System.currentTimeMillis());
+        indexSimObject(pid, CHANNEL_TYPE, simObj);
+        return pid;
+    }
+    
+    public Channel<JSONObject> getEndpointChannelObject(String channelName)
+        throws Exception {
+        return getEndpointChannelProcess(channelName).getChannel();
+    }
+    
+    public EndpointChannelProcess getEndpointChannelProcess(String channelName) 
+        throws Exception {
+        return (EndpointChannelProcess) endpointChannelProcesses.getProcess(channelName);
+    }
+    
+    public void destroyEndpointChannelByName(String name)
+        throws Exception {
+        endpointChannelProcesses.kill(name);
+    }
+    
+    public void publishToEndpointByName(String channelName, 
+                                        JSONObject msg)
+        throws Exception {
+        endpointChannelProcesses.publish(channelName, msg);
+    }
+    
+    public void publishToEndpointByQuery(String query,
+                                         JSONObject msg)
+        throws Exception {
+        emitByQuery(query, msg);
+    }
+    
+    public void publishToEndpointByPid(String pid,
+                                       JSONObject msg)
+        throws Exception {
+        emitByQuery(TYPE_FIELD + ":" + CHANNEL_TYPE +
+                    " pid:" + pid,
+                    msg);
+    }
+    
+    public void subscribeToEndpointByName(String channelName,
+                                          Channel<JSONObject> inboundChannel)
+        throws Exception {
+        getEndpointChannelProcess(channelName).addSubscriber(inboundChannel);
+    }
+    
+    public void unsubscribeToEndpointByName(String channelName,
+                                          Channel<JSONObject> inboundChannel)
+        throws Exception {
+        getEndpointChannelProcess(channelName).removeSubscriber(inboundChannel);
     }
     
     //
     // graph manipulation
     //
-
+    
     public String addVertex(JSONObject jo) throws Exception {
         return addVertex(generateKey(), jo);
     }
@@ -340,6 +425,20 @@ public class Graph
         }
         
         simIndexWriter.updateDocument(new Term(KEY_FIELD, key), doc);
+        refreshSimIndex();
+    }
+    
+    public void deleteSimObject(String key, String type) throws Exception {
+        deleteSimObjectsByQuery(KEY_FIELD + ":" + key + " " + TYPE_FIELD + ": " + type);
+    }
+        
+        
+    public void deleteSimObjectsByQuery(String queryStr) throws Exception {
+        QueryParser qp = new QueryParser(Version.LUCENE_30, KEY_FIELD, analyzer);
+        qp.setDefaultOperator(org.apache.lucene.queryParser.QueryParser.Operator.AND);
+        qp.setAllowLeadingWildcard(true);
+        Query query = qp.parse(queryStr);
+        simIndexWriter.deleteDocuments(query);
         refreshSimIndex();
     }
     
@@ -458,7 +557,7 @@ public class Graph
         return ar.size()>0;
     }
     
-    public JSONObject get(String key) throws Exception {
+    public JSONObject getGraphObject(String key) throws Exception {
         List<JSONObject> ar = queryGraphIndex(KEY_FIELD + ":\"" + key + "\"");
         if (ar.size() == 0) return null;
         return ar.get(0);
@@ -504,7 +603,7 @@ public class Graph
     }
     
     public JSONEdge getEdge(String key) throws Exception {
-        JSONObject jsonEdge = get(key);
+        JSONObject jsonEdge = getGraphObject(key);
         JSONVertex fromVertex = getVertex(jsonEdge.getString(EDGE_SOURCE_FIELD));
         JSONVertex toVertex = getVertex(jsonEdge.getString(EDGE_TARGET_FIELD));
         return gr.getEdge(fromVertex, toVertex);

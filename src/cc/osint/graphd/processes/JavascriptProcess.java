@@ -18,45 +18,42 @@ import cc.osint.graphd.script.*;
 
 public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
     
-    private String pid;
+    private String key;
     private GScriptEngine scriptEngine;
-    private JSONObject udfDef;
     private ConcurrentHashMap<String, Object> stateMap;
     
     public JavascriptProcess(String key,
-                             String pid,
                              GScriptEngine scriptEngine) {
+        this.key = key;
         this.scriptEngine = scriptEngine;
-        this.udfDef = udfDef;
-        this.pid = pid;
         stateMap = new ConcurrentHashMap<String, Object>();
     }
     
     protected void beforeKill() {
         try {
             log("beforeKill");
-            scriptEngine.invoke("_udf_call", pid, "beforeKill");
+            scriptEngine.invoke("_udf_call", getPid(), "beforeKill");
         } catch (Exception ex) { ex.printStackTrace(); }
     }
     
     protected void beforeRemoveVertex(JSONVertex vertex) {
         try {
             log("beforeRemoveVertex");
-            scriptEngine.invoke("_udf_call", pid, "beforeRemoveVertex", vertex);
+            scriptEngine.invoke("_udf_call", getPid(), "beforeRemoveVertex", vertex);
         } catch (Exception ex) { ex.printStackTrace(); }
     }
     
     protected void beforeRemoveEdge(JSONEdge edge) {
         try {
             log("beforeRemoveEdge");
-            scriptEngine.invoke("_udf_call", pid, "beforeRemoveEdge", edge);
+            scriptEngine.invoke("_udf_call", getPid(), "beforeRemoveEdge", edge);
         } catch (Exception ex) { ex.printStackTrace(); }
     }
     
     protected void afterRemoveEdge(JSONEdge edge) {
         try {
             log("afterRemoveEdge");
-            scriptEngine.invoke("_udf_call", pid, "afterRemoveEdge", edge);
+            scriptEngine.invoke("_udf_call", getPid(), "afterRemoveEdge", edge);
         } catch (Exception ex) { ex.printStackTrace(); }
     }
     
@@ -65,7 +62,7 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
             //log("JavascriptProcess: " + pid + ": " + msg.toString());
             // execute function
             Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
-            scriptEngine.invoke("_udf_call", pid, "message", msgObj);
+            scriptEngine.invoke("_udf_call", getPid(), "message", msgObj);
             log("stateMap = " + stateMap.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -87,11 +84,7 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
     }
     
     public String getPid() {
-        return pid;
-    }
-    
-    public JSONObject getUDFDef() {
-        return udfDef;
+        return super.getPid();
     }
     
     public ConcurrentHashMap<String, Object> getState() throws Exception {

@@ -51,23 +51,28 @@ public class GraphServerProtocol {
     
     /* simulation */
     
-    final protected static String CMD_UDFQ = "udfq";                // query internal udf definitions
+    final protected static String CMD_QSIM = "qsim";                // query simulation index (udf, process, channel, subscriber)
     final protected static String CMD_DEFINE_UDF = "define_udf";    // define_udf <udf_key> <udf_type> <udf_data_url>
     final protected static String CMD_SPROC = "sproc";              // start process: sproc <key> <udf_key> <process_name>
     final protected static String CMD_EMIT = "emit";                // emit a message to a running process: emit <key> <process_name> <json>
+    final protected static String CMD_CCHAN = "cchan";              // create a channel endpoint
+    final protected static String CMD_PUBLISH = "publish";          // publish a message to a channel
+    final protected static String CMD_SUBSCRIBE = "subscribe";      // subscribe to a channel
+    final protected static String CMD_UNSUBSCRIBE = "unsubscribe";  // unsubscribe from a channel
     
     /* responses */
     
-    final protected static String R_OK = "-ok";                // standard reply
-    final protected static String R_ERR = "-err";              // error processing request
-    final protected static String R_UNK = "-unk";              // unknown request
-    final protected static String R_NOT_IMPL = "-not_impl";    // cmd not implemented
-    final protected static String R_NOT_FOUND = "-not_found";  // object not found
-    final protected static String R_NOT_EXIST = "-not_exist";  // requested resource does not exist
+    final protected static String R_OK = "-ok";                         // standard reply
+    final protected static String R_ERR = "-err";                       // error processing request
+    final protected static String R_UNK = "-unk";                       // unknown request
+    final protected static String R_NOT_IMPL = "-not_impl";             // cmd not implemented
+    final protected static String R_NOT_FOUND = "-not_found";           // object not found
+    final protected static String R_NOT_EXIST = "-not_exist";           // requested resource does not exist
+    final protected static String R_ALREADY_EXIST = "-already_exist";   // requested resource does not exist
     final protected static String R_UNKNOWN_OBJECT_TYPE = 
-                                    " unknown_object_type"; // should theoretically never happen; if a get(key)
-                                                            //   returns anything other than edge or vertex
-    final protected static String R_BATCH_OK = "-batch-ok";    // response at the end of a selector-driven batch of responses
+                                    " unknown_object_type";             // should theoretically never happen; if a get(key)
+                                                                        //   returns anything other than edge or vertex
+    final protected static String R_BATCH_OK = "-batch-ok";             // response at the end of a selector-driven batch of responses
     
     /* protocol misc */
     

@@ -9,19 +9,26 @@ import java.util.logging.Logger;
 import org.json.*;
 import org.jboss.netty.channel.Channel;
 import cc.osint.graphd.graph.*;
+import cc.osint.graphd.processes.InboundChannelProcess;
 
 public class GraphCommandExecutor implements Runnable {
     private static final Logger log = Logger.getLogger(
         GraphCommandExecutor.class.getName());
 
-    private String graphName;
-    private WeakReference<Graph> graphRef;
-    LinkedBlockingQueue<GraphCommand> graphCommandQueue;
+    final private String graphName;
+    final private WeakReference<Graph> graphRef;
+    final private ConcurrentHashMap<String, 
+        WeakReference<InboundChannelProcess>> inboundChannelMap;
+    final LinkedBlockingQueue<GraphCommand> graphCommandQueue;
     
     public GraphCommandExecutor(String graphName,
-                                WeakReference<Graph> graphRef) {
+                                WeakReference<Graph> graphRef,
+                                ConcurrentHashMap<String, 
+                                    WeakReference<InboundChannelProcess>> 
+                                    inboundChannelMap) {
         this.graphName = graphName;
         this.graphRef = graphRef;
+        this.inboundChannelMap = inboundChannelMap;
         graphCommandQueue = new LinkedBlockingQueue<GraphCommand>();
         log.info("start: GraphCommandExecutor(" + this.graphName + ")");
     }
@@ -207,7 +214,7 @@ public class GraphCommandExecutor implements Runnable {
         // DELETE OBJECT: del <key>
         } else if (cmd.equals(GraphServerProtocol.CMD_DEL)) {
             String key = args[0];
-            JSONObject obj = gr.get(key);
+            JSONObject obj = gr.getGraphObject(key);
             if (null == obj) {
                 rsb.append(GraphServerProtocol.R_NOT_FOUND);
             } else {
@@ -238,7 +245,7 @@ public class GraphCommandExecutor implements Runnable {
         // GET OBJECT: get <key>
         } else if (cmd.equals(GraphServerProtocol.CMD_GET)) {
             String key = args[0];
-            JSONObject jo = gr.get(key);
+            JSONObject jo = gr.getGraphObject(key);
             if (jo == null) {
                 rsb.append(GraphServerProtocol.R_NOT_FOUND);
             } else {
@@ -316,7 +323,7 @@ public class GraphCommandExecutor implements Runnable {
                 rsb.append(GraphServerProtocol.R_ERR);
                 rsb.append(" CANNOT_SET_RESERVED_PROPERTY");
             } else {                    
-                JSONObject obj = gr.get(key);
+                JSONObject obj = gr.getGraphObject(key);
                 if (null == obj) {
                     rsb.append(GraphServerProtocol.R_NOT_FOUND);
                 } else {
@@ -373,7 +380,7 @@ public class GraphCommandExecutor implements Runnable {
         } else if (cmd.equals(GraphServerProtocol.CMD_SPY)) {
             String key = args[0];
             
-            JSONObject obj = gr.get(key);
+            JSONObject obj = gr.getGraphObject(key);
             if (null == obj) {
                 rsb.append(GraphServerProtocol.R_NOT_FOUND);
             } else {
@@ -603,9 +610,17 @@ public class GraphCommandExecutor implements Runnable {
          * SIMULATION
         */
         
-        } else if (cmd.equals(GraphServerProtocol.CMD_UDFQ)) {
-            String sql = request.substring(request.indexOf(GraphServerProtocol.SPACE)+1);
-            rsb.append(gr.queryUDFs(sql).toString(4));
+        // query simulation index: qsim <query> e.g., _type:udf udf_name:test*
+        } else if (cmd.equals(GraphServerProtocol.CMD_QSIM)) {
+            String q = request.substring(request.indexOf(GraphServerProtocol.SPACE)).trim(); // remainder of line past "q "
+            List<JSONObject> results = gr.querySimIndex(q);
+            JSONArray ja = new JSONArray();
+            for(JSONObject jo: results) {
+                ja.put(jo);
+            }
+            JSONObject res = new JSONObject();
+            res.put("results", ja);
+            rsb.append(prepareResult(res));
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
         
@@ -641,6 +656,36 @@ public class GraphCommandExecutor implements Runnable {
             gr.emit(key, processName, jo);
             rsb.append(GraphServerProtocol.R_OK);
             
+        // create a channel: cchan <channel_name>
+        } else if (cmd.equals(GraphServerProtocol.CMD_CCHAN)) {
+            String channelName = args[0];
+            String pid = gr.createEndpointChannel(channelName);
+            if (null == pid) {
+                rsb.append(GraphServerProtocol.R_ALREADY_EXIST);
+            } else {
+                rsb.append(pid);
+                rsb.append(GraphServerProtocol.NL);
+                rsb.append(GraphServerProtocol.R_OK);
+            }
+            
+        // publish a message to a channel: publish <channel_name> <json_msg>
+        } else if (cmd.equals(GraphServerProtocol.CMD_PUBLISH)) {
+            String channelName = args[0];
+            String json = request.substring(request.indexOf(GraphServerProtocol.SPACE + channelName) +
+                (channelName.length()+1)).trim(); // remainder of line
+            gr.publishToEndpointByName(channelName, new JSONObject(json));
+            
+        // subscribe to a channel: subscribe <channel_name>
+        } else if (cmd.equals(GraphServerProtocol.CMD_SUBSCRIBE)) {
+            String channelName = args[0];
+            gr.subscribeToEndpointByName(channelName,
+                                         getInboundChannelProcess(clientId).getChannel());
+            
+        // unsubscribe from a channel: unsubscribe <channel_name>
+        } else if (cmd.equals(GraphServerProtocol.CMD_UNSUBSCRIBE)) {
+            String channelName = args[0];
+            gr.unsubscribeToEndpointByName(channelName,
+                                           getInboundChannelProcess(clientId).getChannel());
         }
         
         // EVENT-SUBSCRIPTION MANAGEMENT
@@ -656,5 +701,9 @@ public class GraphCommandExecutor implements Runnable {
         //return s;
         return jo.toString();
     }
-
+    
+    private InboundChannelProcess getInboundChannelProcess(String clientId)
+        throws Exception {
+        return inboundChannelMap.get(clientId).get();
+    }
 }

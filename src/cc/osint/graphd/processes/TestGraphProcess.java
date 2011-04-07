@@ -97,8 +97,8 @@ public class TestGraphProcess extends GraphProcess<JSONVertex, JSONObject> {
         } catch (Exception ex) {
             ex.printStackTrace();
             try {
-                log(getContext().getString(Graph.KEY_FIELD) + ": suicide :(");
-                this.kill();
+                log(getContext().getString(Graph.KEY_FIELD) + ": exception: " +
+                    ex.getMessage());
             } catch (Exception ex1) {
                 ex1.printStackTrace();
             }
