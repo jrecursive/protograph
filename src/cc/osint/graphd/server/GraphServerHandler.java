@@ -164,7 +164,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             inboundChannel.subscribe(fiber, inboundChannelProcess);
         }
         e.getChannel().write(
-                "graphd " + 
+                "-graphd " + 
                     InetAddress.getLocalHost().getHostName() + 
                     GraphServerProtocol.SPACE + 
                     clientId + 
