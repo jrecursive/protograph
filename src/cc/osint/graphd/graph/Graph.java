@@ -265,10 +265,10 @@ public class Graph
         
     public void emitByQuery(String query, JSONObject msg)
         throws Exception {
-        log.info("emitByQuery: query = " + query);
+        //log.info("emitByQuery: query = " + query);
         List<JSONObject> simObjs = querySimIndex(query);
         for(JSONObject simObj: simObjs) {
-            log.info("emitByQuery(" + query + ", ...) -> simObj = " + simObj.toString(4));
+            //log.info("emitByQuery(" + query + ", ...) -> simObj = " + simObj.toString(4));
             String _type = simObj.getString("obj_type");
             String instanceName = simObj.getString("instance_name");
             

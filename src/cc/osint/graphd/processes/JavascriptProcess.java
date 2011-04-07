@@ -63,7 +63,7 @@ public class JavascriptProcess<T> extends GraphProcess<T, JSONObject> {
             // execute function
             Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
             scriptEngine.invoke("_udf_call", getPid(), "message", msgObj);
-            log("stateMap = " + stateMap.toString());
+            //log("stateMap = " + stateMap.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
             try {

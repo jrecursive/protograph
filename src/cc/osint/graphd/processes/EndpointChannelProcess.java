@@ -43,7 +43,6 @@ public class EndpointChannelProcess extends GraphProcess<String, JSONObject> {
     public void publish(JSONObject msg1) throws Exception {
         JSONObject msg = new JSONObject();
         msg.put("from", name);
-        msg.put("time", System.nanoTime());
         msg.put("msg", msg1);
         for(Channel<JSONObject> channel: subscribers) {
             try {

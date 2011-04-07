@@ -192,7 +192,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         ConcurrentHashMap<String, String> clientState = 
             clientStateMap.get(clientId);
         
-        log.info(clientId + ": " + request);
+        //log.info(clientId + ": " + request);
         
         if (request.length() == 0) {
             response = GraphServerProtocol.R_OK;

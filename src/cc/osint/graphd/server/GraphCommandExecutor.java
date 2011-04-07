@@ -56,7 +56,9 @@ public class GraphCommandExecutor implements Runnable {
                             graphCommand.cmd,
                             graphCommand.args);
                 long requestTimeElapsed = System.currentTimeMillis() - requestTimeStart;
-                log.info("[" + requestTimeElapsed + "ms]");
+                if (requestTimeElapsed > 100) {
+                    log.info("[" + requestTimeElapsed + "ms]: " + graphCommand.request);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
                 response = GraphServerProtocol.R_ERR + GraphServerProtocol.SPACE + ex.getMessage();
