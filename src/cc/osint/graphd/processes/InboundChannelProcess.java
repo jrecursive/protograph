@@ -64,8 +64,22 @@ public class InboundChannelProcess implements Callback<JSONObject> {
         }
     }
     
-    public void onMessage(JSONObject msg) {
-        nettyChannel.write(msg.toString() + "\n");
+    public void onMessage(JSONObject msg1) {
+        try {
+            String from = msg1.getString("from");
+            long time = msg1.getLong("time");
+            JSONObject msg = msg1.getJSONObject("msg");
+            nettyChannel.write("-message " +
+                               from + " " +
+                               time + " " + msg.toString() + "\n");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            try {
+                kill();
+            } catch (Exception ex1) {
+                ex1.printStackTrace();
+            }
+        }
     }
     
     public String getClientId() {

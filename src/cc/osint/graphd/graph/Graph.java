@@ -252,7 +252,7 @@ public class Graph
     
     public void emit(String key, String processName, JSONObject msg) 
         throws Exception {
-        emitByQuery(TYPE_FIELD + ":" + PROCESS_TYPE + 
+        emitByQuery(TYPE_FIELD + ":" + PROCESS_TYPE +
                     " instance_name:" + key + "-" + processName, 
                     msg);
     }
@@ -265,9 +265,11 @@ public class Graph
         
     public void emitByQuery(String query, JSONObject msg)
         throws Exception {
+        log.info("emitByQuery: query = " + query);
         List<JSONObject> simObjs = querySimIndex(query);
         for(JSONObject simObj: simObjs) {
-            String _type = simObj.getString(TYPE_FIELD);
+            log.info("emitByQuery(" + query + ", ...) -> simObj = " + simObj.toString(4));
+            String _type = simObj.getString("obj_type");
             String instanceName = simObj.getString("instance_name");
             
             if (_type.equals(GRAPH_TYPE)) {
@@ -284,7 +286,7 @@ public class Graph
             
             } else {
                 throw new Exception("unknown object type " + 
-                                    TYPE_FIELD + ": " + _type);
+                                    TYPE_FIELD + ":" + _type);
             }
         }
     }
@@ -296,7 +298,7 @@ public class Graph
         throws Exception {
         String pid = generateKey();
         EndpointChannelProcess endpointProcess = 
-            new EndpointChannelProcess();
+            new EndpointChannelProcess(channelName);
         endpointChannelProcesses.start(pid,
                                        channelName, 
                                        channelName, 

@@ -16,10 +16,12 @@ import cc.osint.graphd.graph.*;
 import cc.osint.graphd.sim.*;
 
 public class EndpointChannelProcess extends GraphProcess<String, JSONObject> {
-    final private ConcurrentSkipListSet<Channel<JSONObject>> subscribers;
+    final private Set<Channel<JSONObject>> subscribers;
+    final private String name;
     
-    public EndpointChannelProcess() {
-        subscribers = new ConcurrentSkipListSet<Channel<JSONObject>>();
+    public EndpointChannelProcess(String name) {
+        this.name = name;
+        subscribers = new HashSet<Channel<JSONObject>>();
     }
     
     public void addSubscriber(Channel<JSONObject> channel) throws Exception {
@@ -38,7 +40,11 @@ public class EndpointChannelProcess extends GraphProcess<String, JSONObject> {
         return subscribers;
     }
     
-    public void publish(JSONObject msg) throws Exception {
+    public void publish(JSONObject msg1) throws Exception {
+        JSONObject msg = new JSONObject();
+        msg.put("from", name);
+        msg.put("time", System.nanoTime());
+        msg.put("msg", msg1);
         for(Channel<JSONObject> channel: subscribers) {
             try {
                 channel.publish(msg);

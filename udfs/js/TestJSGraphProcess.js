@@ -35,6 +35,10 @@ TestJSGraphProcess = function(_process) {
             }
         }
         if (sent == 0) {
+            _process.getGraph().publishToEndpointByName(
+                "test_endpoint", 
+                _jsobj_to_JSONObject(msg.visited)
+            );
             log(this._process.getPid() + ": " +
                 _key + 
                 ": endpoint: " + TAFFY.JSON.stringify(msg.visited));
