@@ -27,7 +27,7 @@ TestJSGraphProcess = function(_process) {
         var neighbors = _process.getGraph().getOutgoingNeighborsOf(_process.getContext()).toArray();
         for (var i=0; i<neighbors.length; i++) {
             var vertex = neighbors[i];
-            log("vertex = " + vertex);
+            //log("vertex = " + vertex);
             if (!msg.visited[vertex.get("_key")]) {
                 _emit(_process, vertex.getKey(), vertex.getKey() + "-TestJSGraphProcess", msg);
                 msg.visited[vertex.getKey()] = _process.nanoTime();
@@ -39,9 +39,11 @@ TestJSGraphProcess = function(_process) {
                 "test_endpoint", 
                 _jsobj_to_JSONObject(msg.visited)
             );
+            /*
             log(this._process.getPid() + ": " +
                 _key + 
                 ": endpoint: " + TAFFY.JSON.stringify(msg.visited));
+            */
         }
     };
     
