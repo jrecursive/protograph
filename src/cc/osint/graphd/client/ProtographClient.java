@@ -53,7 +53,7 @@ public class ProtographClient {
         lastWriteFuture = null;
         this.eventHandler = eventHandler;
         ProtographClientHandler protographClientHandler = 
-            new ProtographClientHandler();
+            new ProtographClientHandler(this);
         protographClientHandler.setProtographClient(this);
         clientCommandQueue = new LinkedBlockingQueue<ClientCommand>();
         connect();
@@ -65,8 +65,7 @@ public class ProtographClient {
                         Executors.newCachedThreadPool(),
                         Executors.newCachedThreadPool()));
         ProtographClientPipelineFactory pipelineFactory = 
-            new ProtographClientPipelineFactory();
-        pipelineFactory.setProtographClientHandler(protographClientHandler);
+            new ProtographClientPipelineFactory(this);
         bootstrap.setPipelineFactory(pipelineFactory);
         
         ChannelFuture future = 
@@ -110,6 +109,10 @@ public class ProtographClient {
     }
     
     protected ProtographClientHandler getProtographClientHandler() {
+        if (null == protographClientHandler) {
+            protographClientHandler = 
+                new ProtographClientHandler(this);
+        }
         return protographClientHandler;
     }
     

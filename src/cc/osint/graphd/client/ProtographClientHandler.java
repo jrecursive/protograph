@@ -34,6 +34,11 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
     ProtographClientEventHandler defaultEventHandler =
         new EchoEventHandler();
     
+    public ProtographClientHandler(ProtographClient client) {
+        super();
+        this.client = client;
+    }
+    
     protected void setProtographClient(ProtographClient client) {
         this.client = client;
     }

@@ -16,11 +16,11 @@ import org.jboss.netty.handler.codec.string.StringEncoder;
 public class ProtographClientPipelineFactory implements
         ChannelPipelineFactory {
 
-    protected ProtographClientHandler protographClientHandler;
+    protected ProtographClient client;
     
-    public void setProtographClientHandler(
-        ProtographClientHandler protographClientHandler) {
-        this.protographClientHandler = protographClientHandler;
+    public ProtographClientPipelineFactory(ProtographClient client) {
+        super();
+        this.client = client;
     }
     
     public ChannelPipeline getPipeline() throws Exception {
@@ -29,7 +29,7 @@ public class ProtographClientPipelineFactory implements
                 8192, Delimiters.lineDelimiter()));
         pipeline.addLast("decoder", new StringDecoder());
         pipeline.addLast("encoder", new StringEncoder());
-        pipeline.addLast("handler", protographClientHandler);
+        pipeline.addLast("handler", client.getProtographClientHandler());
         return pipeline;
     }
 }
