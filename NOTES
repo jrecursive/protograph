@@ -1,9 +1,29 @@
-* script-driven traversals: ClosestFirstIterator, BreadthFirstIterator, DepthFirstIterator, and TopologicalOrderIterator
+X script-driven traversals: ClosestFirstIterator, BreadthFirstIterator, DepthFirstIterator, and TopologicalOrderIterator
+e.g., 
+      use flights
+
+scripted:
+      define_udf TestJSTraversal js udfs/js/TestJSTraversal.js
+      TRAV FRA breadth_first TestJSTraversal
+
+pipelined:
+      CCHAN channel1
+      SUBSCRIBE channel1
+      TRAV MEX depth_first - channel1
+
+pipelined closest_first traversal with a radius of 2.0:
+      TRAV VIE closest_first:2 - channel1
+
 * script-defined iterators via: AbstractGraphIterator, CrossComponentIterator
+
 * implement javax.script vm pooling for each process group created
+
 * allow message event matching on the client so as to route messages from one more more specified endpoints to one or more specified handlers
+
 * vertex/edge-level locking
+
 * dynamic concurrent traversal & algorithm "policies", e.g., if a vertex that was supposed to exist doesn't, "do this", whether "this" is a built-in function like "ignore it and move on" or a script.
+
 * port a handful of JUNG classes: 
 BicomponentClusterer 
 EdgeBetweennessClusterer 
@@ -31,4 +51,6 @@ PageRank
 PageRankWithPriors 
 VoltageScorer
 PrimMinimumSpanningTree 
+
+
 
