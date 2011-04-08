@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.*;
 import org.jboss.netty.channel.Channel;
+import org.jgrapht.traverse.*;
 import cc.osint.graphd.graph.*;
 import cc.osint.graphd.processes.InboundChannelProcess;
 
@@ -626,6 +627,9 @@ public class GraphCommandExecutor implements Runnable {
         // if parameter 3 is not "-", it will be interpreted as a server-side udf
         //   that implements TraversalEvent functions
         // 
+        // NOTE: topological <traversal_type> ignores the value of <start_vertex>
+        //       but some value must be specified
+        //
         } else if (cmd.equals(GraphServerProtocol.CMD_TRAV)) {
             String startVertex = args[0];
             String traversalType = args[1];
@@ -645,12 +649,17 @@ public class GraphCommandExecutor implements Runnable {
                     0, traversalType.indexOf(":"));
             }
             
-            /*
-             * XXX
-             * TODO: IMPLEMENT TRAVERSALS
-            */
-            throw new Exception("not implemented");
-        
+            JSONVertex v = gr.getVertex(startVertex);
+            if (null == v) {
+                rsb.append(GraphServerProtocol.R_ERR);
+                rsb.append(GraphServerProtocol.SPACE);
+                rsb.append("startVertex does not exist");
+            } else {
+                // test code
+                gr.pipelinedTraversal(traversalType, v, channel);
+                rsb.append(GraphServerProtocol.R_OK);
+            }
+            
         /*
          * USER-DEFINED FUNCTIONS
         */

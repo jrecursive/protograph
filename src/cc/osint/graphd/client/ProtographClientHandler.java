@@ -71,6 +71,7 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
             ChannelHandlerContext ctx, MessageEvent e) {
         String channelId = "" + e.getChannel().getId();
         String request = (String) e.getMessage();
+        if (request.trim().equals("")) return;
         
         try {
         
@@ -155,6 +156,7 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
                 currentResultHandler.onException(ex);
                 currentResultHandler.onComplete();
             }
+            log.info("EXCEPTION: request = " + request);
         }
     }
 

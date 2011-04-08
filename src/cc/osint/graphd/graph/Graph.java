@@ -16,6 +16,7 @@ import org.jgrapht.alg.*;
 import org.jgrapht.event.*;
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
+import org.jgrapht.traverse.*;
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.standard.*;
 import org.apache.lucene.document.*;
@@ -903,6 +904,100 @@ public class Graph
     
     public int numEdges() throws Exception {
         return gr.edgeSet().size();
+    }
+    
+    /*
+     * TRAVERSALS
+    */
+
+    public void pipelinedTraversal(String traversalType,
+                                   JSONVertex startVertex,
+                                   final String returnChannel) 
+        throws Exception {
+        pipelinedTraversal(traversalType,
+                           startVertex,
+                           returnChannel,
+                           0.0);
+    }
+    
+    public void pipelinedTraversal(String traversalType,
+                                   JSONVertex startVertex,
+                                   final String returnChannel,
+                                   double radius) throws Exception {
+        AbstractGraphIterator<JSONVertex, JSONEdge> graphIterator;
+        if (traversalType.equals("breadth_first")) {
+            graphIterator = new BreadthFirstIterator<JSONVertex, JSONEdge>
+                (gr, startVertex);
+        } else if (traversalType.equals("depth_first")) {
+            graphIterator = new DepthFirstIterator<JSONVertex, JSONEdge>
+                (gr, startVertex);
+        } else if (traversalType.equals("closest_first")) {
+            if (radius > 0.0) {
+                graphIterator = new ClosestFirstIterator<JSONVertex, JSONEdge>
+                    (gr, startVertex, radius);
+            } else {
+                graphIterator = new ClosestFirstIterator<JSONVertex, JSONEdge>
+                    (gr, startVertex);
+            }
+        } else if (traversalType.equals("topological")) {
+            graphIterator = new TopologicalOrderIterator<JSONVertex, JSONEdge>
+                (gr);
+        } else {
+            throw new Exception("unknown traversal type '" +
+                traversalType + "' (try breadth_first, depth_first, closest_first, topological)");
+        }
+        graphIterator.addTraversalListener(new TraversalListener<JSONVertex, JSONEdge>() {
+            public void connectedComponentStarted(ConnectedComponentTraversalEvent e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "ConnectedComponentTraversal");
+                    msg.put("eventType", "ConnectedComponentStarted");
+                    publishToEndpointByName(returnChannel, msg);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+
+            public void connectedComponentFinished(ConnectedComponentTraversalEvent e) {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "ConnectedComponentTraversal");
+                    msg.put("eventType", "ConnectedComponentFinished");
+                    publishToEndpointByName(returnChannel, msg);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+            
+            public void edgeTraversed(EdgeTraversalEvent<JSONVertex, JSONEdge> e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "EdgeTraversal");
+                    msg.put("eventType", "EdgeTraversed");
+                    msg.put(KEY_FIELD, e.getEdge().getKey());
+                    publishToEndpointByName(returnChannel, msg);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+
+            public void vertexFinished(VertexTraversalEvent<JSONVertex> e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "VertexTraversal");
+                    msg.put("eventType", "VertexFinished");
+                    msg.put(KEY_FIELD, e.getVertex().getKey());
+                    publishToEndpointByName(returnChannel, msg);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+
+            public void vertexTraversed(VertexTraversalEvent<JSONVertex> e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "VertexTraversal");
+                    msg.put("eventType", "VertexTraversed");
+                    msg.put(KEY_FIELD, e.getVertex().getKey());
+                    publishToEndpointByName(returnChannel, msg);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            }
+        });
+        while(graphIterator.hasNext()) {
+            graphIterator.next();
+        }
     }
     
     /*
