@@ -7,8 +7,7 @@ import static org.jboss.netty.handler.codec.http.HttpMethod.*;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.jboss.netty.handler.codec.http.HttpVersion.*;
 import java.security.MessageDigest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFuture;
@@ -32,9 +31,7 @@ import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameEncoder;
 import org.jboss.netty.util.CharsetUtil;
 
 public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
-    private static final Logger log = Logger.getLogger(
-            WebSocketServerHandler.class.getName());
-
+    private static final Logger log = Logger.getLogger(WebSocketServerHandler.class.getName());
     private static final String WEBSOCKET_PATH = "/websocket";
 
     @Override

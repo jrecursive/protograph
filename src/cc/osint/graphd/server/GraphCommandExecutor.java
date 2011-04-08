@@ -681,6 +681,11 @@ public class GraphCommandExecutor implements Runnable {
         // subscribe to a channel: subscribe <channel_name>
         } else if (cmd.equals(GraphServerProtocol.CMD_SUBSCRIBE)) {
             String channelName = args[0];
+            log.info("channelName = " + channelName);
+            log.info("getInboundChannelProcess(clientId) = " +
+                getInboundChannelProcess(clientId));
+            log.info("getInboundChannelProcess(clientId).getChannel() = " + 
+                getInboundChannelProcess(clientId).getChannel());
             gr.subscribeToEndpointByName(channelName,
                                          getInboundChannelProcess(clientId).getChannel());
             rsb.append(GraphServerProtocol.R_OK);

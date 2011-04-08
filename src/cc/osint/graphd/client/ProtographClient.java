@@ -4,7 +4,6 @@ import java.lang.*;
 import java.util.*;
 import java.util.concurrent.*;
 import org.json.*;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
@@ -13,16 +12,30 @@ import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import jline.*;
 
 import cc.osint.graphd.client.handlers.*;
 
 public class ProtographClient implements Runnable {
-    private static final Logger log = Logger.getLogger(
-            ProtographClient.class.getName());
-    
+    static class ConsoleLogFormatter extends java.util.logging.Formatter {
+        public String format(LogRecord lr) {
+            return lr.getMessage() + "\n";
+        }
+    }
+
+    private static final Logger log = Logger.getLogger("protographClient");
+    static ConsoleLogFormatter consoleLogFormatter;
+    static ConsoleHandler consoleHandler;
+    static {
+        log.setUseParentHandlers(false);
+        consoleHandler = new ConsoleHandler();
+        log.addHandler(consoleHandler);
+        log.setLevel(Level.ALL);
+        consoleLogFormatter = new ConsoleLogFormatter();
+        consoleHandler.setFormatter((java.util.logging.Formatter)consoleLogFormatter);
+    }
+        
     private String host;
     private int port;
     private boolean connected;
