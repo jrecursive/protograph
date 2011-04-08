@@ -1,0 +1,3 @@
+* implement javax.script vm pooling for each process group created
+* allow message event matching on the client so as to route messages from one more more specified endpoints to one or more specified handlers
+
