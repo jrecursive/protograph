@@ -78,6 +78,7 @@ public class StandardResultHandler extends ProtographClientResultHandler {
     }
     
     public void onError(String err) {
+        super.onError(err);
         log.info("onError: " + err);
         this.err = err;
         success = false;

@@ -135,11 +135,9 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
                 if (request.startsWith(GraphServerProtocol.R_OK) ||
                     request.startsWith(GraphServerProtocol.R_BATCH_OK) ) {
                     currentResultHandler.onComplete();
-                    this.currentResultHandler = null;
                 } else {
                     currentResultHandler.onError(request);
                     currentResultHandler.onComplete();
-                    this.currentResultHandler = null;
                 }
             }
                         

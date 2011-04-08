@@ -11,7 +11,10 @@ public abstract class ProtographClientResultHandler {
     private AtomicBoolean hasExecuted;
 
     public abstract void onResult(String result);
-    public abstract void onError(String err);
+    
+    public void onError(String err) {
+        this.throwable = new Exception(err);
+    }
     
     public ProtographClientResultHandler() {
         hasExecuted = new AtomicBoolean(false);

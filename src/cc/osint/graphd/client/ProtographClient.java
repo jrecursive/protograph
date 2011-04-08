@@ -19,7 +19,7 @@ import jline.*;
 
 import cc.osint.graphd.client.handlers.*;
 
-public class ProtographClient {
+public class ProtographClient implements Runnable {
     private static final Logger log = Logger.getLogger(
             ProtographClient.class.getName());
     
@@ -31,9 +31,12 @@ public class ProtographClient {
     private ClientBootstrap bootstrap;
     private Channel channel;
     private ChannelFuture lastWriteFuture;
-
+    
     private ProtographClientHandler protographClientHandler;
     private ProtographClientEventHandler eventHandler;
+
+    final LinkedBlockingQueue<ClientCommand> clientCommandQueue;
+    final Thread clientCommandThread;
 
     public ProtographClient(String host, int port) 
         throws Exception {
@@ -56,6 +59,8 @@ public class ProtographClient {
             new ProtographClientHandler(this);
         protographClientHandler.setProtographClient(this);
         clientCommandQueue = new LinkedBlockingQueue<ClientCommand>();
+        clientCommandThread = new Thread(this);
+        clientCommandThread.start();
         connect();
     }
     
@@ -91,6 +96,7 @@ public class ProtographClient {
             lastWriteFuture.awaitUninterruptibly();
         */
         shutdown = true;
+        clientCommandThread.interrupt();
         // TODO: proper shutdown sequence
         // wait for queue clear/stop
         // wait for flush
@@ -148,7 +154,6 @@ public class ProtographClient {
             return handler;
         }
     }
-    final LinkedBlockingQueue<ClientCommand> clientCommandQueue;
     
     public void run() {
         try {
@@ -160,6 +165,9 @@ public class ProtographClient {
                         clientCommand.getHandler());
                     send(clientCommand.getCommand(), true);
                     while(!clientCommand.getHandler().isComplete());
+                } catch (java.lang.InterruptedException interruptedEx) {
+                    log.info("Interrupted!  Exiting...");
+                    return;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -180,7 +188,8 @@ public class ProtographClient {
         if (resultHandler.isSuccessful()) {
             return interpretResults(resultList);
         } else {
-            throw new Exception(resultHandler.getException());
+            resultHandler.getException().printStackTrace();
+            return null;
         }
     }
     
@@ -242,9 +251,15 @@ public class ProtographClient {
             
             // Sends the received line to the server.
             //client.send(line + "\r\n");
-            List<JSONObject> results = client.exec(line.trim());
-            for(JSONObject result: results) {
-                log.info(result.toString(4));
+            List<JSONObject> results = client.exec(line.trim() + "\n");
+            if (null == results) {
+                log.info("no result!");
+            } else {
+                int c=0;
+                for(JSONObject result: results) {
+                    c++;
+                    log.info(c + ": " + result.toString(4));
+                }
             }
 
             // If user typed the 'bye' command, wait until the server closes

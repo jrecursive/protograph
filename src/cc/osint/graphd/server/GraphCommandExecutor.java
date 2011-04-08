@@ -676,18 +676,21 @@ public class GraphCommandExecutor implements Runnable {
             String json = request.substring(request.indexOf(GraphServerProtocol.SPACE + channelName) +
                 (channelName.length()+1)).trim(); // remainder of line
             gr.publishToEndpointByName(channelName, new JSONObject(json));
+            rsb.append(GraphServerProtocol.R_OK);
             
         // subscribe to a channel: subscribe <channel_name>
         } else if (cmd.equals(GraphServerProtocol.CMD_SUBSCRIBE)) {
             String channelName = args[0];
             gr.subscribeToEndpointByName(channelName,
                                          getInboundChannelProcess(clientId).getChannel());
+            rsb.append(GraphServerProtocol.R_OK);
             
         // unsubscribe from a channel: unsubscribe <channel_name>
         } else if (cmd.equals(GraphServerProtocol.CMD_UNSUBSCRIBE)) {
             String channelName = args[0];
             gr.unsubscribeToEndpointByName(channelName,
                                            getInboundChannelProcess(clientId).getChannel());
+            rsb.append(GraphServerProtocol.R_OK);
         }
         
         // EVENT-SUBSCRIPTION MANAGEMENT
