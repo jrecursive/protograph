@@ -26,7 +26,7 @@ public class ProtographClientPipelineFactory implements
     public ChannelPipeline getPipeline() throws Exception {
         ChannelPipeline pipeline = pipeline();
         pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                8192, Delimiters.lineDelimiter()));
+                65535 * 2, Delimiters.lineDelimiter()));
         pipeline.addLast("decoder", new StringDecoder());
         pipeline.addLast("encoder", new StringEncoder());
         pipeline.addLast("handler", client.getProtographClientHandler());

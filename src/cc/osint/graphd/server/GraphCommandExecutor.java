@@ -392,7 +392,7 @@ public class GraphCommandExecutor implements Runnable {
                     if (null == je) {
                         rsb.append(GraphServerProtocol.R_NOT_FOUND);
                     } else {
-                        rsb.append(je.asClientJSONObject().toString(4) + GraphServerProtocol.NL);
+                        rsb.append(je.asClientJSONObject().toString() + GraphServerProtocol.NL);
                         rsb.append(GraphServerProtocol.R_OK);
                     }
                 } else if (_type.equals(Graph.VERTEX_TYPE)) {
@@ -400,7 +400,7 @@ public class GraphCommandExecutor implements Runnable {
                     if (null == jv) {
                         rsb.append(GraphServerProtocol.R_NOT_FOUND);
                     } else {
-                        rsb.append(jv.toString(4) + GraphServerProtocol.NL);
+                        rsb.append(jv.toString() + GraphServerProtocol.NL);
                         rsb.append(GraphServerProtocol.R_OK);
                     }
                 } else {

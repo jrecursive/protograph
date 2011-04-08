@@ -72,7 +72,7 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
         String channelId = "" + e.getChannel().getId();
         String request = (String) e.getMessage();
         
-        log.info(channelId + ": " + request);
+        //log.info(channelId + ": " + request);
         
         /* charAt(0):
          *  '!' -> event message
@@ -87,7 +87,7 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
         if (request.charAt(0) == '!' ||
             request.charAt(0) == '#') {
             
-            log.info("event response: " + request);
+            //log.info("event response: " + request);
             
             ProtographClientEventHandler handler = 
                 client.getEventHandler();
@@ -113,10 +113,10 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
             }
         } else if (request.charAt(0) == '-') {
             // server response
-            log.info("server response: " + request);
+            //log.info("server response: " + request);
             
             if (request.startsWith("-graphd")) {
-                log.info("connected: " + request);
+                //log.info("connected: " + request);
             } else {
                 /**
                 final protected static String R_OK = "-ok";                         // standard reply
@@ -143,7 +143,7 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
                         
         } else {
             // result response
-            log.info("result response: " + request);
+            //log.info("result response: " + request);
             currentResultHandler.onResult(request);
         }
     }

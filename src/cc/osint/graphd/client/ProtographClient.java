@@ -255,10 +255,14 @@ public class ProtographClient implements Runnable {
             if (null == results) {
                 log.info("no result!");
             } else {
-                int c=0;
-                for(JSONObject result: results) {
-                    c++;
-                    log.info(c + ": " + result.toString(4));
+                if (results.size() == 0) {
+                    log.info("OK");
+                } else {
+                    int c=0;
+                    for(JSONObject result: results) {
+                        c++;
+                        log.info(c + ": " + result.toString(4));
+                    }
                 }
             }
 

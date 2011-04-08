@@ -285,7 +285,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         // DUMP CLIENT STATE: clstate
         } else if (cmd.equals(GraphServerProtocol.CMD_CLSTATE)) {
             JSONObject result = new JSONObject(clientState);
-            rsb.append(result.toString(4));
+            rsb.append(result.toString());
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
             
@@ -303,7 +303,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             names.put("EDGE_TYPE", Graph.EDGE_TYPE);
             result.put("names", names);
             
-            rsb.append(result.toString(4));
+            rsb.append(result.toString());
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
         
@@ -324,7 +324,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 JSONObject result = new JSONObject();
                 result.put("vertex_count", gr0.numVertices());
                 result.put("edge_count", gr0.numEdges());
-                rsb.append(result.toString(4));
+                rsb.append(result.toString());
                 rsb.append(GraphServerProtocol.NL);
                 rsb.append(GraphServerProtocol.R_OK);
             }

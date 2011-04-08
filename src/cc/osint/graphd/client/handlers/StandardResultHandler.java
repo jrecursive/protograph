@@ -68,18 +68,18 @@ public class StandardResultHandler extends ProtographClientResultHandler {
     }
     
     public void onResult(String result) {
-        log.info("onResult: " + result);
+        //log.info("onResult: " + result);
         results.add(result);
     }
     
     public void onComplete() {
         super.onComplete();
-        log.info("onComplete");
+        //log.info("onComplete");
     }
     
     public void onError(String err) {
         super.onError(err);
-        log.info("onError: " + err);
+        //log.info("onError: " + err);
         this.err = err;
         success = false;
     }
