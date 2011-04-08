@@ -953,9 +953,22 @@ public class Graph
     public void pipelinedTraversal(String traversalType,
                                    JSONVertex startVertex,
                                    final String returnChannel,
-                                   double radius) throws Exception {
+                                   double radius,
+                                   JSONArray eventList) throws Exception {
+        final Set<String> eventSet = new HashSet<String>();
+        if (eventList == null) {
+            eventSet.add("connectedComponentStarted");
+            eventSet.add("connectedComponentFinished");
+            eventSet.add("edgeTraversed");
+            eventSet.add("vertexFinished");
+            eventSet.add("vertexTraversed");
+        } else {
+            for(int i=0; i<eventList.length(); i++) {
+                eventSet.add(eventList.getString(i));
+            }
+        }
         traverse(getGraphIterator(traversalType, startVertex, radius), 
-                 getPipelinedTraversalListener(returnChannel));
+                 getPipelinedTraversalListener(returnChannel, eventSet));
     }
     
     private void traverse(AbstractGraphIterator<JSONVertex, JSONEdge> graphIterator,
@@ -1057,28 +1070,34 @@ public class Graph
     }
 
     private TraversalListener<JSONVertex, JSONEdge> getPipelinedTraversalListener(
-        final String returnChannel) throws Exception {
+        final String returnChannel,
+        final Set<String> eventSet) throws Exception {
         
         return new TraversalListener<JSONVertex, JSONEdge>() {
             public void connectedComponentStarted(ConnectedComponentTraversalEvent e)  {
+                if (!eventSet.contains("connectedComponentStarted")) return;
                 try {
                     JSONObject msg = new JSONObject();
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentStarted");
+                    msg.put("source", e.getSource());
                     publishToEndpointByName(returnChannel, msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
 
             public void connectedComponentFinished(ConnectedComponentTraversalEvent e) {
+                if (!eventSet.contains("connectedComponentFinished")) return;
                 try {
                     JSONObject msg = new JSONObject();
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentFinished");
+                    msg.put("source", e.getSource());
                     publishToEndpointByName(returnChannel, msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
             
             public void edgeTraversed(EdgeTraversalEvent<JSONVertex, JSONEdge> e)  {
+                if (!eventSet.contains("edgeTraversed")) return;
                 try {
                     JSONObject msg = new JSONObject();
                     msg.put("event", "EdgeTraversal");
@@ -1089,6 +1108,7 @@ public class Graph
             }
 
             public void vertexFinished(VertexTraversalEvent<JSONVertex> e)  {
+                if (!eventSet.contains("vertexFinished")) return;
                 try {
                     JSONObject msg = new JSONObject();
                     msg.put("event", "VertexTraversal");
@@ -1099,6 +1119,7 @@ public class Graph
             }
 
             public void vertexTraversed(VertexTraversalEvent<JSONVertex> e)  {
+                if (!eventSet.contains("vertexTraversed")) return;
                 try {
                     JSONObject msg = new JSONObject();
                     msg.put("event", "VertexTraversal");

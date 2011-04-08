@@ -635,10 +635,19 @@ public class GraphCommandExecutor implements Runnable {
             String traversalType = args[1];
             String udfKey = args[2];
             String channel = null;
+            JSONArray pipelineEventPassList = null;
             boolean isPipelined = false;
             if (udfKey.equals("-")) {
                 isPipelined = true;
                 channel = args[3];
+                if (args.length == 5) {
+                    String peplStr = 
+                        request.substring(
+                            request.lastIndexOf(GraphServerProtocol.SPACE + channel) +
+                            (channel.length()+1)).trim(); // remainder of line
+                    pipelineEventPassList = 
+                        new JSONArray(peplStr);
+                }
             }
             double radius = 0.0;
             if (traversalType.indexOf(":")!=-1) {
@@ -655,12 +664,18 @@ public class GraphCommandExecutor implements Runnable {
                 rsb.append(GraphServerProtocol.SPACE);
                 rsb.append("startVertex does not exist");
             } else {
-                
                 if (isPipelined) {
-                    gr.pipelinedTraversal(traversalType, v, channel, radius);
+                    gr.pipelinedTraversal(traversalType, 
+                                          v, 
+                                          channel, 
+                                          radius, 
+                                          pipelineEventPassList);
                     rsb.append(GraphServerProtocol.R_OK);
                 } else {
-                    gr.scriptedTraversal(traversalType, v, udfKey, radius);
+                    gr.scriptedTraversal(traversalType, 
+                                         v, 
+                                         udfKey, 
+                                         radius);
                     rsb.append(GraphServerProtocol.R_OK);
                 }
             }
