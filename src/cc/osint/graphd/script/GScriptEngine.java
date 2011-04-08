@@ -15,7 +15,6 @@ public class GScriptEngine {
         
     private String vmName = "anonymous";
     private String vmType = null;
-    private String bootstrap = null;
     private boolean onlyEval = false;
     
     ScriptEngineManager manager = null;
@@ -38,14 +37,6 @@ public class GScriptEngine {
         }
     }
     
-    public void setBootstrap(String bs) {
-        this.bootstrap = bs;
-    }
-    
-    public String getBootstrap() {
-        return this.bootstrap;
-    }
-    
     public Object eval(String s) throws Exception {
         return engine.eval(s);
     }
@@ -54,8 +45,17 @@ public class GScriptEngine {
         return invocableEngine.invokeFunction(fn, args);
     }
     
-    public void bind(String var, Object val) throws Exception {
+    public Object invokeMethod(Object instance, String fn, Object... args) 
+        throws Exception {
+        return invocableEngine.invokeMethod(instance, fn, args);
+    }
+    
+    public void put(String var, Object val) throws Exception {
         engine.put(var, val);
+    }
+    
+    public Object get(String var) throws Exception {
+        return engine.get(var);
     }
     
     public Object evalScript(String fn) throws Exception {

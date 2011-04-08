@@ -635,12 +635,12 @@ public class GraphCommandExecutor implements Runnable {
             String traversalType = args[1];
             String udfKey = args[2];
             String channel = null;
-            boolean isMessageBased = false;
+            boolean isPipelined = false;
             if (udfKey.equals("-")) {
-                isMessageBased = true;
+                isPipelined = true;
                 channel = args[3];
             }
-            double radius = 0;
+            double radius = 0.0;
             if (traversalType.indexOf(":")!=-1) {
                 radius = Double.parseDouble(
                     traversalType.substring(
@@ -655,9 +655,14 @@ public class GraphCommandExecutor implements Runnable {
                 rsb.append(GraphServerProtocol.SPACE);
                 rsb.append("startVertex does not exist");
             } else {
-                // test code
-                gr.pipelinedTraversal(traversalType, v, channel);
-                rsb.append(GraphServerProtocol.R_OK);
+                
+                if (isPipelined) {
+                    gr.pipelinedTraversal(traversalType, v, channel, radius);
+                    rsb.append(GraphServerProtocol.R_OK);
+                } else {
+                    gr.scriptedTraversal(traversalType, v, udfKey, radius);
+                    rsb.append(GraphServerProtocol.R_OK);
+                }
             }
             
         /*

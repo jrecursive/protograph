@@ -910,20 +910,67 @@ public class Graph
      * TRAVERSALS
     */
 
-    public void pipelinedTraversal(String traversalType,
-                                   JSONVertex startVertex,
-                                   final String returnChannel) 
-        throws Exception {
-        pipelinedTraversal(traversalType,
-                           startVertex,
-                           returnChannel,
-                           0.0);
+    public void scriptedTraversal(String traversalType,
+                                  JSONVertex startVertex,
+                                  String udfKey,
+                                  double radius) throws Exception {
+                                  
+        // XXX
+        // TODO: proper abstraction / refactor / consolidation of "udf"
+        //       & "script engine" code; support for other vm types
+        //
+        String pid = generateKey();
+        JSONObject udfDef = getUDFDef(udfKey);
+        String udfType = udfDef.getString("udf_type");
+        String udfFn = udfDef.getString("udf_fn");
+        
+        final GScriptEngine scriptEngine = 
+            new GScriptEngine(pid + "-" + udfType, udfType);
+        scriptEngine.put("_udf_script_engine_", scriptEngine);
+        scriptEngine.evalScript("udfs/js/vm_init.js");
+        scriptEngine.evalScript(udfFn);
+        
+        JSONObject startState = new JSONObject();
+        startState.put("traversalType", traversalType);
+        startState.put("startVertex", startVertex.getKey());
+        startState.put("udfKey", udfKey);
+        startState.put("radius", radius);
+        startState.put("startTimeMillis", System.currentTimeMillis());
+        Object msgObj = scriptEngine.invoke("_JSONstring_to_js", startState.toString());
+        scriptEngine.put("traversalStartState", msgObj);
+        scriptEngine.eval("var handler = new " + udfKey + "(traversalStartState);");
+        final Object handlerInstance = scriptEngine.get("handler");
+        
+        log.info("scriptedTraversal: " + pid + ": vm initialized: " +
+            scriptEngine.toString() + ": handlerInstance: " +
+            handlerInstance.toString());
+        
+        traverse(getGraphIterator(traversalType, startVertex, radius), 
+                 getScriptedTraversalListener(handlerInstance, scriptEngine));
+        
     }
     
     public void pipelinedTraversal(String traversalType,
                                    JSONVertex startVertex,
                                    final String returnChannel,
                                    double radius) throws Exception {
+        traverse(getGraphIterator(traversalType, startVertex, radius), 
+                 getPipelinedTraversalListener(returnChannel));
+    }
+    
+    private void traverse(AbstractGraphIterator<JSONVertex, JSONEdge> graphIterator,
+                          final TraversalListener<JSONVertex, JSONEdge> traversalListener)
+        throws Exception {
+        graphIterator.addTraversalListener(traversalListener);
+        while(graphIterator.hasNext()) {
+            graphIterator.next();
+        }
+    }
+    
+    private AbstractGraphIterator<JSONVertex, JSONEdge> getGraphIterator(String traversalType, 
+                                                                         JSONVertex startVertex, 
+                                                                         double radius) 
+        throws Exception {
         AbstractGraphIterator<JSONVertex, JSONEdge> graphIterator;
         if (traversalType.equals("breadth_first")) {
             graphIterator = new BreadthFirstIterator<JSONVertex, JSONEdge>
@@ -946,14 +993,80 @@ public class Graph
             throw new Exception("unknown traversal type '" +
                 traversalType + "' (try breadth_first, depth_first, closest_first, topological)");
         }
-        graphIterator.addTraversalListener(new TraversalListener<JSONVertex, JSONEdge>() {
+        return graphIterator;
+    }
+    
+    private TraversalListener<JSONVertex, JSONEdge> getScriptedTraversalListener(
+        final Object handlerInstance,
+        final GScriptEngine scriptEngine) throws Exception {
+        
+        return new TraversalListener<JSONVertex, JSONEdge>() {
+            public void connectedComponentStarted(ConnectedComponentTraversalEvent e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "ConnectedComponentTraversal");
+                    msg.put("eventType", "ConnectedComponentStarted");
+                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "connectedComponentStarted", msgObj);
+                } catch (Exception ex) { log.info(ex.getMessage()); }
+            }
+
+            public void connectedComponentFinished(ConnectedComponentTraversalEvent e) {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "ConnectedComponentTraversal");
+                    msg.put("eventType", "ConnectedComponentFinished");
+                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "connectedComponentFinished", msgObj);
+                } catch (Exception ex) { log.info(ex.getMessage()); }
+            }
+            
+            public void edgeTraversed(EdgeTraversalEvent<JSONVertex, JSONEdge> e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "EdgeTraversal");
+                    msg.put("eventType", "EdgeTraversed");
+                    msg.put(KEY_FIELD, e.getEdge().getKey());
+                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "edgeTraversed", msgObj);
+                } catch (Exception ex) { log.info(ex.getMessage()); }
+            }
+
+            public void vertexFinished(VertexTraversalEvent<JSONVertex> e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "VertexTraversal");
+                    msg.put("eventType", "VertexFinished");
+                    msg.put(KEY_FIELD, e.getVertex().getKey());
+                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "vertexFinished", msgObj);
+                } catch (Exception ex) { log.info(ex.getMessage()); }
+            }
+
+            public void vertexTraversed(VertexTraversalEvent<JSONVertex> e)  {
+                try {
+                    JSONObject msg = new JSONObject();
+                    msg.put("event", "VertexTraversal");
+                    msg.put("eventType", "VertexTraversed");
+                    msg.put(KEY_FIELD, e.getVertex().getKey());
+                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "vertexTraversed", msgObj);
+                } catch (Exception ex) { log.info(ex.getMessage()); }
+            }
+        };
+    }
+
+    private TraversalListener<JSONVertex, JSONEdge> getPipelinedTraversalListener(
+        final String returnChannel) throws Exception {
+        
+        return new TraversalListener<JSONVertex, JSONEdge>() {
             public void connectedComponentStarted(ConnectedComponentTraversalEvent e)  {
                 try {
                     JSONObject msg = new JSONObject();
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentStarted");
                     publishToEndpointByName(returnChannel, msg);
-                } catch (Exception ex) { ex.printStackTrace(); }
+                } catch (Exception ex) { log.info(ex.getMessage()); }
             }
 
             public void connectedComponentFinished(ConnectedComponentTraversalEvent e) {
@@ -962,7 +1075,7 @@ public class Graph
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentFinished");
                     publishToEndpointByName(returnChannel, msg);
-                } catch (Exception ex) { ex.printStackTrace(); }
+                } catch (Exception ex) { log.info(ex.getMessage()); }
             }
             
             public void edgeTraversed(EdgeTraversalEvent<JSONVertex, JSONEdge> e)  {
@@ -972,7 +1085,7 @@ public class Graph
                     msg.put("eventType", "EdgeTraversed");
                     msg.put(KEY_FIELD, e.getEdge().getKey());
                     publishToEndpointByName(returnChannel, msg);
-                } catch (Exception ex) { ex.printStackTrace(); }
+                } catch (Exception ex) { log.info(ex.getMessage()); }
             }
 
             public void vertexFinished(VertexTraversalEvent<JSONVertex> e)  {
@@ -982,7 +1095,7 @@ public class Graph
                     msg.put("eventType", "VertexFinished");
                     msg.put(KEY_FIELD, e.getVertex().getKey());
                     publishToEndpointByName(returnChannel, msg);
-                } catch (Exception ex) { ex.printStackTrace(); }
+                } catch (Exception ex) { log.info(ex.getMessage()); }
             }
 
             public void vertexTraversed(VertexTraversalEvent<JSONVertex> e)  {
@@ -992,12 +1105,9 @@ public class Graph
                     msg.put("eventType", "VertexTraversed");
                     msg.put(KEY_FIELD, e.getVertex().getKey());
                     publishToEndpointByName(returnChannel, msg);
-                } catch (Exception ex) { ex.printStackTrace(); }
+                } catch (Exception ex) { log.info(ex.getMessage()); }
             }
-        });
-        while(graphIterator.hasNext()) {
-            graphIterator.next();
-        }
+        };
     }
     
     /*
