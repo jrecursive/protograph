@@ -609,6 +609,82 @@ public class GraphCommandExecutor implements Runnable {
             }
         
         /*
+         * TRAVERSAL
+        */
+        
+        // custom traversal code
+        // TRAV <start_vertex> <traversal_type> ( - | <udf_key> ) [channel]
+        //
+        // <traversal_type> values:
+        //  breadth_first depth_first closest_first topological
+        //
+        // the following <traversal_type> may be specified with a suffix
+        //  denoting a maximum radius from <start_vertex>:
+        //  closest_first[:radius]
+        //  
+        // if parameter 3 is "-", events will be sent to argument 4 [channel]
+        // if parameter 3 is not "-", it will be interpreted as a server-side udf
+        //   that implements TraversalEvent functions
+        // 
+        } else if (cmd.equals(GraphServerProtocol.CMD_TRAV)) {
+            String startVertex = args[0];
+            String traversalType = args[1];
+            String udfKey = args[2];
+            String channel = null;
+            boolean isMessageBased = false;
+            if (udfKey.equals("-")) {
+                isMessageBased = true;
+                channel = args[3];
+            }
+            double radius = 0;
+            if (traversalType.indexOf(":")!=-1) {
+                radius = Double.parseDouble(
+                    traversalType.substring(
+                        traversalType.indexOf(":")+1));
+                traversalType = traversalType.substring(
+                    0, traversalType.indexOf(":"));
+            }
+            
+            /*
+             * XXX
+             * TODO: IMPLEMENT TRAVERSALS
+            */
+            throw new Exception("not implemented");
+        
+        /*
+         * USER-DEFINED FUNCTIONS
+        */
+        
+        // DEFINE A UDF
+        } else if (cmd.equals(GraphServerProtocol.CMD_DEFINE_UDF)) {
+            String udfKey = args[0];
+            String udfType = args[1];
+            String udfURL = args[2];
+            gr.defineUDF(udfKey, udfType, udfURL);
+            rsb.append(GraphServerProtocol.R_OK);
+        
+        /*
+         * ANONYMOUS BLOCKS
+        */
+        
+        // block_begin <block_key>
+        } else if (cmd.equals(GraphServerProtocol.CMD_BLOCK_BEGIN)) {
+            throw new Exception("not implemented");
+        
+        // block_end <block_key>
+        } else if (cmd.equals(GraphServerProtocol.CMD_BLOCK_END)) {
+            throw new Exception("not implemented");
+        
+        // block_get <block_key>
+        } else if (cmd.equals(GraphServerProtocol.CMD_BLOCK_GET)) {
+            throw new Exception("not implemented");
+
+        // block_remove <block_key>
+        } else if (cmd.equals(GraphServerProtocol.CMD_BLOCK_REMOVE)) {
+            throw new Exception("not implemented");
+        
+        
+        /*
          * SIMULATION
         */
         
@@ -626,14 +702,6 @@ public class GraphCommandExecutor implements Runnable {
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
         
-        // DEFINE A UDF
-        } else if (cmd.equals(GraphServerProtocol.CMD_DEFINE_UDF)) {
-            String udfKey = args[0];
-            String udfType = args[1];
-            String udfURL = args[2];
-            gr.defineUDF(udfKey, udfType, udfURL);
-            rsb.append(GraphServerProtocol.R_OK);
-            
         // START A UDF-BACKED PROCESS
         } else if (cmd.equals(GraphServerProtocol.CMD_SPROC)) {
             String objKey = args[0];
@@ -657,7 +725,11 @@ public class GraphCommandExecutor implements Runnable {
             jo = new JSONObject(json);
             gr.emit(key, processName, jo);
             rsb.append(GraphServerProtocol.R_OK);
-            
+        
+        /*
+         * CHANNEL MESSAGING
+        */
+        
         // create a channel: cchan <channel_name>
         } else if (cmd.equals(GraphServerProtocol.CMD_CCHAN)) {
             String channelName = args[0];

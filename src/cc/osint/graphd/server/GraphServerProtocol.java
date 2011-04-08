@@ -49,12 +49,26 @@ public class GraphServerProtocol {
     final public    static String CMD_GCYC = "gcyc";          // get vertex set for the subgraph of all cycles
     final public    static String CMD_VCYC = "vcyc";          // get vertex set for the subgraph of all cycles that contain V
     
+    /* traversal */
+    final public    static String CMD_TRAV = "trav";          // traverse a graph
+    
+    /* anonymous blocks */
+    final public    static String CMD_BLOCK_BEGIN = "block_begin";      // block_begin <block_key>
+    final public    static String CMD_BLOCK_END = "block_end";          // block_end <block_key>
+    final public    static String CMD_BLOCK_REMOVE = "block_remove";    // block_remove <block_key>
+    final public    static String CMD_BLOCK_GET = "block_get";          // block_get <block_key>
+    
+    /* user-defined functions */
+    final public    static String CMD_DEFINE_UDF = "define_udf";    // define_udf <udf_key> <udf_type> [block:<block_key> | <udf_data_fn>]
+    
     /* simulation */
     
     final public    static String CMD_QSIM = "qsim";                // query simulation index (udf, process, channel, subscriber)
-    final public    static String CMD_DEFINE_UDF = "define_udf";    // define_udf <udf_key> <udf_type> <udf_data_url>
     final public    static String CMD_SPROC = "sproc";              // start process: sproc <key> <udf_key> <process_name>
     final public    static String CMD_EMIT = "emit";                // emit a message to a running process: emit <key> <process_name> <json>
+    
+    /* channel messaging */
+    
     final public    static String CMD_CCHAN = "cchan";              // create a channel endpoint
     final public    static String CMD_PUBLISH = "publish";          // publish a message to a channel
     final public    static String CMD_SUBSCRIBE = "subscribe";      // subscribe to a channel
