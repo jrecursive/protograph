@@ -19,7 +19,7 @@ RandomLogicValueGenerator = function(_process) {
     };
     
     this.message = function(msg) {
-        if (msg.type == "clock") {
+        //if (msg.type == "clock") {
             var _key = "" + this._process.getContext().get("_key");
             var outputs = _process.getGraph().getOutgoingNeighborsOf(_process.getContext(),"signal").toArray();
             for (var i=0; i<outputs.length; i++) {
@@ -33,9 +33,11 @@ RandomLogicValueGenerator = function(_process) {
                     })
                 );
             }
+        /*
         } else {
             log("unknown message type: " + msg.type);
         }
+        */
     };
     return this;
 };
