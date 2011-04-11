@@ -30,6 +30,11 @@ function _emit(_process, objkey, prockey, msg) {
     _process.emit(objkey, prockey, msgObj);
 };
 
+function _emit_by_query(_process, _q, msg) {
+    var msgObj = _jsobj_to_JSONObject(msg);
+    _process.emitByQuery(_q, msgObj);
+};
+
 /*
  * util
 */

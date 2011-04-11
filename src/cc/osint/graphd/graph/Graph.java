@@ -589,6 +589,8 @@ public class Graph
         return vertices.get(key);
     }
     
+    // outgoing edges of
+    
     public Set<JSONEdge> getOutgoingEdgesOf(String key) throws Exception {
         return getOutgoingEdgesOf(getVertex(key));
     }
@@ -596,6 +598,8 @@ public class Graph
     public Set<JSONEdge> getOutgoingEdgesOf(JSONVertex vertex) throws Exception {
         return gr.outgoingEdgesOf(vertex);
     }
+    
+    // outgoing neighbors of
     
     public Set<JSONVertex> getOutgoingNeighborsOf(JSONVertex vertex) throws Exception {
         Set<String> rels = null;
@@ -624,6 +628,45 @@ public class Graph
         return neighbors;
     }
     
+    // incoming edges of
+    
+    public Set<JSONEdge> getIncomingEdgesOf(JSONVertex vertex) throws Exception {
+        return gr.incomingEdgesOf(vertex);
+    }
+    
+    // incoming neighbors of
+
+    public Set<JSONVertex> getIncomingNeighborsOf(JSONVertex vertex) throws Exception {
+        Set<String> rels = null;
+        return getIncomingNeighborsOf(vertex, rels);
+    }
+    
+    public Set<JSONVertex> getIncomingNeighborsOf(JSONVertex vertex, String rel) throws Exception {
+        Set<String> rels = new HashSet<String>();
+        rels.add(rel);
+        return getIncomingNeighborsOf(vertex, rels);
+    }
+    
+    public Set<JSONVertex> getIncomingNeighborsOf(JSONVertex vertex, Set<String> rels) throws Exception {
+        Set<JSONEdge> edges = getIncomingEdgesOf(vertex);
+        Set<JSONVertex> neighbors = new HashSet<JSONVertex>();
+        for(JSONEdge edge: edges) {
+            if (rels != null) {
+                String edgeRel = edge.get(RELATION_FIELD);
+                if (rels.contains(edgeRel)) {
+                    neighbors.add(edge.getTarget());
+                }
+            } else {
+                neighbors.add(edge.getTarget());
+            }
+        }
+        return neighbors;
+    }
+    
+    //
+    //
+    //
+        
     public JSONEdge getEdge(String key) throws Exception {
         JSONObject jsonEdge = getGraphObject(key);
         JSONVertex fromVertex = getVertex(jsonEdge.getString(EDGE_SOURCE_FIELD));

@@ -85,6 +85,10 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
         getGraph().emit(key, processName, msg);
     }
     
+    public void emitByQuery(String query, JSONObject msg) throws Exception {
+        getGraph().emitByQuery(query, msg);
+    }
+    
     public void onMessage(M msg) {
         message(msg);
     }
