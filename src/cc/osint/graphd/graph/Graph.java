@@ -57,9 +57,9 @@ public class Graph
     
     private IndexWriter indexWriter;
     private IndexReader indexReader;
-    private Searcher searcher;
+    private IndexSearcher searcher;
     final private RAMDirectory luceneDirectory;
-    final private Analyzer analyzer = new KeywordAnalyzer();
+    final private Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_31);
     
     /* simulation: process management */
 
@@ -76,7 +76,7 @@ public class Graph
     
     private IndexWriter simIndexWriter;
     private IndexReader simIndexReader;
-    private Searcher simSearcher;
+    private IndexSearcher simSearcher;
     final private RAMDirectory simLuceneDirectory;
     
     /* graph object statics */
@@ -142,7 +142,7 @@ public class Graph
         luceneDirectory = new RAMDirectory();
         indexWriter = new IndexWriter(
             luceneDirectory,
-            new StandardAnalyzer(Version.LUCENE_30),
+            analyzer,
             IndexWriter.MaxFieldLength.LIMITED);
         indexReader = indexWriter.getReader();
         searcher = new IndexSearcher(indexReader);
@@ -151,7 +151,7 @@ public class Graph
         simLuceneDirectory = new RAMDirectory();
         simIndexWriter = new IndexWriter(
             simLuceneDirectory,
-            new StandardAnalyzer(Version.LUCENE_30),
+            analyzer,
             IndexWriter.MaxFieldLength.LIMITED);
         simIndexReader = simIndexWriter.getReader();
         simSearcher = new IndexSearcher(simIndexReader);
@@ -297,6 +297,12 @@ public class Graph
     //
     public String createEndpointChannel(String channelName)
         throws Exception {
+        Channel<JSONObject> existingChannel = 
+            getEndpointChannelObject(channelName);
+        if (null != existingChannel) {
+            return null;
+        }
+        
         String pid = generateKey();
         EndpointChannelProcess endpointProcess = 
             new EndpointChannelProcess(channelName);
@@ -313,7 +319,11 @@ public class Graph
     
     public Channel<JSONObject> getEndpointChannelObject(String channelName)
         throws Exception {
-        return getEndpointChannelProcess(channelName).getChannel();
+        GraphProcess<String, JSONObject> graphProcess =
+            getEndpointChannelProcess(channelName);
+        if (null != graphProcess) {
+            return graphProcess.getChannel();
+        } else return null;
     }
     
     public EndpointChannelProcess getEndpointChannelProcess(String channelName) 
@@ -349,12 +359,21 @@ public class Graph
     public void subscribeToEndpointByName(String channelName,
                                           Channel<JSONObject> inboundChannel)
         throws Exception {
+        if (null == getEndpointChannelProcess(channelName)) {
+            throw new Exception("channel " + channelName + " does not exist");
+        }
+        if (getEndpointChannelProcess(channelName).isSubscribed(inboundChannel)) {
+            throw new Exception("already subscribed to channel " + channelName);
+        }
         getEndpointChannelProcess(channelName).addSubscriber(inboundChannel);
     }
     
     public void unsubscribeToEndpointByName(String channelName,
                                           Channel<JSONObject> inboundChannel)
         throws Exception {
+        if (!getEndpointChannelProcess(channelName).isSubscribed(inboundChannel)) {
+            throw new Exception("not subscribed to channel " + channelName);
+        }
         getEndpointChannelProcess(channelName).removeSubscriber(inboundChannel);
     }
     
@@ -404,7 +423,7 @@ public class Graph
             null != JSONObject.getNames(jo)) {
             for (String k: JSONObject.getNames(jo)) {
                 doc.add(new Field(k, jo.getString(k),
-                        Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+                        Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
             }
         }
         
@@ -437,7 +456,7 @@ public class Graph
         
         
     public void deleteSimObjectsByQuery(String queryStr) throws Exception {
-        QueryParser qp = new QueryParser(Version.LUCENE_30, KEY_FIELD, analyzer);
+        QueryParser qp = new QueryParser(Version.LUCENE_31, KEY_FIELD, analyzer);
         qp.setDefaultOperator(org.apache.lucene.queryParser.QueryParser.Operator.AND);
         qp.setAllowLeadingWildcard(true);
         Query query = qp.parse(queryStr);
@@ -481,10 +500,10 @@ public class Graph
         return query(simSearcher, queryStr);
     }
     
-    public List<JSONObject> query(Searcher indexSearcher, String queryStr) throws Exception {
+    public List<JSONObject> query(IndexSearcher indexSearcher, String queryStr) throws Exception {
         long start_t = System.currentTimeMillis();
         final List<JSONObject> results = new ArrayList<JSONObject>();
-        QueryParser qp = new QueryParser(Version.LUCENE_30, KEY_FIELD, analyzer);
+        QueryParser qp = new QueryParser(Version.LUCENE_31, KEY_FIELD, analyzer);
         qp.setDefaultOperator(org.apache.lucene.queryParser.QueryParser.Operator.AND);
         qp.setAllowLeadingWildcard(true);
         Query query = qp.parse(queryStr);
@@ -705,6 +724,7 @@ public class Graph
         Map<JSONEdge, Double> flowMap = ekmf.getMaximumFlow();
         for(JSONEdge edge: flowMap.keySet()) {
             double flowValue = (double) flowMap.get(edge);
+            if (flowValue == 0) continue;
             String edgeKey = edge.get(KEY_FIELD);
             flowResult.put(edgeKey, flowValue);
         }
@@ -1019,8 +1039,8 @@ public class Graph
                     JSONObject msg = new JSONObject();
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentStarted");
-                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
-                    scriptEngine.invokeMethod(handlerInstance, "connectedComponentStarted", msgObj);
+                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "connectedComponentStarted", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
 
@@ -1029,8 +1049,8 @@ public class Graph
                     JSONObject msg = new JSONObject();
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentFinished");
-                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
-                    scriptEngine.invokeMethod(handlerInstance, "connectedComponentFinished", msgObj);
+                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "connectedComponentFinished", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
             
@@ -1040,8 +1060,8 @@ public class Graph
                     msg.put("event", "EdgeTraversal");
                     msg.put("eventType", "EdgeTraversed");
                     msg.put(KEY_FIELD, e.getEdge().getKey());
-                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
-                    scriptEngine.invokeMethod(handlerInstance, "edgeTraversed", msgObj);
+                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "edgeTraversed", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
 
@@ -1051,8 +1071,8 @@ public class Graph
                     msg.put("event", "VertexTraversal");
                     msg.put("eventType", "VertexFinished");
                     msg.put(KEY_FIELD, e.getVertex().getKey());
-                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
-                    scriptEngine.invokeMethod(handlerInstance, "vertexFinished", msgObj);
+                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "vertexFinished", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
 
@@ -1062,8 +1082,8 @@ public class Graph
                     msg.put("event", "VertexTraversal");
                     msg.put("eventType", "VertexTraversed");
                     msg.put(KEY_FIELD, e.getVertex().getKey());
-                    Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
-                    scriptEngine.invokeMethod(handlerInstance, "vertexTraversed", msgObj);
+                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
+                    scriptEngine.invokeMethod(handlerInstance, "vertexTraversed", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
         };

@@ -161,6 +161,9 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                                           e.getChannel());      // netty channel
             inboundChannelMap.put(clientId, 
                 new WeakReference<InboundChannelProcess>(inboundChannelProcess));
+            
+            log.info(clientId + ": " + inboundChannelMap.get(clientId));
+            
             inboundChannel.subscribe(fiber, inboundChannelProcess);
         }
         e.getChannel().write(
@@ -253,9 +256,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 WeakReference<Graph> graphRef = 
                     new WeakReference<Graph>(newGraph);
                 GraphCommandExecutor graphCommandExecutor = 
-                    new GraphCommandExecutor(args[0], 
-                                             graphRef, 
-                                             inboundChannelMap);
+                    new GraphCommandExecutor(args[0], graphRef);
                 graphCommandExecutorService.execute(graphCommandExecutor);
                 graphCommandExecutorMap.put(args[0], graphCommandExecutor);
                 
@@ -335,10 +336,15 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
             // graph-specific, queue-driven ordered operations
             //
             
+            WeakReference<InboundChannelProcess> inboundChannelProcessRef =
+                inboundChannelMap.get(clientId);
+            
             GraphCommand graphCommand = new GraphCommand();
             graphCommand.responseChannel = responseChannel;
             graphCommand.clientId = clientId;
             graphCommand.clientState = clientState;
+            graphCommand.inboundChannelProcess = 
+                inboundChannelProcessRef.get();
             graphCommand.request = request;
             graphCommand.cmd = cmd;
             graphCommand.args = args;

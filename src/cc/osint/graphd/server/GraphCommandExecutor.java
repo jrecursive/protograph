@@ -18,18 +18,12 @@ public class GraphCommandExecutor implements Runnable {
 
     final private String graphName;
     final private WeakReference<Graph> graphRef;
-    final private ConcurrentHashMap<String, 
-        WeakReference<InboundChannelProcess>> inboundChannelMap;
     final LinkedBlockingQueue<GraphCommand> graphCommandQueue;
     
     public GraphCommandExecutor(String graphName,
-                                WeakReference<Graph> graphRef,
-                                ConcurrentHashMap<String, 
-                                    WeakReference<InboundChannelProcess>> 
-                                    inboundChannelMap) {
+                                WeakReference<Graph> graphRef) {
         this.graphName = graphName;
         this.graphRef = graphRef;
-        this.inboundChannelMap = inboundChannelMap;
         graphCommandQueue = new LinkedBlockingQueue<GraphCommand>();
         log.info("start: GraphCommandExecutor(" + this.graphName + ")");
     }
@@ -53,6 +47,7 @@ public class GraphCommandExecutor implements Runnable {
                     execute(graphCommand.responseChannel,
                             graphCommand.clientId,
                             graphCommand.clientState,
+                            graphCommand.inboundChannelProcess,
                             graphCommand.request,
                             graphCommand.cmd,
                             graphCommand.args);
@@ -70,7 +65,8 @@ public class GraphCommandExecutor implements Runnable {
     
     protected String execute(Channel responseChannel,
                              String clientId, 
-                             ConcurrentHashMap<String, String> clientState, 
+                             ConcurrentHashMap<String, String> clientState,
+                             InboundChannelProcess inboundChannelProcess,
                              String request, 
                              String cmd, 
                              String[] args) throws Exception {
@@ -131,10 +127,13 @@ public class GraphCommandExecutor implements Runnable {
                     batchArgs = new String[0];
                 }
                     
+                log.info("batchRequest: " + batchRequest);
+                
                 String batchCmdResponse =
                     execute(responseChannel,
                             clientId, 
-                            clientState, 
+                            clientState,
+                            inboundChannelProcess,
                             batchRequest,
                             batchCmd,
                             batchArgs);
@@ -783,19 +782,20 @@ public class GraphCommandExecutor implements Runnable {
         } else if (cmd.equals(GraphServerProtocol.CMD_SUBSCRIBE)) {
             String channelName = args[0];
             log.info("channelName = " + channelName);
-            log.info("getInboundChannelProcess(clientId) = " +
-                getInboundChannelProcess(clientId));
-            log.info("getInboundChannelProcess(clientId).getChannel() = " + 
-                getInboundChannelProcess(clientId).getChannel());
+            log.info("inboundChannelProcess = " + inboundChannelProcess);
+            log.info("inboundChannelProcess = " + 
+                inboundChannelProcess);
+            log.info("inboundChannelProcess.getChannel() = " + 
+                inboundChannelProcess.getChannel());
             gr.subscribeToEndpointByName(channelName,
-                                         getInboundChannelProcess(clientId).getChannel());
+                inboundChannelProcess.getChannel());
             rsb.append(GraphServerProtocol.R_OK);
             
         // unsubscribe from a channel: unsubscribe <channel_name>
         } else if (cmd.equals(GraphServerProtocol.CMD_UNSUBSCRIBE)) {
             String channelName = args[0];
             gr.unsubscribeToEndpointByName(channelName,
-                                           getInboundChannelProcess(clientId).getChannel());
+                inboundChannelProcess.getChannel());
             rsb.append(GraphServerProtocol.R_OK);
         }
         
@@ -811,10 +811,5 @@ public class GraphCommandExecutor implements Runnable {
         //s = s.replaceAll(GraphServerProtocol.NL, GraphServerProtocol.SPACE);
         //return s;
         return jo.toString();
-    }
-    
-    private InboundChannelProcess getInboundChannelProcess(String clientId)
-        throws Exception {
-        return inboundChannelMap.get(clientId).get();
     }
 }
