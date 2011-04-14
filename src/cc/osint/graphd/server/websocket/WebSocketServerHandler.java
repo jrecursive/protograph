@@ -8,6 +8,8 @@ import static org.jboss.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.jboss.netty.handler.codec.http.HttpVersion.*;
 import java.security.MessageDigest;
 import java.util.logging.*;
+import java.util.*;
+import java.util.concurrent.*;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFuture;
@@ -17,6 +19,9 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.channel.ChannelEvent;
+import org.jboss.netty.channel.ChannelStateEvent;
+import org.jboss.netty.channel.ChannelState;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
@@ -29,11 +34,102 @@ import org.jboss.netty.handler.codec.http.websocket.WebSocketFrame;
 import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameDecoder;
 import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameEncoder;
 import org.jboss.netty.util.CharsetUtil;
+import org.json.*;
+import cc.osint.graphd.util.*;
+import cc.osint.graphd.client.*;
+import cc.osint.graphd.client.handlers.*;
 
-public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
+public class WebSocketServerHandler 
+    extends SimpleChannelUpstreamHandler {
+    
     private static final Logger log = Logger.getLogger(WebSocketServerHandler.class.getName());
     private static final String WEBSOCKET_PATH = "/websocket";
+    
+    static ConcurrentHashMap<String, ProtographClient> clientMap;
+    static {
+        clientMap = new ConcurrentHashMap<String, ProtographClient>();
+    }
+    
+    class ClientCmd {
+        protected ChannelHandlerContext ctx;
+        protected String cmd;
+    }
+    
+    static Runnable runnable;
+    static Thread clientCommandThread;
+    static LinkedBlockingQueue<ClientCmd> cmdQueue;
+    static {
+        cmdQueue = new LinkedBlockingQueue<ClientCmd>();
+        runnable = new Runnable() {
+            public void run() {
+                try {
+                    while(true) {
+                        try {
+                            ClientCmd cmd = cmdQueue.take();
+                            log.info("clientCmd [" + cmd.ctx + "]: " + cmd.cmd);
 
+                            String clientId = "" + cmd.ctx.getChannel().getId();
+                            if (null == clientMap.get(clientId)) {
+                                clientMap.put(clientId, 
+                                              new ProtographClient("localhost", 
+                                                                   10101,
+                                                                   new WebsocketEventHandler(cmd.ctx)));
+                            }
+                            ProtographClient client = clientMap.get(clientId);
+                            
+                            List<JSONObject> results = client.exec(cmd.cmd.trim() + "\n");
+                            if (null == results) {
+                                send(cmd.ctx, "no result!");
+                            } else {
+                                if (results.size() == 0) {
+                                    send(cmd.ctx, "OK");
+                                } else {
+                                    int c=0;
+                                    for(JSONObject result: results) {
+                                        c++;
+                                        send(cmd.ctx, c + ": " + result.toString(4));
+                                    }
+                                }
+                            }
+                        } catch (Exception clex) {
+                            clex.printStackTrace();
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        };
+        clientCommandThread = new Thread(runnable);
+        clientCommandThread.start();
+    }
+    
+    @Override
+    public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) 
+        throws Exception {
+        if (e instanceof ChannelStateEvent) {
+            String clientId = "" + e.getChannel().getId();
+            ChannelState state = ((ChannelStateEvent)e).getState();
+            if (state == state.CONNECTED &&
+                ((ChannelStateEvent)e).getValue() == null) {
+                
+                // TODO: send client disconnection messages to any related
+                //       or interested parties (processes, watched objects, 
+                //       watching objects, etc.)
+                
+                ProtographClient cl = clientMap.get(clientId);
+                if (null != cl) {
+                    cl.disconnect();
+                }
+                clientMap.remove(clientId);
+                log.info("WEBSOCKETS: DISCONNECTED: " + clientId);
+            } else {
+                log.info("WEBSOCKETS: NETTY: handleUpstream: " + e.toString());
+            }
+        }
+        super.handleUpstream(ctx, e);
+    }
+    
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
         Object msg = e.getMessage();
@@ -52,16 +148,21 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
             return;
         }
 
-        // Send the demo page.
-        if (req.getUri().equals("/")) {
+        log.info("req.getUri() = " + req.getUri());
+        log.info("getWebSocketLocation(req) = " + getWebSocketLocation(req));
+        if (req.getUri().startsWith("/app/")) {
             HttpResponse res = new DefaultHttpResponse(HTTP_1_1, OK);
-
-            ChannelBuffer content =
-                WebSocketServerIndexPage.getContent(getWebSocketLocation(req));
-
+            String fn = req.getUri().replaceAll("\\/app\\/", "");
+            log.info("fn = " + fn);
+            if (fn.indexOf("..")!=-1) throw new Exception ("illegal");
+            if (fn.indexOf("~")!=-1) throw new Exception ("illegal");
+            if (fn.indexOf("/")!=-1) throw new Exception ("illegal");
+            fn = "./www/" + fn;
+            log.info("fn [2] = " + fn);
+            ChannelBuffer content = 
+                ChannelBuffers.copiedBuffer(TextFile.get(fn), CharsetUtil.US_ASCII);
             res.setHeader(CONTENT_TYPE, "text/html; charset=UTF-8");
             setContentLength(res, content.readableBytes());
-
             res.setContent(content);
             sendHttpResponse(ctx, req, res);
             return;
@@ -130,11 +231,25 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
     }
 
     private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
-        // Send the uppercased string back.
-        String request = frame.getTextData();
-        log.info("WebSocketServerHandler: handleWebSocketFrame: request = " + request);
-        ctx.getChannel().write(
-                new DefaultWebSocketFrame(frame.getTextData().toUpperCase()));
+        try {
+            // Send the uppercased string back.
+            String request = frame.getTextData();
+            log.info("WebSocketServerHandler: handleWebSocketFrame: request = " + request);
+            ClientCmd cmd = new ClientCmd();
+            cmd.ctx = ctx;
+            cmd.cmd = request;
+            cmdQueue.put(cmd);
+            /*
+            ctx.getChannel().write(
+                    new DefaultWebSocketFrame(frame.getTextData().toUpperCase()));
+            */
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private static void send(ChannelHandlerContext ctx, String msg) throws Exception {
+        ctx.getChannel().write(new DefaultWebSocketFrame(msg));
     }
 
     private void sendHttpResponse(ChannelHandlerContext ctx, HttpRequest req, HttpResponse res) {

@@ -56,6 +56,39 @@ function log(s) {
     print(s + "\n");
 }
 
+$g = {};
+$g.Client = function() {
+    this.client = new Packages.cc.osint.graphd.client.ProtographClient("localhost", 10101);
+    
+    this.exec = function(cmd) {
+        var results = this.client.exec(cmd + "\n");
+        if (null == results) {
+            log("no result!");
+            return null;
+        } else {
+            if (results.size() == 0) {
+                return true;
+            } else {
+                var c=0;
+                var r = [];
+                for(var i=0; i<results.length; i++) {
+                    var result = results[i];
+                    c++;
+                    log.info(c + ": " + result.toString(4));
+                    r.push(_JSONstring_to_js(result.toString(4)));
+                }
+                return r;
+            }
+        }
+    };
+    
+    this.disconnect = function() {
+        this.client.disconnect();
+    };
+};
+
+$g.client = new $g.Client();
+
 exec("udfs/js/lib/taffy.js");
 
 log("vm_init.js ok");

@@ -74,6 +74,11 @@ ANDProcess = function(_process) {
         }
         // clear state
         this.inputState = {};
+        $g.client.exec("use logic");
+        
+        // xxx todo: change to emit_delayed <key> <process-name> <delay-ms> <json>
+        $g.client.exec("emit and1 and1-ANDProcess {\"type\":\"clock\"}");
+        $g.client.disconnect();
     };
     
     return this;

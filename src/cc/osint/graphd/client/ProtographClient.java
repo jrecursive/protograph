@@ -12,6 +12,7 @@ import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.jboss.netty.channel.ChannelHandlerContext;
 import java.util.logging.*;
 import jline.*;
 
@@ -55,7 +56,7 @@ public class ProtographClient implements Runnable {
         throws Exception {
         this(host, port, null);
     }
-    
+
     public ProtographClient(String host, 
                             int port, 
                             ProtographClientEventHandler eventHandler) 
@@ -180,7 +181,7 @@ public class ProtographClient implements Runnable {
                     while(!clientCommand.getHandler().isComplete());
                 } catch (java.lang.InterruptedException interruptedEx) {
                     log.info("Interrupted!  Exiting...");
-                    return;
+                    break;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
