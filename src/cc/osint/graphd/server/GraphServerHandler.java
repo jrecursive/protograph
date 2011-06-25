@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 John Muellerleile
+ * Copyright 2011 John Muellerleile
  *
  * This file is licensed to you under the Apache License, version 2.0
  * (the "License"); you may not use this file except in compliance with the
@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 package cc.osint.graphd.server;
 
 import java.lang.ref.*;
