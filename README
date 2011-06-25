@@ -3,9 +3,69 @@
 // protograph (under development)
 //
 
-//
-// command list (so far)
-//
+introduction
+------------
+
+A lot of experiments in ranking, relevance, social network exploration, etc. I
+have done in the past have required different parts of what has become
+protograph.  In April I had the time and the motivation to take those parts and
+put them together.
+
+First I'll make a small but sincere apology -- the code is haphazard and should
+not be even remotely considered for any kind of production installation.  It's
+not even remotely efficient in its use of resources -- yet.
+
+I do have many plans on cleaning this experimental project up and will be
+working on it from time to time.  The list of changes is long and at some point
+I will enter them into the issue tracker and fill out the wiki.
+
+Until then, consider protograph the frankenchild progeny after a graph library
+and a search engine get drunk and have a wicked night of it.
+
+requirements
+------------
+
+java 1.6
+
+
+to compile
+----------
+
+ant
+
+
+start the server
+----------------
+
+./start-graphd.sh
+
+
+load some data
+--------------
+
+./load-graph.sh flights.graph
+
+
+start a client
+--------------
+
+./client.sh localhost 10101
+
+
+coming soon
+-----------
+
+* actual java, php, ... clients
+* finished websockets interface
+* RESTful interface
+* responsible resource management
+* reworked vertex/edge process management
+* ... 
+
+commands
+--------
+
+* (NOTE: see command modifiers below for more examples)
 
 CREATE      Create a named directed graph
             create <name>
@@ -17,6 +77,18 @@ DROP        Delete a named graph
             drop <name>
             
 LISTG       List graphs
+            
+            listg
+            1: {"value": "flights"}
+            2: {"value": "categories"}
+            
+GSTAT       Get the status of an existing graph
+
+            gstat flights
+            {
+                "edge_count": 1779,
+                "vertex_count": 362
+            }
 
 BYE         End session & disconnect
 
@@ -29,509 +101,868 @@ CEDGE       Create an edge between two vertices
 EXISTS      Test to see if a vertex or edge exists by key
             exists <key>
 
+            exists SFO
+            {
+                "exists": true,
+                "key": "SFO"
+            }
+
 GET         Get a JSON representation of a vertex or edge by key
             get <key>
+            
+            get MEX
+            {
+                "_key": "MEX",
+                "_type": "v",
+                "location": "mexico city distrito federal mexico",
+                "name": "juarez intl",
+                "terminal_fee": "126"
+            }
             
 SET         Set or clear an attribute of a vertex or edge by key
             set <key> <attr> <value>
 
-            set v0 cost 250.00
-            set e3 seats 65
+            set MEX _weight 2.5
+            OK
+            get MEX
+            {
+                "_key": "MEX",
+                "_type": "v",
+                "_weight": "2.5",
+                "location": "mexico city distrito federal mexico",
+                "name": "juarez intl",
+                "terminal_fee": "126"
+            }
+
 
 DEL         Delete a vertex or edge by key
             del <key>
             
-Q           Query attributes of vertices and edges by any field
+Q           Query attributes of vertices and edges
             q <query>
-            q distance:[2000 TO 3000] AND _type:edge
-            q seats:[60 TO 70] AND _type:edge
+            
+            q location:mexico
+            {"results": [
+                {
+                    "_key": "MEX",
+                    "_type": "v",
+                    "location": "mexico city distrito federal mexico",
+                    "name": "juarez intl",
+                    "terminal_fee": "126"
+                },
+                {
+                    "_key": "MTY",
+                    "_type": "v",
+                    "location": "monterrey nuevo leon mexico",
+                    "name": "escobedo",
+                    "terminal_fee": "97"
+                },
+                {
+                    "_key": "GDL",
+                    "_type": "v",
+                    "location": "guadalajara jalisco mexico",
+                    "name": "miguel hidalgo intl",
+                    "terminal_fee": "127"
+                }
+            ]}
 
 INCW        Increment the weight of an edge by key
             incw <key> <amount>
 
-            incw e1 154.0
-            incw e2 405.0
+            incw ORD-MSP 12.3
+            OK
+            
+            incw MSP-ORD -1.4
+            OK
             
 SPATH       Find the shortest path between two vertices (with optional maximum path length)
-            spath <from_key> <to_key> [radius]
+            spath <from_key> <to_key>
             
-            spath a m
-            spath a m 5
-
+            spath MEX SFO
+            {
+                "edges": [
+                    "MEX-FRA",
+                    "FRA-SFO"
+                ],
+                "end_vertex": "SFO",
+                "start_vertex": "MEX",
+                "weight": 3825
+            }
             
 KSPATH      Find the k-shortest paths between two vertices (with optional maximum path length)
             kspath <from_key> <to_key> <k> [radius]
 
-            kspath v0 v3 6
-            kspath v0 v3 2 5
+            kspath MEX SFO 2 6
+            {
+                "end_vertex": "SFO",
+                "k": 2,
+                "max_hops": 6,
+                "paths": [
+                    {
+                        "path": [
+                            "MEX-FRA",
+                            "FRA-SFO"
+                        ],
+                        "weight": 3825
+                    },
+                    {
+                        "path": [
+                            "MEX-FRA",
+                            "FRA-STR",
+                            "STR-MUC",
+                            "MUC-SFO"
+                        ],
+                        "weight": 4450
+                    }
+                ],
+                "start_vertex": "MEX"
+            }
 
 HC          Find the hamiltonian cycle if it exists ("traveling salesman problem")
 
+            hc
+            {"cycle": [
+                {
+                    "_key": "c",
+                    "city": "chicago"
+                },
+                {
+                    "_key": "b",
+                    "city": "duluth"
+                },
+                {
+                    "_key": "a",
+                    "city": "minneapolis"
+                }
+            ]}
+
 EC          Find the eulerian circuit if it exists
+
+            ec
+            {"circuit": [
+                {
+                    "_key": "a",
+                    "city": "minneapolis"
+                },
+                {
+                    "_key": "c",
+                    "city": "chicago"
+                },
+                {
+                    "_key": "b",
+                    "city": "duluth"
+                },
+                {
+                    "_key": "a",
+                    "city": "minneapolis"
+                }
+            ]}
             
 EKMF        Calculate Edmonds Karp maximum flow between two vertices
             ekmf <source_vertex_key> <target_vertex_key>
             
+            ekmf MEX SFO
+            {
+                "flow": {
+                    "DFW-FRA": 825,
+                    "DFW-IAD": 1000,
+                    "FRA-LAX": 1400,
+                    "FRA-MUC": 475,
+                    "FRA-ORD": 175,
+                    "FRA-SFO": 1300,
+                    "IAD-MUC": 1000,
+                    "LAX-SFO": 1575,
+                    "MEX-DFW": 1825,
+                    "MEX-FRA": 2525,
+                    "MUC-SFO": 1475,
+                    "ORD-LAX": 175
+                },
+                "maximum_flow_value": 4350
+            }
+            
 CN          Compute the chromatic number ("graph coloring")
+
+            cn
+            {"chromatic_number": 8}
 
 KMST        Compute Kruskal's minimum spanning tree
             
             kmst
             {
                 "edge_set": [
-                    {
-                        "data": {
-                            "_fromVertex": "c",
-                            "_rel": "private-flight-to",
-                            "_toVertex": "d",
-                            "_weight": "977.0",
-                            "id": "e6",
-                            "seats": 10
-                        },
-                        "rel": "private-flight-to",
-                        "v1": {
-                            "city": "chicago",
-                            "id": "c"
-                        },
-                        "v2": {
-                            "city": "austin",
-                            "id": "d"
-                        }
-                    },
-                    {
-                        "data": {
-                            "_fromVertex": "a",
-                            "_rel": "private-flight-to",
-                            "_toVertex": "c",
-                            "_weight": "356.0",
-                            "id": "e5",
-                            "seats": 10
-                        },
-                        "rel": "private-flight-to",
-                        "v1": {
-                            "city": "minneapolis",
-                            "id": "a"
-                        },
-                        "v2": {
-                            "city": "chicago",
-                            "id": "c"
-                        }
-                    },
-                    {
-                        "data": {
-                            "_fromVertex": "a",
-                            "_rel": "flight-to",
-                            "_toVertex": "b",
-                            "_weight": "155.0",
-                            "id": "e1",
-                            "seats": 50
-                        },
-                        "rel": "flight-to",
-                        "v1": {
-                            "city": "minneapolis",
-                            "id": "a"
-                        },
-                        "v2": {
-                            "city": "duluth",
-                            "id": "b"
-                        }
-                    }
+                    "PVG-PEK",
+                    "VCP-EZE",
+                    "GRU-FLN",
+                    "ASR-FRA",
+                    [...]
                 ],
-                "spanning_tree_cost": 1488
+                "spanning_tree_cost": 563160
             }
-            done
 
 VCG         Compute vertex cover set (greedy method)
 
             vcg
             {"cover_set": [
-                {
-                    "city": "chicago",
-                    "id": "c"
-                },
-                {
-                    "city": "duluth",
-                    "id": "b"
-                },
-                {
-                    "city": "minneapolis",
-                    "id": "a"
-                }
+                "YYC",
+                "MAD",
+                "HKG",
+                "ABV",
+                "RUH",
+                [...]
             ]}
-            done
 
 VC2A        Compute vertex cover set (2-approximation method)
 
             vc2a
             {"cover_set": [
                 {
-                    "city": "austin",
-                    "id": "d"
+                    "_key": "YYC",
+                    "location": "calgary alberta canada",
+                    "name": "calgary intl",
+                    "terminal_fee": 149
                 },
-                {
-                    "city": "chicago",
-                    "id": "c"
-                },
-                {
-                    "city": "duluth",
-                    "id": "b"
-                },
-                {
-                    "city": "minneapolis",
-                    "id": "a"
-                }
+                [...]
             ]}
-            done
 
 CSETV       Compute the maximally connected set for a vertex
             csetv <key>
             
-            csetv b
+            csetv MST
             {"connected_set": [
-                {
-                    "city": "austin",
-                    "id": "d"
-                },
-                {
-                    "city": "chicago",
-                    "id": "c"
-                },
-                {
-                    "city": "minneapolis",
-                    "id": "a"
-                },
-                {
-                    "city": "duluth",
-                    "id": "b"
-                }
+                "PEK",
+                "AGP",
+                "HEL",
+                [...]
             ]}
-            done
 
 CSETS       Compute all maximally connected sets
             
             csets
             {"connected_sets": [[
-                {
-                    "city": "austin",
-                    "id": "d"
-                },
-                {
-                    "city": "chicago",
-                    "id": "c"
-                },
-                {
-                    "city": "duluth",
-                    "id": "b"
-                },
-                {
-                    "city": "minneapolis",
-                    "id": "a"
-                }
+                "VLC",
+                "SZF",
+                "TLL",
+                "ZJF",
+                "KUF",
+                "MOB",
+                "SHJ",
+                "GDL",
+                [...]],
+            [   "ABC",
+                "DEF",
+                "GHI",
+                "LUL",
+                "ZLO",
+                "LSL"
             ]]}
-            done
-
 
 ISCON       Returns "true" if graph connected
 
             iscon
-            true
-            done
-
+            {"value": "true"}
 
 UPATHEX     Returns "true" if there exists any UNDIRECTED path between the two vertices specified
             upathex <vertex_0> <vertex_1>
 
-            upathex c a
-            true
-            done
+            upathex MEX SFO
+            {"value": "true"}
+
+FAMC        Find ALL maximal cliques using "Bron Kerosch Clique Finder"
+
+            FAMC
+            {"cliques": [
+            
+                ...
+            
+                [
+                    "VCP",
+                    "POA"
+                ],
+                [
+                    "GIG",
+                    "VCP"
+                ],
+                [
+                    "CNF",
+                    "VCP"
+                ],
+                [
+                    "SCL",
+                    "VCP"
+                ],
+                ["CNF"],
+                ["NVT"],
+                
+                ...
+                
+            ]}
+
+FBMC        Find biggest maximal cliques using "Bron Kerosch Clique Finder"
+            
+            FBMC
+            {"cliques": [
+                [
+                    "LEJ",
+                    "VIE",
+                    "HAM",
+                    "AYT",
+                    "AMS",
+                    "DUS",
+                    "MUC",
+                    "FRA"
+                ],
+                [
+                    "LEJ",
+                    "VIE",
+                    "HAM",
+                    "AYT",
+                    "DUS",
+                    "MUC",
+                    "STR",
+                    "FRA"
+                ],
+                [
+                    "VIE",
+                    "HAM",
+                    "DUS",
+                    "LHR",
+                    "MUC",
+                    "STR",
+                    "FRA",
+                    "MXP"
+                ]
+            ]}
+            
+ASPV        All-shortest paths from <key>
+            aspv <key>
+            
+            aspv SCL
+            1: {
+                "diameter": 25150,
+                "paths": [
+                    {
+                        "edges": [
+                            "WAW-FRA",
+                            "FRA-SCL"
+                        ],
+                        "end_vertex": "SCL",
+                        "start_vertex": "WAW",
+                        "weight": 2
+                    },
+                    {
+                        "edges": [
+                            "MAA-FRA",
+                            "FRA-SCL"
+                        ],
+                        "end_vertex": "SCL",
+                        "start_vertex": "MAA",
+                        "weight": 2
+                    },
+                    
+                    ...
+                    
+                ],
+                    "shortest_path_count": 110575,
+                    "source_vertex": "SCL"
+                }
+
+GCYC        Get all graph cycles
+
+            gcyc
+            1: {"cycles": [
+                "KWI",
+                "MAN",
+                "LAX",
+                "AMM",
+                "OSL",
+                "POA",
+                ...
+            ]}
+
+VCYC        Get all cycles containing <key>
+            vcyc <key>
+
+            vcyc MLX
+            1: {
+                "cycles": [
+                    "KWI",
+                    "MAN",
+                    "LAX",
+                    "AMM",
+                    
+                    ...
+                    
+                    "IAS",
+                    "PRG",
+                    "TRN",
+                    "MLX"
+                ],
+                "vertex": "MLX"
+            }
+
+CCHAN       Create a "message channel" to receive messages from traversals, etc.
+            cchan <channel_name>
+            
+            cchan tr1
+            {"value": "bda2fe8e-f731-4139-8b86-50a4c2e81172"}
+
+SUBSCRIBE   Subscribe the current client to the named channel
+            subscribe <channel_name>
+
+            subscribe tr1
+            OK
+
+UNSUBSCRIBE Unsubscribe the current client to the named channel
+            unsubscribe <channel_name>
+
+            unsubscribe tr1
+            OK
+
+PUBLISH     Publish a message to a channel.
+            publish <channel> <json_message>
+            
+            PUBLISH tr1 {"message": "hi"}
+            OK
+            
+            * If you are subscribed to the channel "tr1" in this case, the client will receive it:
+            
+            New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"message":"hi"}
+
+TRAV        Execute a client-side evented traversal (via a channel) or a server-side
+            traversal (via a UDF):
+
+            TRAV <source_vertex> <traversal_type[:radius]> <udf|"-"> [channel_name]
+            
+            * <traversal_type> values:
+                * breadth_first 
+                * depth_first 
+                * closest_first 
+                * topological
+            
+            * the following <traversal_type> may be specified with a suffix
+              denoting a maximum radius from <start_vertex>:
+              * closest_first[:radius]
+            
+            * if parameter 3 is "-", events will be sent to argument 4 [channel]
+            * if parameter 3 is not "-", it will be interpreted as a server-side udf
+              that implements TraversalEvent functions
+            
+            NOTE: topological <traversal_type> ignores the value of <start_vertex>
+                  but some value must be specified
+                  
+            EXAMPLES:
+            
+
+            * traverse, starting from WAW, via closest_first of maximum radius 5;
+              publish each traversal event to the channel "tr1":
+
+            
+                trav WAW closest_first:5 - tr1
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@318e136f","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentStarted"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW","event":"VertexTraversal","eventType":"VertexTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-FRA","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-MUC","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-DUS","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-MXP","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-VIE","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-KTW","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-KRK","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-POZ","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"_key":"WAW-LEJ","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: tr1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@318e136f","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentFinished"}
 
 
-//
-// more examples
-//
+            * topological traversal published to "traverse1" channel:
 
-[ ~]# telnet localhost 10101
-Trying 127.0.0.1...
-Connected to localhost (127.0.0.1).
-Escape character is '^]'.
-graphd localhost
-create db
-ok
-use db
-ok
+            
+                trav VIE topological - traversal1
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.TopologicalOrderIterator@3a97b29a","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentStarted"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"ANR","event":"VertexTraversal","eventType":"VertexTraversed"}
+                OK
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"ANR-BRU","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"PEN","event":"VertexTraversal","eventType":"VertexTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"PEN-SIN","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+    
+                [...]
+    
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"HAU","event":"VertexTraversal","eventType":"VertexTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"HAU-OSL","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.TopologicalOrderIterator@3a97b29a","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentFinished"}
+            
+            * closest_first traversal starting at every location:usa 
+              AND location:ca to a radius of 5, publishing to traversal1
 
-/* create vertices & edges */
+                trav <<location:usa location:ca>> closest_first:5 - traversal1
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@16119cb","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentStarted"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"LAX","event":"VertexTraversal","eventType":"VertexTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"LAX-MUC","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+    
+                [...]
+    
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@79cb0f1a","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentFinished"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@24cb26e","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentStarted"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"SMF","event":"VertexTraversal","eventType":"VertexTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@24cb26e","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentFinished"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@4943f9d2","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentStarted"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"_key":"SAN","event":"VertexTraversal","eventType":"VertexTraversed"}
+                New I/O client worker #1-1  INFO EchoEventHandler - onGenericEvent: traversal1 {"source":"org.jgrapht.traverse.ClosestFirstIterator@4943f9d2","event":"ConnectedComponentTraversal","eventType":"ConnectedComponentFinished"}
 
-cvert a {"city":"minneapolis"} 
-ok CMD_CVERT a
-cvert b {"city":"boston"}
-ok CMD_CVERT b
-cvert c {"city":"atlanta"}
-ok CMD_CVERT c
-cvert d {"city":"chicago"}
-ok CMD_CVERT d
-cvert e {"city":"los angeles"}
-ok CMD_CVERT e
-cvert f {"city":"honolulu"}
-ok CMD_CVERT f
-cvert g {"city":"houston"}
-ok CMD_CVERT g
-cvert h {"city":"miami"}
-ok CMD_CVERT h
-cvert i {"city":"new york city"}
-ok CMD_CVERT i
-cedge e1 a b flight-to {"distance":2014}
-ok CMD_CEDGE e1
-cedge e2 a d flight-to {"distance":780} 
-ok CMD_CEDGE e2
-cedge e3 d e flight-to {"distance":2200}
-ok CMD_CEDGE e3
-cedge e4 e f flight-to {"distance":2600}
-ok CMD_CEDGE e4
-cedge e5 b i bus-route {"cost":46} 
-ok CMD_CEDGE e5
-cedge e6 d c flight-to {"cost":320} 
-ok CMD_CEDGE e6
-cedge e7 e c flight-to {"cost":199}
-ok CMD_CEDGE e7
-cedge e8 e g flight-to {"cost":169}
-ok CMD_CEDGE e8
-cedge e9 f g flight-to {"cost":349}
-ok CMD_CEDGE e9
-cedge e10 c e flight-to {"cost":299}
-ok CMD_CEDGE e10
-cedge e11 a e flight-to {"cost":399}
-ok CMD_CEDGE e11
-cedge e12 i j flight-to {"cost":2000}
-ok CMD_CEDGE e12
-cedge e13 j k flight-to {"cost":2000}
-ok CMD_CEDGE e13
-cedge e14 k m flight-to {"cost":2000}
-ok CMD_CEDGE e14
-cedge e15 i k flight-to {"cost":2000}
-ok CMD_CEDGE e15
-cedge e16 k m flight-to {"cost":2000}
-ok CMD_CEDGE e16
 
-/* shortest path (dijkstra) */
+            * traverse using a user-defined server-side traversal event handler:
+            
+            
+                define_udf TestJSTraversal js udfs/js/TestJSTraversal.js
+                OK
+                trav <<_key:beauty*>> closest_first:5 TestJSTraversal
+                OK
 
-spath a b
-{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","distance":2014},"rel":"flight-to"}
-done
+            [*] in the server console you will see something like:
+            
+                [...]
+                
+                edgeTraversed: {"_key":"parking-services-parking-consultants","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                edgeTraversed: {"_key":"parking-services-automotive-sales-services","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                vertexTraversed: {"_key":"aviation","event":"VertexTraversal","eventType":"VertexTraversed"}
+                edgeTraversed: {"_key":"aviation-aircraft-rental","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                edgeTraversed: {"_key":"aviation-aircraft-dealers","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                edgeTraversed: {"_key":"aviation-automotive-sales-services","event":"EdgeTraversal","eventType":"EdgeTraversed"}
+                connectedComponentFinished: {"event":"ConnectedComponentTraversal","eventType":"ConnectedComponentFinished"}
+                
+            [*] see below for specs for JS UDF-driven traversals
 
-spath a c
-{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'d','city':'chicago'},"data":{"id":"e2","distance":780},"rel":"flight-to"}
-{"v1":{'id':'d','city':'chicago'},"v2":{'id':'c','city':'atlanta'},"data":{"id":"e6","cost":320},"rel":"flight-to"}
-done
+DEFINE_UDF  Install a user-defined function
+            define_udf <udf_name> <udf_type> <udf_def_filename>
+            
+            e.g.,
 
-spath a e
-{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'e','city':'los angeles'},"data":{"id":"e11","cost":399},"rel":"flight-to"}
-done
+            define_udf TestJSGraphProcess js udfs/js/TestJSGraphProcess.js
+            OK
+            
+SPROC       Start a vertex or edge (UDF-defined) process
+            sproc <key> <udf_name>
+            
+            e.g.,
 
-/* query vertices & edges */
+            sproc <<_key:MEX OR _key:FRA OR _key:DFW>> TestJSGraphProcess
+            OK
+            
+EMIT        Emit a JSON message to a vertex or edge (UDF-defined) process
+            emit <key> <process_name> <json_message>
+            
+            e.g.,
 
-q cost:[200 400]
-{"_type":"edge","_fromVertex":"d","_toVertex":"c","_weight":"1.0","_key":"e6","cost":"320","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"f","_toVertex":"g","_weight":"1.0","_key":"e9","cost":"349","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"c","_toVertex":"e","_weight":"1.0","_key":"e10","cost":"299","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"a","_toVertex":"e","_weight":"1.0","_key":"e11","cost":"399","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"i","_toVertex":"j","_weight":"1.0","_key":"e12","cost":"2000","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"j","_toVertex":"k","_weight":"1.0","_key":"e13","cost":"2000","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"k","_toVertex":"m","_weight":"1.0","_key":"e14","cost":"2000","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"i","_toVertex":"k","_weight":"1.0","_key":"e15","cost":"2000","_rel":"flight-to"}
-{"_type":"edge","_fromVertex":"k","_toVertex":"m","_weight":"1.0","_key":"e16","cost":"2000","_rel":"flight-to"}
-done
+            emit MSP MSP-TestJSGraphProcess {"message": "emitted message!"}
 
-q city:hon*
-{"_type":"vertex","_key":"f","city":"honolulu"}
-{"_type":"vertex","_key":"l","city":"hong kong"}
-done
+QSIM        Query the simulation process index
 
-/* k-shortest paths */
+            qsim _type:udf
+            1: {"results": [{
+                "_key": "TestJSGraphProcess",
+                "_type": "udf",
+                "udf_fn": "udfs/js/TestJSGraphProcess.js",
+                "udf_type": "js"
+            }]}
 
-kspath a m 3
-{"weight":4,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e15","_toVertex":"k","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
-{"weight":5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'j','city':'tokyo'},"data":{"id":"e12","_toVertex":"j","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'j','city':'tokyo'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e13","_toVertex":"k","_fromVertex":"j","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
-done
 
-/* dump attributes of a vertex or edge */
 
-spy m
-{
-    "city": "auckland",
-    "id": "m"
-}
-done
+COMMAND MODIFIERS
+-----------------
 
-spy e15
-{
-    "data": {
-        "_fromVertex": "i",
+MODIFIER: QUERY EXPANSIONS
+==========================
+
+Enclosing lucene syntax in << >> for any vertex or edge attribute query
+will issue the command with the query results replaced.  Multiple
+expansions can be used; if multiple expansions are used, the command
+is executed for the cross-join equivalent of all results returned.
+
+* inline query expansions, e.g.
+
+    get <<cost:[299 TO 300]>>
+    1: {
+        "_key": "MUC-IST",
         "_rel": "flight-to",
-        "_toVertex": "k",
-        "_weight": 1,
-        "cost": 2000,
-        "id": "e15"
-    },
-    "rel": "flight-to",
-    "v1": {
-        "city": "new york city",
-        "id": "i"
-    },
-    "v2": {
-        "city": "beijing",
-        "id": "k"
+        "_source": "MUC",
+        "_target": "IST",
+        "_type": "e",
+        "_weight": "1875.0",
+        "cost": "299"
     }
-}
-done
-
-/* set attributes & weights */
-
-set e15 _weight 2.5
-done
-
-/* shortest path changes with changed weight */
-
-kspath a m 3
-{"weight":5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'j','city':'tokyo'},"data":{"id":"e12","_toVertex":"j","_fromVertex":"i","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'j','city':'tokyo'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e13","_toVertex":"k","_fromVertex":"j","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
-{"weight":5.5,"path":[{"v1":{'id':'a','city':'minneapolis'},"v2":{'id':'b','city':'boston'},"data":{"id":"e1","_toVertex":"b","_fromVertex":"a","distance":2014,"_weight":1,"_rel":"flight-to"},"rel":"flight-to"},{"v1":{'id':'b','city':'boston'},"v2":{'id':'i','city':'new york city'},"data":{"id":"e5","_toVertex":"i","_fromVertex":"b","_weight":1,"_rel":"bus-route","cost":46},"rel":"bus-route"},{"v1":{'id':'i','city':'new york city'},"v2":{'id':'k','city':'beijing'},"data":{"id":"e15","_toVertex":"k","_fromVertex":"i","_weight":"2.5","_rel":"flight-to","cost":2000},"rel":"flight-to"},{"v1":{'id':'k','city':'beijing'},"v2":{'id':'m','city':'auckland'},"data":{"id":"e14","_toVertex":"m","_fromVertex":"k","_weight":1,"_rel":"flight-to","cost":2000},"rel":"flight-to"}]}
-done
-
------
-
-create db4
-use db4
-cvert a {"city":"minneapolis"} 
-ok CMD_CVERT a
-cvert b {"city":"duluth"}
-ok CMD_CVERT b
-cvert c {"city":"chicago"}
-ok CMD_CVERT c
-cedge e1 a b flight-to {"cost": 1000}
-ok CMD_CEDGE e1
-cedge e2 b c flight-to {"cost": 1000}
-ok CMD_CEDGE e2
-cedge e3 a c flight-to {"cost": 1000}
-ok CMD_CEDGE e3
-
-/* hamiltonian cycle */
-
-hc
-{'id':'c','city':'chicago'}
-{'id':'b','city':'duluth'}
-{'id':'a','city':'minneapolis'}
-done
-
-set e2 _weight 5.0
-done
-
-spy e2
-{
-    "data": {
-        "_fromVertex": "b",
+    2: {
+        "_key": "RLG-MUC",
         "_rel": "flight-to",
-        "_toVertex": "c",
-        "_weight": "5.0",
-        "cost": 1000,
-        "id": "e2"
-    },
-    "rel": "flight-to",
-    "v1": {
-        "city": "duluth",
-        "id": "b"
-    },
-    "v2": {
-        "city": "chicago",
-        "id": "c"
+        "_source": "RLG",
+        "_target": "MUC",
+        "_type": "e",
+        "_weight": "825.0",
+        "cost": "299"
     }
+    3: {
+        "_key": "MXP-BCN",
+        "_rel": "flight-to",
+        "_source": "MXP",
+        "_target": "BCN",
+        "_type": "e",
+        "_weight": "625.0",
+        "cost": "299"
+    }
+    4: {
+        "_key": "GIG-VCP",
+        "_rel": "flight-to",
+        "_source": "GIG",
+        "_target": "VCP",
+        "_type": "e",
+        "_weight": "5500.0",
+        "cost": "300"
+    }
+    
+* another example:
+
+    get <<location:mexico>>
+    1: {
+        "_key": "MTY",
+        "_type": "v",
+        "location": "monterrey nuevo leon mexico",
+        "name": "escobedo",
+        "terminal_fee": "97"
+    }
+    2: {
+        "_key": "GDL",
+        "_type": "v",
+        "location": "guadalajara jalisco mexico",
+        "name": "miguel hidalgo intl",
+        "terminal_fee": "127"
+    }
+    3: {
+        "_key": "MEX",
+        "_type": "v",
+        "_weight": "2.5",
+        "location": "mexico city distrito federal mexico",
+        "name": "juarez intl",
+        "terminal_fee": "126"
+    }
+
+* "stacking" inline query expansions:
+
+    spath <<location:mn>> <<location:ca>>
+    1: {
+        "edges": [
+            "MSP-ORD",
+            "ORD-LAX"
+        ],
+        "end_vertex": "LAX",
+        "start_vertex": "MSP",
+        "weight": 7850
+    }
+    2: {
+        "edges": [
+            "MSP-ORD",
+            "ORD-LAX",
+            "LAX-MUC",
+            "MUC-SFO"
+        ],
+        "end_vertex": "SFO",
+        "start_vertex": "MSP",
+        "weight": 11225
+    }
+    3: {
+        "edges": [
+            "MSP-ORD",
+            "ORD-LAX",
+            "LAX-SMF"
+        ],
+        "end_vertex": "SMF",
+        "start_vertex": "MSP",
+        "weight": 12850
+    }
+    4: {
+        "edges": [
+            "MSP-ORD",
+            "ORD-LAX",
+            "LAX-SAN"
+        ],
+        "end_vertex": "SAN",
+        "start_vertex": "MSP",
+        "weight": 14350
+    }
+
+MODIFIER: ASYNC OVERRIDE
+========================
+
+Other than being a cool name, because graph operations are executed in a single-threaded
+context in the order they are received, if there is a huge queue of operations executing
+and you need to access something in the graph you feel comfortable is not predicated
+on whatever commands are supposed to execute first, and those same queued commands
+are not going to be screwed up as a result of a command to wish to execute "out of
+order" and "without guarantee", you can prepend a "&" character to any command
+protograph accepts and it will be executed immediately against the current
+graph.
+
+This is in general a terrible idea and I recommend you do not use it unless you are
+feeling god-like and/or obscenely lucky.
+
+e.g.,
+
+&get MEX
+1: {
+    "_key": "MEX",
+    "_type": "v",
+    "location": "mexico city distrito federal mexico",
+    "name": "juarez intl",
+    "terminal_fee": "126"
 }
-done
 
-hc
-{'id':'b','city':'duluth'}
-{'id':'c','city':'chicago'}
-{'id':'a','city':'minneapolis'}
-done
 
-------
+GRAPH OBJECT STANDARD FIELDS
+----------------------------
 
-create db4
-use db4
-cvert a {"city":"minneapolis"} 
-ok CMD_CVERT a
-cvert b {"city":"duluth"}
-ok CMD_CVERT b
-cvert c {"city":"chicago"}
-ok CMD_CVERT c
-cedge e1 a b flight-to {}
-ok CMD_CEDGE e1
-cedge e2 b c flight-to {}
-ok CMD_CEDGE e2
-cedge e3 a c flight-to {}
-ok CMD_CEDGE e3
+VERTICES:
 
-/* eulerian circuit */
+* _key      vertex key
+* _type     always "v"
 
-ec
-{'id':'a','city':'minneapolis'}
-{'id':'c','city':'chicago'}
-{'id':'b','city':'duluth'}
-{'id':'a','city':'minneapolis'}
-done
+EDGES:
 
-------
+* _key          edge key
+* _source       source vertex key
+* _target       target vertex key
+* _type         always "e"
+* _rel          edge-relation
 
-// omitting the "ok" replies for brevity ... 
+Examples using these standard fields:
 
-create db5
-use db5
-cvert a {"city":"minneapolis"} 
-cvert b {"city":"duluth"}
-cvert c {"city":"chicago"}
-cvert d {"city":"austin"}
-cvert e {"city":"chicago"}
-cvert f {"city":"milwaukee"}
-cedge e1 a b flight-to {}
-cedge e2 b c flight-to {}
-cedge e3 b d flight-to {}
-cedge e4 c e flight-to {}
-cedge e5 d e flight-to {}
-cedge e5 d f flight-to {}
-cedge e6 f a flight-to {}
-cedge e7 e b flight-to {}
-cedge e8 d b flight-to {}
-cedge e9 c a bus-to {}
-set e1 _weight 2.0
-set e2 _weight 3.0
-set e3 _weight 0.5
-set e4 _weight 6.3
-set e5 _weight 10.0
-set e6 _weight 2.3
-set e7 _weight 9.3
-set e8 _weight 11.1
-set e9 _weight 1.982
 
-/* edmonds-karp maximum flow */
+* get all edges emanating from ORD:
 
-ekmf a f
-{
-    "maximum_flow": {
-        "flight-to": 0.5,
-        "flight-to": 0,
-        "bus-to": 0,
-        "flight-to": 0.5,
-        "flight-to": 0,
-        "flight-to": 0,
-        "flight-to": 0,
-        "flight-to": 0,
-        "flight-to": 0.5,
-        "flight-to": 0
-    },
-    "maximum_flow_value": 0.5
-}
-done
 
-------
+    q <<_type:e _source:ORD>>
+    1: {"results": [{
+        "_key": "ORD-FRA",
+        "_rel": "flight-to",
+        "_source": "ORD",
+        "_target": "FRA",
+        "_type": "e",
+        "_weight": "4450.0",
+        "cost": "474"
+    }]}
+    2: {"results": [{
+        "_key": "ORD-MUC",
+        "_rel": "flight-to",
+        "_source": "ORD",
+        "_target": "MUC",
+        "_type": "e",
+        "_weight": "4100.0",
+        "cost": "307"
+    }]}
+     
+    ....
+    
+    20: {"results": [{
+        "_key": "ORD-AMS",
+        "_rel": "flight-to",
+        "_source": "ORD",
+        "_target": "AMS",
+        "_type": "e",
+        "_weight": "4650.0",
+        "cost": "769"
+    }]}
 
-/* more to come :) */
+
+* get all "flight-to" relation edges going to MSP:
+
+
+    get <<_rel:"flight-to" _target:MSP>>
+    1: {
+        "_key": "ORD-MSP",
+        "_rel": "flight-to",
+        "_source": "ORD",
+        "_target": "MSP",
+        "_type": "e",
+        "_weight": "2500.0",
+        "cost": "672"
+    }
+
+JAVASCRIPT TRAVERSALS
+---------------------
+
+* see: udfs/js/TestJSTraversal.js for full code
+
+e.g.,
+
+    TestJSTraversal = function(startingState) {
+        this.startingState = startingState;
+        
+        /* 
+         * constructor logic, executed once per
+         * UDF registration
+        */
+        log("TestJSTraversal: constructor");
+        log("TestJSTraversal: startingState = " + 
+            this.startingState);
+        
+        this.connectedComponentStarted = function(msg) {
+        };
+        
+        this.connectedComponentFinished = function(msg) {
+        };
+        
+        this.edgeTraversed = function(msg) {
+        };
+        
+        this.vertexFinished = function(msg) {
+        };
+        
+        this.vertexTraversed = function(msg) {
+        };
+    
+        return this;
+    };
+
+// post registration logic here, executed once
+// per UDF registration
+
+
+JAVASCRIPT VERTEX PROCESSES
+---------------------------
+
+* see: udfs/js/TestJSGraphProcess.js for full code
+
+e.g.,
+
+    TestJSGraphProcess = function(_process) {
+        
+        // handle to the owning process harness
+        // (to self-reference your "pid" from js)
+        this._process = _process;
+        
+        // before this process is killed, clean up
+        
+        this.beforeKill = function() {
+        };
+        
+        // vertex removal
+        
+        this.beforeRemoveVertex = function(vertex) {
+        };
+                
+        // edge removal
+        
+        this.beforeRemoveEdge = function(edge) {
+        };
+                
+        this.afterRemoveEdge = function(edge) {
+        };
+    
+        // this is called when a mesage is "emit"ted to this
+        //  process            
+        this.message = function(msg) {
+        };
+        
+        return this;
+    };
+
+WEBSOCKETS INTERFACE
+--------------------
+
+Not fully functioning and under current development.
 

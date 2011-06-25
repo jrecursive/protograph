@@ -2,19 +2,19 @@ X script-driven traversals: ClosestFirstIterator, BreadthFirstIterator, DepthFir
 e.g., 
       use flights
 
-scripted:
+X scripted:
       define_udf TestJSTraversal js udfs/js/TestJSTraversal.js
       TRAV FRA breadth_first TestJSTraversal
 
-pipelined:
+X pipelined:
       CCHAN channel1
       SUBSCRIBE channel1
       TRAV MEX depth_first - channel1
 
-pipelined closest_first traversal with a radius of 2.0:
+X pipelined closest_first traversal with a radius of 2.0:
       TRAV VIE closest_first:2 - channel1
 
-* script-defined iterators via: AbstractGraphIterator, CrossComponentIterator
+X * script-defined iterators via: AbstractGraphIterator, CrossComponentIterator
 
 * implement javax.script vm pooling for each process group created
 

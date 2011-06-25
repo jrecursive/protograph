@@ -257,7 +257,11 @@ public class GraphCommandExecutor implements Runnable {
         // OBJECT EXISTS: exists <key>
         } else if (cmd.equals(GraphServerProtocol.CMD_EXISTS)) {
             String key = args[0];
-            rsb.append(gr.exists(key) + " " + key);
+            JSONObject jo = new JSONObject();
+            jo.put("key", key);
+            jo.put("exists", gr.exists(key));
+            rsb.append(jo);
+            rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
         
         // GET OBJECT: get <key>
@@ -286,7 +290,8 @@ public class GraphCommandExecutor implements Runnable {
             rsb.append(res);
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
-            
+        
+        // DEPRECATED
         // QUERY PROCESSES: qp <query>
         } else if (cmd.equals(GraphServerProtocol.CMD_QP)) {
             String q = request.substring(request.indexOf(GraphServerProtocol.SPACE)).trim(); // remainder of line past "qp "
