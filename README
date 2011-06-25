@@ -1,9 +1,10 @@
 
 //
-// protograph (under development)
+// protograph
 //
 
-introduction
+------------
+Introduction
 ------------
 
 A lot of experiments in ranking, relevance, social network exploration, etc. I
@@ -17,82 +18,91 @@ Protograph ...
 * ... and a graph library (jgrapht)
 * ... and a threading library (jetlang)
 * is not a persistent data store!  memory-only!
-* implements many graph algorithms
-* implements a simple pub/sub messaging system
-* implements client-side & server-side graph traversals;
-* lets you define functions in javascript for traversals and
-  vertex processes
+* uses a simple line-at-a-time redis-like command/response protocol
+* utilizes JSON for all vertex & edge data and all returned results
+* provides an easy interface to many graph algorithms
+* provides a simple pub/sub messaging system
+* provides client-side & server-side graph traversals
+* lets you define javascript UDFs for traversal & vertex/edge processes
   
-Don't know what some of this stuff means?  check out the command list.
+Don't know what some of this stuff means?  Check out the command list and
+subsequent examples.
 
 And now from the HATERS GONNA HATE department:
 
-this is experimental
---------------------
+-----------------------------
+This is experimental software
+-----------------------------
 
 I created this from pieces and parts I scavenged from other, lesser autobots of
 mine to finally get an idea what one ultimate voltron of searchable graph servers 
-might look like; really though, I did it so I'd have a tool to be able to do 
-exactly what I have needed over and over again in one place that I know like 
-the back of my ...
+might look like; really though, I did it so I'd have a tool that does
+exactly what I want and need, all in one place, that I know like the back of my...
 
 I have not yet preened this code into sexy-amazing-elegant singularity-inception-
 inspired meta-oblivion and am actively screwing around with the internals to test
 different approaches to many problems.  You may be offended.  That's okay, 
-because ... 
+because... 
 
-It is going to get better!  If that doesn't placate you, there's always 
+It is going to get better!  If that doesn't placate you, check out 
 neo4j http://neo4j.org/ which has pretty code, is made by smart guys and is used 
 widely in real-world production settings.
 
 Until I get this code reading like the best Crichton novel you've ever had your
 head explode while reading, consider protograph just a baby.  A hungry one.
 
-if you are inclined to help
 ---------------------------
+If you are inclined to help
+---------------------------
+
+I welcome & encourage (and recognize) contributions & collaboration.
 
 I accept and will actively review pull requests.  I will respond to relevant email.
 I'm on freenode in #riak and others regularly.
 
-requirements
-------------
+--------------
+The good stuff
+--------------
+
+1. Requirements
+---------------
 
 java 1.6
 ant
 
 
-to compile
-----------
+2. Build
+--------
 
 ant
 
 
-start the server
-----------------
+3. Start the server
+-------------------
 
 In one console:
 
 ./start-graphd.sh
 
 
-load some data
---------------
+4. Load a graph
+---------------
 
 In another console:
 
 ./load-graph.sh flights.graph
 
 
-start a client
---------------
+5. Start a client
+-----------------
 
 Anywhere you desire:
 
 ./client.sh localhost 10101
 
 
-try some stuff
---------------
+6. Try some stuff
+-----------------
 
 If you've followed the above instructions, type this in the client console,
 line by line.  You'll want to see the output of each.
@@ -106,7 +116,8 @@ line by line.  You'll want to see the output of each.
     spath <<location:usa location:ca>> <<location:mexico>>
 
 
-coming soon
+-----------
+Coming soon
 -----------
 
 * actual java, php, ... clients
@@ -120,11 +131,10 @@ coming soon
 
 ... & lots more
 
-
+--------
 COMMANDS
 --------
 
-* (NOTE: see command modifiers below for more examples)
 
 CREATE      Create a named directed graph
             create <name>
@@ -722,7 +732,7 @@ QSIM        Query the simulation process index
             }]}
 
 
-
+-----------------
 COMMAND MODIFIERS
 -----------------
 
@@ -871,6 +881,7 @@ e.g.,
     }
 
 
+----------------------------
 GRAPH OBJECT STANDARD FIELDS
 ----------------------------
 
@@ -940,6 +951,7 @@ Examples using these standard fields:
     }
 
 
+---------------------
 JAVASCRIPT TRAVERSALS
 ---------------------
 
@@ -980,6 +992,7 @@ e.g.,
 // per UDF registration
 
 
+---------------------------
 JAVASCRIPT VERTEX PROCESSES
 ---------------------------
 
@@ -1020,16 +1033,19 @@ e.g.,
     };
 
 
+--------------------
 WEBSOCKETS INTERFACE
 --------------------
 
 Not fully functioning and under current development.
 
 
-FLIGHTS.GRAPH and CATEGORIES.GRAPH
-----------------------------------
+--------------------------------
+FLIGHTS.GRAPH & CATEGORIES.GRAPH
+--------------------------------
 
 These are simple scripts that are replayed.  They are readable
 and represent typical use of protograph commands.  For now this
 is a good way to generate graphs you want to use with protograph.
+
 
