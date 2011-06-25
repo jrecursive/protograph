@@ -11,21 +11,54 @@ have done in the past have required different parts of what has become
 protograph.  In April I had the time and the motivation to take those parts and
 put them together.
 
-First I'll make a small but sincere apology -- the code is haphazard and should
-not be even remotely considered for any kind of production installation.  It's
-not even remotely efficient in its use of resources -- yet.
+Protograph ...
 
-I do have many plans on cleaning this experimental project up and will be
-working on it from time to time.  The list of changes is long and at some point
-I will enter them into the issue tracker and fill out the wiki.
+* is the combination of a search engine (lucene)
+* ... and a graph library (jgrapht)
+* ... and a process library (jetlang)
+* is not a persistent data store!  memory-only!
+* implements many graph algorithms
+* implements a simple pub/sub messaging system
+* implements client-side & server-side graph traversals;
+* lets you define functions in javascript for traversals and
+  vertex processes
+  
+Don't know what some of this stuff means?  check out the command list.
 
-Until then, consider protograph the frankenchild progeny after a graph library
-and a search engine get drunk and have a wicked night of it.
+And now from the HATERS GONNA HATE department:
+
+this is experimental
+--------------------
+
+I created this from pieces and parts I scavenged from other, lesser autobots of
+mine to finally get an idea what one ultimate voltron of searchable graph servers 
+might look like; really though, I did it so I'd have a tool to be able to do 
+exactly what I have needed over and over again in one place that I know like 
+the back of my ...
+
+I have not yet preened this code into sexy-amazing-elegant singularity-inception-
+inspired meta-oblivion and am actively screwing around with the internals to test
+different approaches to many problems.  You may be offended.  That's okay, 
+because ... 
+
+It is going to get better!  If that doesn't placate you, there's always 
+neo4j http://neo4j.org/ which has pretty code, is made by smart guys and is used 
+widely in real-world production settings.
+
+Until I get this code reading like the best Crichton novel you've ever had your
+head explode while reading, consider protograph just a baby.  A hungry one.
+
+if you are inclined to help
+---------------------------
+
+I accept and will actively review pull requests.  I will respond to relevant email.
+I'm on freenode in #riak and others regularly.
 
 requirements
 ------------
 
 java 1.6
+ant
 
 
 to compile
@@ -60,9 +93,14 @@ coming soon
 * RESTful interface
 * responsible resource management
 * reworked vertex/edge process management
-* ... 
+* blueprints interface
+* gremlin integration
+* jung algorithm ports
 
-commands
+... & lots more
+
+
+COMMANDS
 --------
 
 * (NOTE: see command modifiers below for more examples)
@@ -315,12 +353,11 @@ VC2A        Compute vertex cover set (2-approximation method)
 
             vc2a
             {"cover_set": [
-                {
-                    "_key": "YYC",
-                    "location": "calgary alberta canada",
-                    "name": "calgary intl",
-                    "terminal_fee": 149
-                },
+                "PEE",
+                "LNZ",
+                "LHE",
+                "BOD",
+                "BAH",
                 [...]
             ]}
 

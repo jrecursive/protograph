@@ -831,7 +831,11 @@ public class Graph
         if (null == verts) {
             return null;
         } else {
-            result.put("cover_set", verts);
+            JSONArray vertKeys = new JSONArray();
+            for(JSONVertex v: verts) {
+                vertKeys.put(v.getKey());
+            }
+            result.put("cover_set", vertKeys);
             return result;
         }
     }
