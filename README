@@ -164,8 +164,12 @@ BYE         End session & disconnect
 CVERT       Create a vertex
             cvert <key> <json_attrs>
             
+            cvert FMO {"terminal_fee":30,"name":"muenster","location":"muenster germany"}
+            
 CEDGE       Create an edge between two vertices
             cedge <key> <from_key> <to_key> <relation> <weight> <json_attrs>
+            
+            cedge FRA-AGP FRA AGP flight-to 1450 {"cost":569}
             
 EXISTS      Test to see if a vertex or edge exists by key
             exists <key>
