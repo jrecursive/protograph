@@ -70,11 +70,15 @@ ant
 start the server
 ----------------
 
+In one console:
+
 ./start-graphd.sh
 
 
 load some data
 --------------
+
+In another console:
 
 ./load-graph.sh flights.graph
 
@@ -82,7 +86,24 @@ load some data
 start a client
 --------------
 
+Anywhere you desire:
+
 ./client.sh localhost 10101
+
+
+try some stuff
+--------------
+
+If you've followed the above instructions, type this in the client console,
+line by line.  You'll want to see the output of each.
+
+    use flights
+    gstat flights
+    get MEX
+    spath WAW SAW
+    kspath WAW SAW 5 8
+    get <<location:usa location:ca>>
+    spath <<location:usa location:ca>> <<location:mexico>>
 
 
 coming soon
@@ -840,14 +861,14 @@ feeling god-like and/or obscenely lucky.
 
 e.g.,
 
-&get MEX
-1: {
-    "_key": "MEX",
-    "_type": "v",
-    "location": "mexico city distrito federal mexico",
-    "name": "juarez intl",
-    "terminal_fee": "126"
-}
+    &get MEX
+    1: {
+        "_key": "MEX",
+        "_type": "v",
+        "location": "mexico city distrito federal mexico",
+        "name": "juarez intl",
+        "terminal_fee": "126"
+    }
 
 
 GRAPH OBJECT STANDARD FIELDS
@@ -855,19 +876,18 @@ GRAPH OBJECT STANDARD FIELDS
 
 VERTICES:
 
-* _key      vertex key
-* _type     always "v"
+    * _key      vertex key
+    * _type     always "v"
 
 EDGES:
 
-* _key          edge key
-* _source       source vertex key
-* _target       target vertex key
-* _type         always "e"
-* _rel          edge-relation
+    * _key          edge key
+    * _source       source vertex key
+    * _target       target vertex key
+    * _type         always "e"
+    * _rel          edge-relation
 
 Examples using these standard fields:
-
 
 * get all edges emanating from ORD:
 
@@ -918,6 +938,7 @@ Examples using these standard fields:
         "_weight": "2500.0",
         "cost": "672"
     }
+
 
 JAVASCRIPT TRAVERSALS
 ---------------------
@@ -998,8 +1019,17 @@ e.g.,
         return this;
     };
 
+
 WEBSOCKETS INTERFACE
 --------------------
 
 Not fully functioning and under current development.
+
+
+FLIGHTS.GRAPH and CATEGORIES.GRAPH
+----------------------------------
+
+These are simple scripts that are replayed.  They are readable
+and represent typical use of protograph commands.  For now this
+is a good way to generate graphs you want to use with protograph.
 
