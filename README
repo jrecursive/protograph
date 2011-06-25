@@ -15,7 +15,7 @@ Protograph ...
 
 * is the combination of a search engine (lucene)
 * ... and a graph library (jgrapht)
-* ... and a process library (jetlang)
+* ... and a threading library (jetlang)
 * is not a persistent data store!  memory-only!
 * implements many graph algorithms
 * implements a simple pub/sub messaging system
