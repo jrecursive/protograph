@@ -249,6 +249,8 @@ INCW        Increment the weight of an edge by key
             OK
             
 SPATH       Find the shortest path between two vertices (with optional maximum path length)
+            http://en.wikipedia.org/wiki/Shortest_path_problem
+
             spath <from_key> <to_key>
             
             spath MEX SFO
@@ -263,6 +265,8 @@ SPATH       Find the shortest path between two vertices (with optional maximum p
             }
             
 KSPATH      Find the k-shortest paths between two vertices (with optional maximum path length)
+            http://en.wikipedia.org/wiki/Shortest_path_problem
+            
             kspath <from_key> <to_key> <k> [radius]
 
             kspath MEX SFO 2 6
@@ -292,6 +296,7 @@ KSPATH      Find the k-shortest paths between two vertices (with optional maximu
             }
 
 HC          Find the hamiltonian cycle if it exists ("traveling salesman problem")
+            http://en.wikipedia.org/wiki/Hamiltonian_path
 
             hc
             {"cycle": [
@@ -310,6 +315,7 @@ HC          Find the hamiltonian cycle if it exists ("traveling salesman problem
             ]}
 
 EC          Find the eulerian circuit if it exists
+            http://en.wikipedia.org/wiki/Eulerian_path
 
             ec
             {"circuit": [
@@ -332,6 +338,9 @@ EC          Find the eulerian circuit if it exists
             ]}
             
 EKMF        Calculate Edmonds Karp maximum flow between two vertices
+            http://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
+            http://en.wikipedia.org/wiki/Maximum_flow_problem
+
             ekmf <source_vertex_key> <target_vertex_key>
             
             ekmf MEX SFO
@@ -354,11 +363,14 @@ EKMF        Calculate Edmonds Karp maximum flow between two vertices
             }
             
 CN          Compute the chromatic number ("graph coloring")
+            http://en.wikipedia.org/wiki/Graph_coloring
 
             cn
             {"chromatic_number": 8}
 
 KMST        Compute Kruskal's minimum spanning tree
+            http://en.wikipedia.org/wiki/Kruskal%27s_algorithm
+            http://en.wikipedia.org/wiki/Minimum_spanning_tree
             
             kmst
             {
@@ -373,7 +385,8 @@ KMST        Compute Kruskal's minimum spanning tree
             }
 
 VCG         Compute vertex cover set (greedy method)
-
+            http://en.wikipedia.org/wiki/Vertex_cover
+            
             vcg
             {"cover_set": [
                 "YYC",
@@ -385,6 +398,7 @@ VCG         Compute vertex cover set (greedy method)
             ]}
 
 VC2A        Compute vertex cover set (2-approximation method)
+            http://en.wikipedia.org/wiki/Vertex_cover
 
             vc2a
             {"cover_set": [
@@ -397,6 +411,9 @@ VC2A        Compute vertex cover set (2-approximation method)
             ]}
 
 CSETV       Compute the maximally connected set for a vertex
+            http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Strongly_connected_component
+            http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Connectivity
+            
             csetv <key>
             
             csetv MST
@@ -408,6 +425,8 @@ CSETV       Compute the maximally connected set for a vertex
             ]}
 
 CSETS       Compute all maximally connected sets
+            http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Strongly_connected_component
+            http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Connectivity
             
             csets
             {"connected_sets": [[
@@ -429,6 +448,7 @@ CSETS       Compute all maximally connected sets
             ]]}
 
 ISCON       Returns "true" if graph connected
+            http://en.wikipedia.org/wiki/Connected_graph
 
             iscon
             {"value": "true"}
@@ -439,8 +459,10 @@ UPATHEX     Returns "true" if there exists any UNDIRECTED path between the two v
             upathex MEX SFO
             {"value": "true"}
 
-FAMC        Find ALL maximal cliques using "Bron Kerosch Clique Finder"
-
+FAMC        Find ALL maximal cliques using "Bron Kerbosch Clique Finder"
+            http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+            http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Cliques
+            
             FAMC
             {"cliques": [
             
@@ -469,7 +491,9 @@ FAMC        Find ALL maximal cliques using "Bron Kerosch Clique Finder"
                 
             ]}
 
-FBMC        Find biggest maximal cliques using "Bron Kerosch Clique Finder"
+FBMC        Find biggest maximal cliques using "Bron-Kerbosch Clique Finder"
+            http://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+            http://en.wikipedia.org/wiki/Glossary_of_graph_theory#Cliques
             
             FBMC
             {"cliques": [
@@ -505,7 +529,9 @@ FBMC        Find biggest maximal cliques using "Bron Kerosch Clique Finder"
                 ]
             ]}
             
-ASPV        All-shortest paths from <key>
+ASPV        All shortest paths from <key> (Floyd Warshall) 
+            http://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+            
             aspv <key>
             
             aspv SCL
@@ -539,6 +565,7 @@ ASPV        All-shortest paths from <key>
                 }
 
 GCYC        Get all graph cycles
+            http://en.wikipedia.org/wiki/Graph_cycle
 
             gcyc
             1: {"cycles": [
@@ -552,6 +579,8 @@ GCYC        Get all graph cycles
             ]}
 
 VCYC        Get all cycles containing <key>
+            http://en.wikipedia.org/wiki/Graph_cycle
+            
             vcyc <key>
 
             vcyc MLX
@@ -606,8 +635,8 @@ TRAV        Execute a client-side evented traversal (via a channel) or a server-
             TRAV <source_vertex> <traversal_type[:radius]> <udf|"-"> [channel_name]
             
             * <traversal_type> values:
-                * breadth_first 
-                * depth_first 
+                * breadth_first - http://en.wikipedia.org/wiki/Breadth-first_traversal
+                * depth_first - http://en.wikipedia.org/wiki/Depth-first_search
                 * closest_first 
                 * topological
             
