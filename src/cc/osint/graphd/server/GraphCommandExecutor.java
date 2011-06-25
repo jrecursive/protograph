@@ -815,7 +815,13 @@ public class GraphCommandExecutor implements Runnable {
             gr.unsubscribeToEndpointByName(channelName,
                 inboundChannelProcess.getChannel());
             rsb.append(GraphServerProtocol.R_OK);
+        } else {
+            log.info("GraphServerProtocol.R_UNK: " + cmd);
+            rsb.append(GraphServerProtocol.R_UNK);
+            rsb.append(GraphServerProtocol.SPACE);
+            rsb.append(cmd);
         }
+
         
         return rsb.toString();
     }
