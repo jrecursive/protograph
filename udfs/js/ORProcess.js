@@ -63,7 +63,6 @@ ORProcess = function(_process) {
                 })
             );
         }
-        // clear state
         this.inputState = {};
     };
     

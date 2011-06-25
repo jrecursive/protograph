@@ -251,7 +251,7 @@ public class GraphCommandExecutor implements Runnable {
             if (jo == null) {
                 rsb.append(GraphServerProtocol.R_NOT_FOUND);
             } else {
-                rsb.append(prepareResult(jo));
+                rsb.append(jo);
                 rsb.append(GraphServerProtocol.NL);
                 rsb.append(GraphServerProtocol.R_OK);
             }
@@ -267,7 +267,7 @@ public class GraphCommandExecutor implements Runnable {
             JSONObject res = new JSONObject();
             res.put("results", ja);
             
-            rsb.append(prepareResult(res));
+            rsb.append(res);
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
             
@@ -284,7 +284,7 @@ public class GraphCommandExecutor implements Runnable {
             JSONObject res = new JSONObject();
             res.put("results", ja);
             
-            rsb.append(prepareResult(res));
+            rsb.append(res);
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
             */
@@ -301,7 +301,7 @@ public class GraphCommandExecutor implements Runnable {
             if (null == result) {
                 rsb.append(GraphServerProtocol.R_NOT_EXIST);
             } else {
-                rsb.append(prepareResult(result));
+                rsb.append(result);
                 rsb.append(GraphServerProtocol.NL);
                 rsb.append(GraphServerProtocol.R_OK);
             }
@@ -419,7 +419,7 @@ public class GraphCommandExecutor implements Runnable {
                 maxHops = Integer.parseInt(args[3]);
             }
             JSONObject result = gr.getKShortestPaths(vFromKey, vToKey, k, maxHops);
-            rsb.append(prepareResult(result));
+            rsb.append(result);
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
         
@@ -435,7 +435,7 @@ public class GraphCommandExecutor implements Runnable {
                     cycle.put(jo);
                 }
                 res.put("cycle", cycle);
-                rsb.append(prepareResult(res));
+                rsb.append(res);
                 rsb.append(GraphServerProtocol.NL);
                 rsb.append(GraphServerProtocol.R_OK);
             }
@@ -452,7 +452,7 @@ public class GraphCommandExecutor implements Runnable {
                     circuit.put(jo);
                 }
                 res.put("circuit", circuit);
-                rsb.append(prepareResult(res));
+                rsb.append(res);
                 rsb.append(GraphServerProtocol.NL);
                 rsb.append(GraphServerProtocol.R_OK);
             }
@@ -726,7 +726,7 @@ public class GraphCommandExecutor implements Runnable {
             }
             JSONObject res = new JSONObject();
             res.put("results", ja);
-            rsb.append(prepareResult(res));
+            rsb.append(res);
             rsb.append(GraphServerProtocol.NL);
             rsb.append(GraphServerProtocol.R_OK);
         
@@ -781,12 +781,14 @@ public class GraphCommandExecutor implements Runnable {
         // subscribe to a channel: subscribe <channel_name>
         } else if (cmd.equals(GraphServerProtocol.CMD_SUBSCRIBE)) {
             String channelName = args[0];
+            /*
             log.info("channelName = " + channelName);
             log.info("inboundChannelProcess = " + inboundChannelProcess);
             log.info("inboundChannelProcess = " + 
                 inboundChannelProcess);
             log.info("inboundChannelProcess.getChannel() = " + 
                 inboundChannelProcess.getChannel());
+            */
             gr.subscribeToEndpointByName(channelName,
                 inboundChannelProcess.getChannel());
             rsb.append(GraphServerProtocol.R_OK);
@@ -799,17 +801,6 @@ public class GraphCommandExecutor implements Runnable {
             rsb.append(GraphServerProtocol.R_OK);
         }
         
-        // EVENT-SUBSCRIPTION MANAGEMENT
-        // JAVASCRIPT "POINT-OF-VIEW" TRAVERSAL
         return rsb.toString();
-    }
-    
-    /* utility methods */
-    
-    private String prepareResult(JSONObject jo) throws Exception {
-        //String s = jo.toString();
-        //s = s.replaceAll(GraphServerProtocol.NL, GraphServerProtocol.SPACE);
-        //return s;
-        return jo.toString();
     }
 }

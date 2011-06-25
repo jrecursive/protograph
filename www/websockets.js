@@ -14,23 +14,23 @@ Protograph.WebSocketConnection = function(host, port, handler) {
             this.socket = new WebSocket(this.websocketURL);
             
             this.socket.onmessage = function(event) {
-                console.log("onmessage: " + event);
+                //console.log("onmessage: " + event);
                 self.handler.onMessage(event);
             };
             
             this.socket.onopen = function(event) { 
-                console.log("onopen: ");                
+                //console.log("onopen: ");                
                 self.handler.onOpen(event);
             };
             
             this.socket.onclose = function(event) {
-                console.log("onclose: " + event);
+                //console.log("onclose: " + event);
                 if (self.handler.onClose) self.handler.onClose(event);
             };
             return true;
             
         } else {
-            console.log("no websockets");
+            //console.log("no websockets");
             alert("Your browser does not support WebSockets.");
             if (self.handler.onNoWebSocketSupport) {
                 self.handler.onNoWebSocketSupport();
@@ -43,7 +43,7 @@ Protograph.WebSocketConnection = function(host, port, handler) {
     };
     
     this.send = function(message) {
-        console.log("send: " + event);
+        //console.log("send: " + event);
         if (!window.WebSocket) {
             if (self.handler.onNoWebSocketSupport) {
                 self.handler.onNoWebSocketSupport();

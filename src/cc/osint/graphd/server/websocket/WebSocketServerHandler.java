@@ -79,16 +79,17 @@ public class WebSocketServerHandler
                             
                             List<JSONObject> results = client.exec(cmd.cmd.trim() + "\n");
                             if (null == results) {
-                                send(cmd.ctx, "no result!");
+                                send(cmd.ctx, "-err no result!");
                             } else {
                                 if (results.size() == 0) {
-                                    send(cmd.ctx, "OK");
+                                    send(cmd.ctx, "-ok");
                                 } else {
                                     int c=0;
                                     for(JSONObject result: results) {
                                         c++;
-                                        send(cmd.ctx, c + ": " + result.toString(4));
+                                        send(cmd.ctx, "@ " + result.toString().trim());
                                     }
+                                    send(cmd.ctx, "-ok");
                                 }
                             }
                         } catch (Exception clex) {
@@ -213,36 +214,25 @@ public class WebSocketServerHandler
                     res.addHeader(WEBSOCKET_PROTOCOL, protocol);
                 }
             }
-            
-            // Upgrade the connection and send the handshake response.
             ChannelPipeline p = ctx.getChannel().getPipeline();
             p.remove("aggregator");
             p.replace("decoder", "wsdecoder", new WebSocketFrameDecoder());
-
             ctx.getChannel().write(res);
-
             p.replace("encoder", "wsencoder", new WebSocketFrameEncoder());
             return;
         }
-
-        // Send an error page otherwise.
         sendHttpResponse(
                 ctx, req, new DefaultHttpResponse(HTTP_1_1, FORBIDDEN));
     }
 
     private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
         try {
-            // Send the uppercased string back.
             String request = frame.getTextData();
             log.info("WebSocketServerHandler: handleWebSocketFrame: request = " + request);
             ClientCmd cmd = new ClientCmd();
             cmd.ctx = ctx;
             cmd.cmd = request;
             cmdQueue.put(cmd);
-            /*
-            ctx.getChannel().write(
-                    new DefaultWebSocketFrame(frame.getTextData().toUpperCase()));
-            */
         } catch (Exception ex) {
             ex.printStackTrace();
         }

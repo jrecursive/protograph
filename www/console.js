@@ -8,6 +8,7 @@ Protograph.Console = function(app, containerElementId, inputElementId, outputEle
     
     this.history = new Array();
     this.historyIndex = 0;
+    this.lastScrollTimeoutId = 0;
     
     this.in.keypress(function(e) {
         if (e.which == 13) {
@@ -39,7 +40,7 @@ Protograph.Console = function(app, containerElementId, inputElementId, outputEle
     
     this.onInput = function(str) {
         if (str == "") return;
-        console.log("console input: " + str);
+        //console.log("console input: " + str);
         self.println(">> " + str);
         self.send(str);
         self.history.push(str);
@@ -48,17 +49,17 @@ Protograph.Console = function(app, containerElementId, inputElementId, outputEle
     };
     
     this.onArrowUp = function() {
-        console.log("onArrowUp " + self.historyIndex + ", " + self.history.length);
+        //console.log("onArrowUp " + self.historyIndex + ", " + self.history.length);
         if (self.historyIndex == self.history.length) {
             return;
         }
         self.historyIndex++;
         self.in.val(self.history[self.history.length - self.historyIndex]);
-        console.log("onArrowUp");
+        //console.log("onArrowUp");
     };
     
     this.onArrowDown = function() {
-        console.log("onArrowDown " + self.historyIndex + ", " + self.history.length);
+        //console.log("onArrowDown " + self.historyIndex + ", " + self.history.length);
         if (self.historyIndex == 0) {
             self.in.val(self.currentVal);
             return;
@@ -68,7 +69,7 @@ Protograph.Console = function(app, containerElementId, inputElementId, outputEle
     };
     
     this.onKeypress = function(key, isCtrl, isShift, isAlt) {
-        console.log(key + " [" + isCtrl + ", " + isShift + ", " + isAlt + ")");
+        //console.log(key + " [" + isCtrl + ", " + isShift + ", " + isAlt + ")");
     };
     
     this.clearInput = function() {
@@ -81,16 +82,25 @@ Protograph.Console = function(app, containerElementId, inputElementId, outputEle
     
     this.println = function(str) {
         self.out.html(this.out.html()+"\n"+str);
-        self.out[0].scrollTop = this.out[0].scrollHeight;
-        self.out[0].height = this.out[0].scrollHeight;
+        /*
+        if (self.lastScrollTimeoutId != 0) {
+            clearTimeout(self.lastScrollTimeoutId);
+        }
+        self.lastScrollTimeoutId = setTimeout("periodic_scrolldown('" + outputElementId + "')", 250);
+        */
     };
     
     this.print = function(str) {
         self.out.html(this.out.html()+str);
-        self.out[0].scrollTop = this.out[0].scrollHeight;
     };
     
     this.send = function(str) {
         self.app.send(str);
     };
 };
+
+function periodic_scrolldown(el) {
+    $("#"+el)[0].scrollTop = $("#"+el)[0].scrollHeight;
+    //$("#"+el)[0].height = $("#"+el)[0].scrollHeight;
+}
+

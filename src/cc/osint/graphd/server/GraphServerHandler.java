@@ -25,7 +25,6 @@ import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -39,7 +38,6 @@ import org.json.*;
 import cc.osint.graphd.graph.*;
 import cc.osint.graphd.processes.*;
 
-@ChannelPipelineCoverage("all")
 public class GraphServerHandler extends SimpleChannelUpstreamHandler {
     private static final Logger log = Logger.getLogger(
         GraphServerHandler.class.getName());
@@ -129,7 +127,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
                 
                 log.info("DISCONNECTED: " + clientId);
             } else {
-                log.info("NETTY: handleUpstream: " + e.toString());
+                //log.info("NETTY: handleUpstream: " + e.toString());
             }
         }
         super.handleUpstream(ctx, e);
@@ -195,7 +193,7 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         ConcurrentHashMap<String, String> clientState = 
             clientStateMap.get(clientId);
         
-        log.info(clientId + ": " + request);
+        //log.info(clientId + ": " + request);
         
         if (request.length() == 0) {
             response = GraphServerProtocol.R_OK;
@@ -333,26 +331,51 @@ public class GraphServerHandler extends SimpleChannelUpstreamHandler {
         } else {
             
             //
-            // graph-specific, queue-driven ordered operations
+            // graph-specific operations
             //
             
             WeakReference<InboundChannelProcess> inboundChannelProcessRef =
                 inboundChannelMap.get(clientId);
+                
+            //
+            // async override handler
+            // 
             
-            GraphCommand graphCommand = new GraphCommand();
-            graphCommand.responseChannel = responseChannel;
-            graphCommand.clientId = clientId;
-            graphCommand.clientState = clientState;
-            graphCommand.inboundChannelProcess = 
-                inboundChannelProcessRef.get();
-            graphCommand.request = request;
-            graphCommand.cmd = cmd;
-            graphCommand.args = args;
-            graphCommand.poisonPill = false;
-            
-            graphCommandExecutorMap.get(
-                clientState.get(GraphServerHandler.ST_DB))
-                    .queue(graphCommand);
+            if (cmd.startsWith("&")) {
+                cmd = cmd.substring(1);
+                request = request.substring(1);
+                responseChannel.write(
+                  graphCommandExecutorMap.get(
+                    clientState.get(GraphServerHandler.ST_DB)).execute(
+                        responseChannel,
+                        clientId,
+                        clientState,
+                        inboundChannelProcessRef.get(),
+                        request,
+                        cmd,
+                        args
+                    ) + GraphServerProtocol.NL);
+            } else {
+
+                //
+                // graph-specific, queue-driven ordered operations
+                //
+                
+                GraphCommand graphCommand = new GraphCommand();
+                graphCommand.responseChannel = responseChannel;
+                graphCommand.clientId = clientId;
+                graphCommand.clientState = clientState;
+                graphCommand.inboundChannelProcess = 
+                    inboundChannelProcessRef.get();
+                graphCommand.request = request;
+                graphCommand.cmd = cmd;
+                graphCommand.args = args;
+                graphCommand.poisonPill = false;
+                            
+                graphCommandExecutorMap.get(
+                    clientState.get(GraphServerHandler.ST_DB))
+                        .queue(graphCommand);
+            }
             
             // a null return value indicates it's been queued for execution
             // by the appropriate GraphCommandExecutor

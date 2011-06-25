@@ -53,7 +53,6 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     
     public void publish(M msg) throws Exception {
         channel.publish(msg);
-        //log("process: send: " + name + ": " + msg);
     }
     
     public Graph getGraph() {
@@ -96,8 +95,6 @@ public abstract class GraphProcess<T, M> implements Callback<M> {
     public String getPid() {
         return pid;
     }
-    
-    //
     
     protected abstract void beforeKill();
     protected abstract void beforeRemoveVertex(JSONVertex vertex);

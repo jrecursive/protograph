@@ -54,7 +54,10 @@ var App = function(host, port, containerElementId, w, h, fontSize) {
         this.onMessage = function(ev) {
             var msg = ev.data;
             this.app.println(msg);
-            console.log("onMessage " + msg);
+            if (msg[0] != '@') {
+                periodic_scrolldown(this.app.consoleHandler.out[0].id);
+            }
+            //console.log("onMessage " + msg);
         };
         
         this.onOpen = function(ev) {
@@ -63,12 +66,12 @@ var App = function(host, port, containerElementId, w, h, fontSize) {
         };
         
         this.onClose = function(ev) {
-            console.log("onClose " + ev);
+            //console.log("onClose " + ev);
             console.dir(ev);
         };
         
         this.err = function(msg) {
-            console.log("err: " + msg);
+            //console.log("err: " + msg);
         };
         
         this.onNoWebSocketSupport = function() {
@@ -77,16 +80,16 @@ var App = function(host, port, containerElementId, w, h, fontSize) {
     };
     this.connection = new this.ConnectionHandler(this, host, port);
     
-    console.log("new App(" + containerElementId + ", " + w + ", " + h + ")");
+    //console.log("new App(" + containerElementId + ", " + w + ", " + h + ")");
 };
 
 var app = null;
 $(document).ready(function() {
-    console.log("ready!");
+    //console.log("ready!");
     app = new App("thinkdifferent.ly", 10102, "console", $(window).width() * .5, $(window).height() * .8, 12);
     app.redraw();
     $(window).resize(function() {
-        console.log("resize!");
+        //console.log("resize!");
         app.resize($(window).width() * .5, $(window).height() * .8);
     });
     $("#consoleIn").focus();

@@ -61,11 +61,6 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
         super.handleUpstream(ctx, e);
     }
 
-    /*
-     *
-     *
-     *
-    */
     @Override
     public void messageReceived(
             ChannelHandlerContext ctx, MessageEvent e) {
@@ -89,9 +84,6 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
             
             if (request.charAt(0) == '!' ||
                 request.charAt(0) == '#') {
-                
-                //log.info("event response: " + request);
-                
                 ProtographClientEventHandler handler = 
                     client.getEventHandler();
                 String[] eventParts = request.split(" ");
@@ -115,13 +107,12 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
                     }
                 }
             } else if (request.charAt(0) == '-') {
-                // server response
-                //log.info("server response: " + request);
-                
                 if (request.startsWith("-graphd")) {
-                    //log.info("connected: " + request);
+                    log.info("connected: " + request);
                 } else {
                     /**
+                     ** TODO: client impls; below for reference
+                     **
                     final protected static String R_OK = "-ok";                         // standard reply
                     final protected static String R_ERR = "-err";                       // error processing request
                     final protected static String R_UNK = "-unk";                       // unknown request
@@ -145,8 +136,6 @@ public class ProtographClientHandler extends SimpleChannelUpstreamHandler {
                 }
                             
             } else {
-                // result response
-                //log.info("result response: " + request);
                 currentResultHandler.onResult(request);
             }
         } catch (Exception ex) {

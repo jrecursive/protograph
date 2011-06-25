@@ -113,8 +113,6 @@ public class Graph
         gr.addGraphListener(connectivityInspector);
         
         // simulation components
-        //executorService = 
-        //    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
         executorService = Executors.newCachedThreadPool();
         fiberFactory = new PoolFiberFactory(executorService);
         vertexProcesses = 
@@ -202,6 +200,11 @@ public class Graph
         //  a specific instance of this process
         String instanceName = key + "-" + processName;
         
+        /*
+         * NOTE: this code is all getting torn out and 
+         *       replaced with something sane.
+        */
+        
         if (_type.equals(VERTEX_TYPE)) {
             JSONVertex jv = getVertex(key);
             
@@ -266,10 +269,8 @@ public class Graph
         
     public void emitByQuery(String query, JSONObject msg)
         throws Exception {
-        //log.info("emitByQuery: query = " + query);
         List<JSONObject> simObjs = querySimIndex(query);
         for(JSONObject simObj: simObjs) {
-            //log.info("emitByQuery(" + query + ", ...) -> simObj = " + simObj.toString(4));
             String _type = simObj.getString("obj_type");
             String instanceName = simObj.getString("instance_name");
             
@@ -295,6 +296,7 @@ public class Graph
     //
     // endpoint channel management & broadcast
     //
+    
     public String createEndpointChannel(String channelName)
         throws Exception {
         Channel<JSONObject> existingChannel = 
@@ -453,8 +455,7 @@ public class Graph
     public void deleteSimObject(String key, String type) throws Exception {
         deleteSimObjectsByQuery(KEY_FIELD + ":" + key + " " + TYPE_FIELD + ": " + type);
     }
-        
-        
+    
     public void deleteSimObjectsByQuery(String queryStr) throws Exception {
         QueryParser qp = new QueryParser(Version.LUCENE_31, KEY_FIELD, analyzer);
         qp.setDefaultOperator(org.apache.lucene.queryParser.QueryParser.Operator.AND);
@@ -522,7 +523,7 @@ public class Graph
                 
                 // accept docs out of order
                 public boolean acceptsDocsOutOfOrder() {
-                    return false;
+                    return true;
                 }
                 
                 public void collect(int doc) {
@@ -663,10 +664,6 @@ public class Graph
         return neighbors;
     }
     
-    //
-    //
-    //
-        
     public JSONEdge getEdge(String key) throws Exception {
         JSONObject jsonEdge = getGraphObject(key);
         JSONVertex fromVertex = getVertex(jsonEdge.getString(EDGE_SOURCE_FIELD));
@@ -977,8 +974,6 @@ public class Graph
                                   JSONVertex startVertex,
                                   String udfKey,
                                   double radius) throws Exception {
-                                  
-        // XXX
         // TODO: proper abstraction / refactor / consolidation of "udf"
         //       & "script engine" code; support for other vm types
         //
@@ -1082,7 +1077,6 @@ public class Graph
                     JSONObject msg = new JSONObject();
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentStarted");
-                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
                     scriptEngine.invokeMethod(handlerInstance, "connectedComponentStarted", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
@@ -1092,7 +1086,6 @@ public class Graph
                     JSONObject msg = new JSONObject();
                     msg.put("event", "ConnectedComponentTraversal");
                     msg.put("eventType", "ConnectedComponentFinished");
-                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
                     scriptEngine.invokeMethod(handlerInstance, "connectedComponentFinished", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
@@ -1103,7 +1096,6 @@ public class Graph
                     msg.put("event", "EdgeTraversal");
                     msg.put("eventType", "EdgeTraversed");
                     msg.put(KEY_FIELD, e.getEdge().getKey());
-                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
                     scriptEngine.invokeMethod(handlerInstance, "edgeTraversed", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
@@ -1114,7 +1106,6 @@ public class Graph
                     msg.put("event", "VertexTraversal");
                     msg.put("eventType", "VertexFinished");
                     msg.put(KEY_FIELD, e.getVertex().getKey());
-                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
                     scriptEngine.invokeMethod(handlerInstance, "vertexFinished", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
@@ -1125,7 +1116,6 @@ public class Graph
                     msg.put("event", "VertexTraversal");
                     msg.put("eventType", "VertexTraversed");
                     msg.put(KEY_FIELD, e.getVertex().getKey());
-                    //Object msgObj = scriptEngine.invoke("_JSONstring_to_js", msg.toString());
                     scriptEngine.invokeMethod(handlerInstance, "vertexTraversed", msg);
                 } catch (Exception ex) { log.info(ex.getMessage()); }
             }
@@ -1206,7 +1196,6 @@ public class Graph
     public void vertexAdded(GraphVertexChangeEvent<JSONVertex> e) {
         try {
             // TODO: pub client-event message(s)
-            
             //log.info("[event] vertexAdded: " + e.getVertex().get(KEY_FIELD));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -1300,11 +1289,4 @@ public class Graph
     public void vertexTraversed(VertexTraversalEvent<JSONVertex> e) {
         log.info("vertexTraversed: " + e.toString());
     }
-    
-    
 }
-
-
-
-
-

@@ -104,17 +104,8 @@ public class ProtographClient implements Runnable {
     }
     
     public void disconnect() throws Exception {
-        /*
-        //waitForFlush();
-        if (lastWriteFuture != null)
-            lastWriteFuture.awaitUninterruptibly();
-        */
         shutdown = true;
         clientCommandThread.interrupt();
-        // TODO: proper shutdown sequence
-        // wait for queue clear/stop
-        // wait for flush
-        // continue
         channel.getCloseFuture().awaitUninterruptibly();
         bootstrap.releaseExternalResources();
         shutdown = true;
@@ -194,6 +185,7 @@ public class ProtographClient implements Runnable {
     /*
      * send a raw command and block until a result
     */
+    
     public List<JSONObject> exec(String str) throws Exception {
         StandardResultHandler resultHandler = 
             new StandardResultHandler();
@@ -210,6 +202,7 @@ public class ProtographClient implements Runnable {
     /*
      * send a raw command and do not block until a result
     */
+    
     public void exec(String str, 
                      ProtographClientResultHandler resultHandler) 
         throws Exception {
