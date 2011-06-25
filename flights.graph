@@ -1,0 +1,2144 @@
+create flights
+use flights
+cvert HAM {"terminal_fee":22,"name":"fuhlsbuttel","location":"hamburg germany"}
+cvert FRA {"terminal_fee":97,"name":"frankfurt intl","location":"frankfurt germany"}
+cvert BRE {"terminal_fee":46,"name":"bremen","location":"bremen germany"}
+cvert HAJ {"terminal_fee":71,"name":"langenhagen","location":"hanover germany"}
+cvert FMO {"terminal_fee":30,"name":"muenster","location":"muenster germany"}
+cvert DUS {"terminal_fee":50,"name":"dusseldorf","location":"dusseldorf germany"}
+cvert MUC {"terminal_fee":42,"name":"franz josef strauss","location":"munich germany"}
+cvert AMS {"terminal_fee":81,"name":"schiphol","location":"amsterdam netherlands"}
+cvert BRU {"terminal_fee":84,"name":"national","location":"brussels belgium"}
+cvert CDG {"terminal_fee":97,"name":"charles de gaulle","location":"paris france"}
+cvert NCE {"terminal_fee":25,"name":"cote d azur","location":"nice france"}
+cvert LYS {"terminal_fee":119,"name":"satolas","location":"lyon france"}
+cvert MRS {"terminal_fee":69,"name":"marseille provence","location":"marseille france"}
+cvert TLS {"terminal_fee":137,"name":"blagnac","location":"toulouse france"}
+cvert BIA {"terminal_fee":150,"name":"poretta","location":"bastia corsica france"}
+cvert MAD {"terminal_fee":100,"name":"barajas","location":"madrid spain"}
+cvert BCN {"terminal_fee":30,"name":"barcelona","location":"barcelona spain"}
+cvert BIO {"terminal_fee":64,"name":"sondica","location":"bilbao spain"}
+cvert AGP {"terminal_fee":74,"name":"malaga","location":"malaga spain"}
+cvert PMI {"terminal_fee":87,"name":"palma mallorca","location":"palma mallorca mallorca island spain"}
+cvert FAO {"terminal_fee":133,"name":"faro","location":"faro portugal"}
+cvert LIS {"terminal_fee":42,"name":"lisboa","location":"lisbon portugal"}
+cvert OPO {"terminal_fee":19,"name":"porto","location":"porto portugal"}
+cvert ZRH {"terminal_fee":69,"name":"zurich","location":"zurich switzerland"}
+cvert BSL {"terminal_fee":132,"name":"basel","location":"basel switzerland"}
+cvert GVA {"terminal_fee":106,"name":"geneva","location":"geneva switzerland"}
+cvert VIE {"terminal_fee":18,"name":"schwechat","location":"vienna austria"}
+cvert LNZ {"terminal_fee":97,"name":"linz","location":"linz austria"}
+cvert STR {"terminal_fee":88,"name":"echterdingen","location":"stuttgart germany"}
+cvert GRZ {"terminal_fee":69,"name":"thalerhof","location":"graz austria"}
+cvert INN {"terminal_fee":90,"name":"kranebitten","location":"innsbruck austria"}
+cvert MLA {"terminal_fee":101,"name":"luqa","location":"malta malta"}
+cvert ATH {"terminal_fee":15,"name":"hellinikon","location":"athens greece"}
+cvert LCA {"terminal_fee":127,"name":"intl","location":"larnaca cyprus"}
+cvert IST {"terminal_fee":22,"name":"ataturk","location":"istanbul turkey"}
+cvert BEY {"terminal_fee":36,"name":"intl","location":"beirut lebanon"}
+cvert TIP {"terminal_fee":27,"name":"","location":""}
+cvert ALG {"terminal_fee":54,"name":"houari boumedienne","location":"algiers algeria"}
+cvert TUN {"terminal_fee":108,"name":"carthage","location":"tunis tunisia"}
+cvert CMN {"terminal_fee":102,"name":"mohamed v","location":"casablanca morocco"}
+cvert BUD {"terminal_fee":141,"name":"ferihegy","location":"budapest hungary"}
+cvert WAW {"terminal_fee":123,"name":"okecie","location":"warsaw poland"}
+cvert KTW {"terminal_fee":70,"name":"pyrzowice","location":"katowice poland"}
+cvert KRK {"terminal_fee":60,"name":"balice","location":"krakow poland"}
+cvert WRO {"terminal_fee":110,"name":"strachowice","location":"wroclaw poland"}
+cvert GDN {"terminal_fee":69,"name":"rebiechowo","location":"gdansk poland"}
+cvert RZE {"terminal_fee":10,"name":"","location":""}
+cvert POZ {"terminal_fee":130,"name":"lawica","location":"poznan poland"}
+cvert PRG {"terminal_fee":124,"name":"ruzyne","location":"prague czech republic"}
+cvert NUE {"terminal_fee":74,"name":"nuremberg","location":"nuremberg germany"}
+cvert BEG {"terminal_fee":66,"name":"belgrade beograd","location":"belgrade yugoslavia"}
+cvert SPU {"terminal_fee":107,"name":"split","location":"split croatia hrvatska"}
+cvert ZAG {"terminal_fee":107,"name":"zagreb","location":"zagreb croatia hrvatska"}
+cvert OTP {"terminal_fee":76,"name":"otopeni","location":"bucharest romania"}
+cvert SOF {"terminal_fee":25,"name":"sofia intl","location":"sofia bulgaria"}
+cvert DME {"terminal_fee":89,"name":"domodedovo","location":"moscow russia"}
+cvert LED {"terminal_fee":31,"name":"pulkovo","location":"st petersburg russia"}
+cvert PEE {"terminal_fee":33,"name":"perm","location":"perm russia"}
+cvert GOJ {"terminal_fee":35,"name":"nizhniy","location":"nizhniy novgorod russia"}
+cvert KUF {"terminal_fee":110,"name":"samara","location":"samara russia"}
+cvert KZN {"terminal_fee":93,"name":"kazan","location":"kazan russia"}
+cvert ROV {"terminal_fee":116,"name":"rostov","location":"rostov russia"}
+cvert SVX {"terminal_fee":60,"name":"","location":"ekaterinburg russia"}
+cvert MSQ {"terminal_fee":98,"name":"minsk","location":"minsk belarus"}
+cvert KBP {"terminal_fee":92,"name":"borispol","location":"kiev ukraine"}
+cvert LEJ {"terminal_fee":73,"name":"leipzig","location":"leipzig germany"}
+cvert TSR {"terminal_fee":125,"name":"timisoara","location":"timisoara romania"}
+cvert SBZ {"terminal_fee":110,"name":"","location":""}
+cvert CLJ {"terminal_fee":117,"name":"cluj","location":"cluj romania"}
+cvert TXL {"terminal_fee":82,"name":"tegel","location":"berlin germany"}
+cvert DBV {"terminal_fee":61,"name":"hrvatska","location":"dubrovnik croatia"}
+cvert ZAD {"terminal_fee":108,"name":"","location":""}
+cvert SJJ {"terminal_fee":55,"name":"butmir","location":"sarajevo bosnia and herzegowina"}
+cvert TIA {"terminal_fee":122,"name":"rinas","location":"tirana albania"}
+cvert KIV {"terminal_fee":17,"name":"kishinev","location":"kishinev moldova"}
+cvert AYT {"terminal_fee":14,"name":"antalya","location":"antalya turkey"}
+cvert ADB {"terminal_fee":40,"name":"adnam menderes","location":"izmir turkey"}
+cvert ESB {"terminal_fee":18,"name":"esenboga","location":"ankara turkey"}
+cvert YEI {"terminal_fee":135,"name":"","location":""}
+cvert FCO {"terminal_fee":14,"name":"leonardo da vinci","location":"rome italy"}
+cvert MXP {"terminal_fee":83,"name":"malpensa","location":"milan italy"}
+cvert BLQ {"terminal_fee":51,"name":"guglielmo marconi","location":"bologna italy"}
+cvert FLR {"terminal_fee":111,"name":"","location":"florence italy"}
+cvert TRN {"terminal_fee":39,"name":"caselle","location":"turin italy"}
+cvert VCE {"terminal_fee":117,"name":"marco polo","location":"venice italy"}
+cvert VRN {"terminal_fee":127,"name":"verona","location":"verona italy"}
+cvert NAP {"terminal_fee":119,"name":"capodichino","location":"naples italy"}
+cvert TRS {"terminal_fee":139,"name":"ronchi dei legionari","location":"trieste italy"}
+cvert GOA {"terminal_fee":10,"name":"christoforo colombo","location":"genoa italy"}
+cvert PSA {"terminal_fee":144,"name":"g galilei","location":"pisa italy"}
+cvert AOI {"terminal_fee":99,"name":"falconara","location":"ancona italy"}
+cvert CAG {"terminal_fee":93,"name":"elmas","location":"cagliari sardinia italy"}
+cvert CTA {"terminal_fee":109,"name":"fontanarossa","location":"catania sicily italy"}
+cvert OLB {"terminal_fee":150,"name":"","location":""}
+cvert BRI {"terminal_fee":41,"name":"","location":"bari italy"}
+cvert PMO {"terminal_fee":51,"name":"punta raisi","location":"palermo sicily italy"}
+cvert CGN {"terminal_fee":72,"name":"koeln bonn","location":"cologne bonn germany"}
+cvert DRS {"terminal_fee":15,"name":"dresden","location":"dresden germany"}
+cvert RLG {"terminal_fee":10,"name":"","location":""}
+cvert LUX {"terminal_fee":38,"name":"findel","location":"luxembourg luxembourg"}
+cvert KLU {"terminal_fee":88,"name":"klagenfurt","location":"klagenfurt austria"}
+cvert ARN {"terminal_fee":62,"name":"arlanda intl","location":"stockholm sweden"}
+cvert GOT {"terminal_fee":137,"name":"landvetter","location":"gothenburg sweden"}
+cvert TLL {"terminal_fee":134,"name":"ulemiste","location":"tallinn estonia"}
+cvert CPH {"terminal_fee":33,"name":"copenhagen","location":"copenhagen denmark"}
+cvert OSL {"terminal_fee":145,"name":"","location":""}
+cvert HEL {"terminal_fee":139,"name":"helsinki","location":"helsinki finland"}
+cvert LHR {"terminal_fee":64,"name":"heathrow","location":"london england united kingdom"}
+cvert LCY {"terminal_fee":12,"name":"london city","location":"london england united kingdom"}
+cvert MAN {"terminal_fee":123,"name":"intl","location":"manchester england united kingdom"}
+cvert BHX {"terminal_fee":68,"name":"intl","location":"birmingham england united kingdom"}
+cvert DUB {"terminal_fee":85,"name":"dublin","location":"dublin ireland"}
+cvert DOK {"terminal_fee":23,"name":"donetsk","location":"donetsk ukraine"}
+cvert LWO {"terminal_fee":29,"name":"snilow","location":"lvov ukraine"}
+cvert TBS {"terminal_fee":115,"name":"novo alexeyevka","location":"tbilisi georgia"}
+cvert LIN {"terminal_fee":131,"name":"linate","location":"milan italy"}
+cvert BGO {"terminal_fee":146,"name":"flesland","location":"bergen norway"}
+cvert VLC {"terminal_fee":83,"name":"valencia","location":"valencia spain"}
+cvert NCL {"terminal_fee":120,"name":"intl","location":"newcastle england united kingdom"}
+cvert EDI {"terminal_fee":146,"name":"turnhouse","location":"edinburgh scotland united kingdom"}
+cvert JFK {"terminal_fee":76,"name":"john f kennedy intl","location":"new york ny usa"}
+cvert EWR {"terminal_fee":68,"name":"newark intl","location":"newark nj usa"}
+cvert IAD {"terminal_fee":89,"name":"washington dulles intl","location":"washington dc usa"}
+cvert BOS {"terminal_fee":35,"name":"logan intl","location":"boston ma usa"}
+cvert PHL {"terminal_fee":67,"name":"philadelphia intl","location":"philadelphia pa usa"}
+cvert CLT {"terminal_fee":120,"name":"charlotte douglas intl","location":"charlotte nc usa"}
+cvert ORD {"terminal_fee":77,"name":"o hare intl","location":"chicago il usa"}
+cvert DFW {"terminal_fee":129,"name":"dallas ft worth intl","location":"dallas ft worth tx usa"}
+cvert IAH {"terminal_fee":126,"name":"houston intercontinental","location":"houston tx usa"}
+cvert DTW {"terminal_fee":78,"name":"detroit metropolitan","location":"detroit mi usa"}
+cvert ATL {"terminal_fee":17,"name":"hartsfield intl","location":"atlanta ga usa"}
+cvert DEN {"terminal_fee":63,"name":"denver intl","location":"denver co usa"}
+cvert LAX {"terminal_fee":130,"name":"los angeles intl","location":"los angeles ca usa"}
+cvert SFO {"terminal_fee":144,"name":"san francisco intl","location":"san francisco ca usa"}
+cvert MIA {"terminal_fee":47,"name":"miami intl","location":"miami fl usa"}
+cvert MCO {"terminal_fee":13,"name":"orlando intl","location":"orlando fl usa"}
+cvert YYZ {"terminal_fee":138,"name":"pearson intl","location":"toronto ontario canada"}
+cvert YUL {"terminal_fee":35,"name":"","location":"montreal quebec canada"}
+cvert SEA {"terminal_fee":67,"name":"seattle tacoma intl","location":"seattle wa usa"}
+cvert YVR {"terminal_fee":140,"name":"vancouver intl","location":"vancouver british columbia canada"}
+cvert YYC {"terminal_fee":149,"name":"calgary intl","location":"calgary alberta canada"}
+cvert MEX {"terminal_fee":126,"name":"juarez intl","location":"mexico city distrito federal mexico"}
+cvert GRU {"terminal_fee":74,"name":"guarulhos intl","location":"sao paulo sao paulo brazil"}
+cvert EZE {"terminal_fee":22,"name":"eze","location":"buenos aires buenos aires argentina"}
+cvert CCS {"terminal_fee":145,"name":"simon bolivar intl","location":"caracas venezuela"}
+cvert BOG {"terminal_fee":38,"name":"eldorado","location":"bogota colombia"}
+cvert LAD {"terminal_fee":143,"name":"fevereiro","location":"luanda angola"}
+cvert SSG {"terminal_fee":141,"name":"santa isabel","location":"malabo equatorial guinea"}
+cvert ABV {"terminal_fee":112,"name":"","location":""}
+cvert LOS {"terminal_fee":112,"name":"murtala muhammed","location":"lagos nigeria"}
+cvert ACC {"terminal_fee":137,"name":"kotoka","location":"accra ghana"}
+cvert PHC {"terminal_fee":38,"name":"","location":""}
+cvert JNB {"terminal_fee":29,"name":"jan smuts","location":"johannesburg south africa"}
+cvert CAI {"terminal_fee":75,"name":"intl","location":"cairo egypt"}
+cvert PNR {"terminal_fee":63,"name":"pointe noire","location":"pointe noire congo"}
+cvert LBV {"terminal_fee":87,"name":"libreville","location":"libreville gabon"}
+cvert KRT {"terminal_fee":44,"name":"civil","location":"khartoum sudan"}
+cvert ASM {"terminal_fee":131,"name":"asmara intl yohannes iv","location":"asmara eritrea"}
+cvert JED {"terminal_fee":65,"name":"jeddah intl","location":"jeddah saudi arabia"}
+cvert ADD {"terminal_fee":19,"name":"bole","location":"addis ababa ethiopia"}
+cvert IKA {"terminal_fee":58,"name":"","location":""}
+cvert EMA {"terminal_fee":73,"name":"east midlands","location":"east midlands england united kingdom"}
+cvert GLA {"terminal_fee":73,"name":"glasgow scotland","location":"glasgow scotland united kingdom"}
+cvert ABZ {"terminal_fee":38,"name":"dyce","location":"aberdeen scotland united kingdom"}
+cvert BFS {"terminal_fee":66,"name":"belfast intl","location":"belfast northern ireland united kingdom"}
+cvert ORK {"terminal_fee":111,"name":"cork","location":"cork ireland"}
+cvert SNN {"terminal_fee":41,"name":"shannon","location":"shannon ireland"}
+cvert RUH {"terminal_fee":54,"name":"king khaled intl","location":"riyadh saudi arabia"}
+cvert ASB {"terminal_fee":136,"name":"","location":""}
+cvert GYD {"terminal_fee":98,"name":"","location":""}
+cvert ANR {"terminal_fee":43,"name":"deurne","location":"antwerp belgium"}
+cvert LIL {"terminal_fee":135,"name":"","location":""}
+cvert RNS {"terminal_fee":73,"name":"st jacques","location":"rennes france"}
+cvert NTE {"terminal_fee":108,"name":"nantes chateau bougon","location":"nantes france"}
+cvert MPL {"terminal_fee":147,"name":"frejorgues","location":"montpellier france"}
+cvert BOD {"terminal_fee":68,"name":"merignac","location":"bordeaux france"}
+cvert MCT {"terminal_fee":137,"name":"seeb","location":"muscat oman"}
+cvert AUH {"terminal_fee":139,"name":"abu dhabi intl","location":"abu dhabi united arab emirates"}
+cvert ORY {"terminal_fee":59,"name":"orly","location":"paris france"}
+cvert DOH {"terminal_fee":98,"name":"doha","location":"doha qatar"}
+cvert RIX {"terminal_fee":101,"name":"riga","location":"riga latvia"}
+cvert BAH {"terminal_fee":45,"name":"bahrain intl bahrain","location":"bahrain bahrain"}
+cvert DMM {"terminal_fee":126,"name":"","location":""}
+cvert SKG {"terminal_fee":121,"name":"thessaloniki","location":"thessaloniki greece"}
+cvert DXB {"terminal_fee":110,"name":"dubai intl","location":"dubai united arab emirates"}
+cvert VBS {"terminal_fee":39,"name":"","location":""}
+cvert ALC {"terminal_fee":57,"name":"alicante","location":"alicante spain"}
+cvert KWI {"terminal_fee":145,"name":"intl","location":"kuwait kuwait"}
+cvert EIN {"terminal_fee":19,"name":"welschap","location":"eindhoven netherlands"}
+cvert VNO {"terminal_fee":113,"name":"vilnius","location":"vilnius lithuania"}
+cvert BTS {"terminal_fee":13,"name":"ivanka","location":"bratislava slovakia"}
+cvert TAS {"terminal_fee":68,"name":"tashkent","location":"tashkent uzbekistan"}
+cvert LJU {"terminal_fee":36,"name":"brnik","location":"ljubljana slovenia"}
+cvert ALA {"terminal_fee":77,"name":"almaty","location":"almaty kazakhstan"}
+cvert TSE {"terminal_fee":96,"name":"","location":""}
+cvert SKP {"terminal_fee":92,"name":"skopje","location":"skopje macedonia"}
+cvert SWK {"terminal_fee":37,"name":"","location":""}
+cvert SHJ {"terminal_fee":128,"name":"sharjah","location":"sharjah united arab emirates"}
+cvert XZF {"terminal_fee":137,"name":"","location":""}
+cvert ZJF {"terminal_fee":23,"name":"","location":""}
+cvert CPT {"terminal_fee":75,"name":"d f malan","location":"cape town south africa"}
+cvert DUR {"terminal_fee":29,"name":"louis botha","location":"durban south africa"}
+cvert PLZ {"terminal_fee":148,"name":"hf verwoerd","location":"port elizabeth south africa"}
+cvert PVG {"terminal_fee":139,"name":"","location":""}
+cvert SZV {"terminal_fee":128,"name":"","location":""}
+cvert NKG {"terminal_fee":144,"name":"","location":"nanjing china"}
+cvert HGH {"terminal_fee":57,"name":"","location":"hangzhou china"}
+cvert NGB {"terminal_fee":114,"name":"","location":""}
+cvert SZX {"terminal_fee":133,"name":"shenzhen","location":"shenzhen china"}
+cvert FOC {"terminal_fee":106,"name":"","location":""}
+cvert HKG {"terminal_fee":62,"name":"","location":"hong kong hong kong"}
+cvert NGO {"terminal_fee":83,"name":"komaki","location":"nagoya japan"}
+cvert NRT {"terminal_fee":141,"name":"","location":"tokyo japan"}
+cvert KIX {"terminal_fee":37,"name":"kansai intl","location":"osaka japan"}
+cvert PEN {"terminal_fee":54,"name":"penang intl","location":"penang malaysia"}
+cvert SIN {"terminal_fee":101,"name":"changi intl","location":"singapore singapore"}
+cvert SVO {"terminal_fee":67,"name":"sheremetyevo","location":"moscow russia"}
+cvert YEG {"terminal_fee":102,"name":"edmonton intl","location":"edmonton alberta canada"}
+cvert BDL {"terminal_fee":95,"name":"bradley intl","location":"hartford ct usa"}
+cvert BWI {"terminal_fee":76,"name":"baltimore washington intl","location":"baltimore md usa"}
+cvert CLE {"terminal_fee":64,"name":"hopkins intl","location":"cleveland oh usa"}
+cvert ORF {"terminal_fee":99,"name":"norfolk intl","location":"norfolk va usa"}
+cvert PIT {"terminal_fee":135,"name":"greater pit intnl","location":"pittsburgh pa usa"}
+cvert RIC {"terminal_fee":90,"name":"richmond intl","location":"richmond va usa"}
+cvert GSP {"terminal_fee":26,"name":"","location":""}
+cvert MDT {"terminal_fee":80,"name":"harrisburg intl","location":"harrisburg pa usa"}
+cvert RDU {"terminal_fee":32,"name":"raleigh durham intl","location":"raleigh durham nc usa"}
+cvert PVD {"terminal_fee":53,"name":"tf green state","location":"providence ri usa"}
+cvert CVG {"terminal_fee":58,"name":"greater cincinnati intl","location":"cincinnati oh usa"}
+cvert GSO {"terminal_fee":18,"name":"piedmont triad intl","location":"greensboro high point nc usa"}
+cvert BNA {"terminal_fee":67,"name":"nashville metropolitan","location":"nashville tn usa"}
+cvert CHS {"terminal_fee":123,"name":"charleston intl","location":"charleston sc usa"}
+cvert JAX {"terminal_fee":38,"name":"jacksonville intl","location":"jacksonville fl usa"}
+cvert MEM {"terminal_fee":64,"name":"memphis intl","location":"memphis tn usa"}
+cvert MOB {"terminal_fee":112,"name":"mobile municipal","location":"mobile al usa"}
+cvert MSY {"terminal_fee":16,"name":"moisant intl","location":"new orleans la usa"}
+cvert TPA {"terminal_fee":58,"name":"tampa intl","location":"tampa fl usa"}
+cvert CMH {"terminal_fee":19,"name":"port columbus intl","location":"columbus oh usa"}
+cvert DAY {"terminal_fee":121,"name":"james m cox dayton intl","location":"dayton oh usa"}
+cvert IND {"terminal_fee":40,"name":"indianapolis intl","location":"indianapolis in usa"}
+cvert MCI {"terminal_fee":115,"name":"kansas city intl","location":"kansas city mo usa"}
+cvert MKE {"terminal_fee":32,"name":"general mitchell field","location":"milwaukee wi usa"}
+cvert MSP {"terminal_fee":114,"name":"minneapolis st paul intl","location":"minneapolis mn usa"}
+cvert OMA {"terminal_fee":106,"name":"eppley airfield","location":"omaha ne usa"}
+cvert SDF {"terminal_fee":60,"name":"standiford field","location":"louisville ky usa"}
+cvert STL {"terminal_fee":18,"name":"lambert st louis internatl","location":"st louis mo usa"}
+cvert SLC {"terminal_fee":56,"name":"salt lake city intl","location":"salt lake city ut usa"}
+cvert TLV {"terminal_fee":117,"name":"ben gurion intl","location":"tel aviv yafo israel"}
+cvert ABQ {"terminal_fee":110,"name":"albuquerque intl","location":"albuquerque nm usa"}
+cvert AUS {"terminal_fee":142,"name":"robert mueller municipal","location":"austin tx usa"}
+cvert ELP {"terminal_fee":42,"name":"el paso intl","location":"el paso tx usa"}
+cvert LRD {"terminal_fee":24,"name":"intl","location":"laredo tx usa"}
+cvert MFE {"terminal_fee":90,"name":"","location":"mc allen mission tx usa"}
+cvert OKC {"terminal_fee":26,"name":"will rogers world","location":"oklahoma city ok usa"}
+cvert SAT {"terminal_fee":105,"name":"san antonio intl","location":"san antonio tx usa"}
+cvert TUL {"terminal_fee":107,"name":"tulsa intl","location":"tulsa ok usa"}
+cvert MTY {"terminal_fee":97,"name":"escobedo","location":"monterrey nuevo leon mexico"}
+cvert GDL {"terminal_fee":127,"name":"miguel hidalgo intl","location":"guadalajara jalisco mexico"}
+cvert PDX {"terminal_fee":150,"name":"portland intl","location":"portland or usa"}
+cvert RNO {"terminal_fee":145,"name":"reno cannon intl","location":"reno nv usa"}
+cvert SMF {"terminal_fee":136,"name":"sacramento metropolitan","location":"sacramento ca usa"}
+cvert LAS {"terminal_fee":67,"name":"mccarran intl","location":"las vegas nv usa"}
+cvert PHX {"terminal_fee":118,"name":"sky harbor intl","location":"phoenix az usa"}
+cvert SAN {"terminal_fee":24,"name":"lindbergh intl","location":"san diego ca usa"}
+cvert TUS {"terminal_fee":121,"name":"tucson intl","location":"tucson az usa"}
+cvert AMM {"terminal_fee":80,"name":"queen alia intl","location":"amman jordan"}
+cvert EBL {"terminal_fee":30,"name":"","location":""}
+cvert VCP {"terminal_fee":29,"name":"","location":""}
+cvert POA {"terminal_fee":89,"name":"salgado filho","location":"porto alegre rio grande do sul brazil"}
+cvert GIG {"terminal_fee":141,"name":"intl","location":"rio de janeiro rio de janeiro brazil"}
+cvert CNF {"terminal_fee":60,"name":"aeropuerto internacional tancredo neves","location":"belo horizonte belo horizon minas gerais brazil"}
+cvert CWB {"terminal_fee":53,"name":"afonso pena","location":"curitiba parana brazil"}
+cvert NVT {"terminal_fee":23,"name":"","location":"navegantes santa catarina brazil"}
+cvert FLN {"terminal_fee":24,"name":"florianopolis","location":"florianopolis santa catarina brazil"}
+cvert JOI {"terminal_fee":150,"name":"federal","location":"joinville santa catarina brazil"}
+cvert MVD {"terminal_fee":73,"name":"carrasco","location":"montevideo uruguay"}
+cvert ICN {"terminal_fee":32,"name":"","location":""}
+cvert PUS {"terminal_fee":55,"name":"kimhae","location":"pusan south korea"}
+cvert PEK {"terminal_fee":39,"name":"peking capital","location":"beijing china"}
+cvert MMX {"terminal_fee":132,"name":"sturup","location":"malmo sweden"}
+cvert BLL {"terminal_fee":47,"name":"billund","location":"billund denmark"}
+cvert SVG {"terminal_fee":72,"name":"sola","location":"stavanger norway"}
+cvert CCU {"terminal_fee":147,"name":"calcutta","location":"calcutta india"}
+cvert HYD {"terminal_fee":128,"name":"begumpet","location":"hyderabad india"}
+cvert BLR {"terminal_fee":89,"name":"hindustan","location":"bangalore india"}
+cvert BOM {"terminal_fee":101,"name":"bombay","location":"bombay india"}
+cvert MAA {"terminal_fee":84,"name":"meenambarkkam","location":"madras india"}
+cvert BRN {"terminal_fee":35,"name":"belp","location":"berne switzerland"}
+cvert LUG {"terminal_fee":78,"name":"agno","location":"lugano switzerland"}
+cvert DEL {"terminal_fee":83,"name":"delhi intl","location":"delhi india"}
+cvert MLH {"terminal_fee":30,"name":"mulhouse","location":"mulhouse france"}
+cvert SXB {"terminal_fee":63,"name":"entzheim","location":"strasbourg france"}
+cvert PNQ {"terminal_fee":141,"name":"lohegaon poona","location":"poona india"}
+cvert MST {"terminal_fee":139,"name":"zuid limburg","location":"maastricht netherlands"}
+cvert RTM {"terminal_fee":78,"name":"rotterdam","location":"rotterdam netherlands"}
+cvert SGN {"terminal_fee":112,"name":"tan son nhut","location":"ho chi minh city vietnam"}
+cvert BKK {"terminal_fee":69,"name":"bangkok intl","location":"bangkok thailand"}
+cvert CGK {"terminal_fee":98,"name":"soekarno hatta intl","location":"jakarta indonesia"}
+cvert KUL {"terminal_fee":131,"name":"subang kuala lumpur intl","location":"kuala lumpur malaysia"}
+cvert CAN {"terminal_fee":148,"name":"baiyun","location":"guangzhou china"}
+cvert TPE {"terminal_fee":89,"name":"chiang kai shek","location":"taipei taiwan"}
+cvert HAN {"terminal_fee":41,"name":"noibai","location":"hanoi vietnam"}
+cvert LIM {"terminal_fee":51,"name":"intl jorge chavez","location":"lima peru"}
+cvert SCL {"terminal_fee":102,"name":"aeropuerto comodoro arturo merino benitez","location":"santiago chile"}
+cvert LHE {"terminal_fee":55,"name":"lahore","location":"lahore pakistan"}
+cvert TSN {"terminal_fee":50,"name":"","location":""}
+cvert CMB {"terminal_fee":24,"name":"katunayake intl","location":"colombo sri lanka"}
+cvert LGG {"terminal_fee":78,"name":"bierset","location":"liege belgium"}
+cvert SMA {"terminal_fee":96,"name":"","location":""}
+cvert XQN {"terminal_fee":54,"name":"","location":""}
+cvert XOM {"terminal_fee":59,"name":"","location":""}
+cvert XYS {"terminal_fee":133,"name":"","location":""}
+cvert BQN {"terminal_fee":116,"name":"","location":"aguadilla pr usa"}
+cvert DKR {"terminal_fee":55,"name":"yoff","location":"dakar senegal"}
+cvert MAO {"terminal_fee":110,"name":"eduardo gomes","location":"manaus amazonas brazil"}
+cvert UIO {"terminal_fee":54,"name":"mariscal","location":"quito ecuador"}
+cvert NBO {"terminal_fee":147,"name":"jomo kenyatta internatonal","location":"nairobi kenya"}
+cvert IQQ {"terminal_fee":44,"name":"chucumata","location":"iquique chile"}
+cvert KJA {"terminal_fee":80,"name":"","location":"krasnojarsk russia"}
+cvert DAC {"terminal_fee":74,"name":"zia intl","location":"dhaka bangladesh"}
+cvert TRD {"terminal_fee":117,"name":"trondheim vaernes","location":"trondheim norway"}
+cvert CTU {"terminal_fee":101,"name":"","location":"chengdu china"}
+cvert DLC {"terminal_fee":127,"name":"","location":"dalian china"}
+cvert MLE {"terminal_fee":108,"name":"male intl","location":"male maldives"}
+cvert SZG {"terminal_fee":89,"name":"salzburg","location":"salzburg austria"}
+cvert FNC {"terminal_fee":55,"name":"funchal","location":"funchal madeira islands portugal"}
+cvert PRN {"terminal_fee":69,"name":"","location":""}
+cvert KRR {"terminal_fee":149,"name":"krasnodar","location":"krasnodar russia"}
+cvert AER {"terminal_fee":143,"name":"","location":""}
+cvert EVN {"terminal_fee":49,"name":"","location":"yerevan armenia"}
+cvert IAS {"terminal_fee":146,"name":"iasi","location":"iasi romania"}
+cvert HOH {"terminal_fee":82,"name":"","location":""}
+cvert DNK {"terminal_fee":80,"name":"","location":""}
+cvert ODS {"terminal_fee":47,"name":"central","location":"odessa ukraine"}
+cvert TGD {"terminal_fee":34,"name":"golubovci","location":"podgorica yugoslavia"}
+cvert KSC {"terminal_fee":126,"name":"barca","location":"kosice slovakia"}
+cvert HRK {"terminal_fee":88,"name":"kharkov","location":"kharkov ukraine"}
+cvert VAR {"terminal_fee":49,"name":"varna","location":"varna bulgaria"}
+cvert DAM {"terminal_fee":53,"name":"damascus intl","location":"damascus syria"}
+cvert HER {"terminal_fee":33,"name":"heraklion","location":"heraklion crete island greece"}
+cvert RHO {"terminal_fee":93,"name":"paradisi","location":"rhodes greece"}
+cvert FUE {"terminal_fee":103,"name":"fuerteventura","location":"fuerteventura puerto del rosario canary islands fuerteventura island spain"}
+cvert ACE {"terminal_fee":16,"name":"lanzarote","location":"lanzarote canary islands spain"}
+cvert LPA {"terminal_fee":58,"name":"aeropuerto de gran canaria","location":"gran canaria canary islands spain"}
+cvert REU {"terminal_fee":149,"name":"reus","location":"reus spain"}
+cvert TFS {"terminal_fee":117,"name":"reina sofia","location":"tenerife canary islands spain"}
+cvert DLM {"terminal_fee":103,"name":"dalaman","location":"dalaman turkey"}
+cvert BWK {"terminal_fee":145,"name":"","location":""}
+cvert PSR {"terminal_fee":10,"name":"liberi","location":"pescara italy"}
+cvert VST {"terminal_fee":32,"name":"hasslo","location":"vasteras sweden"}
+cvert AES {"terminal_fee":68,"name":"vigra","location":"aalesund norway"}
+cvert KRS {"terminal_fee":118,"name":"kjevik","location":"kristiansand norway"}
+cvert HAU {"terminal_fee":123,"name":"karmoy","location":"haugesund norway"}
+cvert SCN {"terminal_fee":45,"name":"ensheim","location":"saarbruecken germany"}
+cvert EZS {"terminal_fee":75,"name":"","location":""}
+cvert SZF {"terminal_fee":62,"name":"","location":""}
+cvert ADA {"terminal_fee":90,"name":"adana","location":"adana turkey"}
+cvert GZT {"terminal_fee":134,"name":"","location":""}
+cvert TZX {"terminal_fee":60,"name":"trabzon","location":"trabzon turkey"}
+cvert ASR {"terminal_fee":83,"name":"","location":""}
+cvert MLX {"terminal_fee":33,"name":"","location":""}
+cvert SAW {"terminal_fee":56,"name":"","location":""}
+cvert  {"terminal_fee":14,"name":"","location":""}
+cedge HAM-FRA HAM FRA flight-to 550 {"cost":655}
+cedge FRA-HAM FRA HAM flight-to 500 {"cost":276}
+cedge FRA-BRE FRA BRE flight-to 475 {"cost":329}
+cedge BRE-FRA BRE FRA flight-to 500 {"cost":685}
+cedge FRA-HAJ FRA HAJ flight-to 450 {"cost":443}
+cedge HAJ-FRA HAJ FRA flight-to 275 {"cost":444}
+cedge FRA-FMO FRA FMO flight-to 425 {"cost":793}
+cedge FMO-FRA FMO FRA flight-to 450 {"cost":702}
+cedge FRA-DUS FRA DUS flight-to 225 {"cost":636}
+cedge DUS-FRA DUS FRA flight-to 475 {"cost":278}
+cedge FRA-MUC FRA MUC flight-to 475 {"cost":428}
+cedge MUC-FRA MUC FRA flight-to 525 {"cost":501}
+cedge FRA-AMS FRA AMS flight-to 525 {"cost":584}
+cedge AMS-FRA AMS FRA flight-to 550 {"cost":769}
+cedge FRA-BRU FRA BRU flight-to 475 {"cost":478}
+cedge BRU-FRA BRU FRA flight-to 500 {"cost":554}
+cedge FRA-CDG FRA CDG flight-to 550 {"cost":748}
+cedge CDG-FRA CDG FRA flight-to 575 {"cost":625}
+cedge FRA-NCE FRA NCE flight-to 850 {"cost":447}
+cedge NCE-FRA NCE FRA flight-to 700 {"cost":340}
+cedge FRA-LYS FRA LYS flight-to 575 {"cost":764}
+cedge LYS-FRA LYS FRA flight-to 650 {"cost":581}
+cedge FRA-MRS FRA MRS flight-to 675 {"cost":739}
+cedge MRS-FRA MRS FRA flight-to 925 {"cost":347}
+cedge FRA-TLS FRA TLS flight-to 700 {"cost":467}
+cedge TLS-FRA TLS FRA flight-to 950 {"cost":489}
+cedge FRA-BIA FRA BIA flight-to 900 {"cost":449}
+cedge BIA-FRA BIA FRA flight-to 875 {"cost":797}
+cedge FRA-MAD FRA MAD flight-to 1200 {"cost":278}
+cedge MAD-FRA MAD FRA flight-to 1375 {"cost":419}
+cedge FRA-BCN FRA BCN flight-to 775 {"cost":347}
+cedge BCN-FRA BCN FRA flight-to 1075 {"cost":684}
+cedge FRA-BIO FRA BIO flight-to 1225 {"cost":446}
+cedge BIO-FRA BIO FRA flight-to 1025 {"cost":426}
+cedge FRA-AGP FRA AGP flight-to 1450 {"cost":569}
+cedge AGP-FRA AGP FRA flight-to 1525 {"cost":639}
+cedge FRA-PMI FRA PMI flight-to 1025 {"cost":620}
+cedge PMI-FRA PMI FRA flight-to 1050 {"cost":561}
+cedge FRA-FAO FRA FAO flight-to 1000 {"cost":541}
+cedge FAO-FRA FAO FRA flight-to 2000 {"cost":456}
+cedge FRA-LIS FRA LIS flight-to 975 {"cost":590}
+cedge LIS-FRA LIS FRA flight-to 2000 {"cost":720}
+cedge FRA-OPO FRA OPO flight-to 900 {"cost":707}
+cedge OPO-FRA OPO FRA flight-to 1675 {"cost":373}
+cedge FRA-ZRH FRA ZRH flight-to 450 {"cost":689}
+cedge ZRH-FRA ZRH FRA flight-to 525 {"cost":385}
+cedge FRA-BSL FRA BSL flight-to 425 {"cost":678}
+cedge BSL-FRA BSL FRA flight-to 525 {"cost":636}
+cedge FRA-GVA FRA GVA flight-to 500 {"cost":760}
+cedge GVA-FRA GVA FRA flight-to 600 {"cost":324}
+cedge FRA-VIE FRA VIE flight-to 800 {"cost":727}
+cedge VIE-FRA VIE FRA flight-to 825 {"cost":724}
+cedge FRA-LNZ FRA LNZ flight-to 500 {"cost":656}
+cedge LNZ-FRA LNZ FRA flight-to 550 {"cost":665}
+cedge FRA-STR FRA STR flight-to 200 {"cost":270}
+cedge FRA-GRZ FRA GRZ flight-to 575 {"cost":323}
+cedge GRZ-FRA GRZ FRA flight-to 600 {"cost":354}
+cedge FRA-INN FRA INN flight-to 525 {"cost":470}
+cedge INN-FRA INN FRA flight-to 575 {"cost":320}
+cedge STR-FRA STR FRA flight-to 250 {"cost":383}
+cedge FRA-MLA FRA MLA flight-to 1125 {"cost":640}
+cedge MLA-FRA MLA FRA flight-to 1400 {"cost":417}
+cedge FRA-ATH FRA ATH flight-to 1700 {"cost":266}
+cedge ATH-FRA ATH FRA flight-to 975 {"cost":285}
+cedge FRA-LCA FRA LCA flight-to 2200 {"cost":593}
+cedge LCA-FRA LCA FRA flight-to 1500 {"cost":586}
+cedge FRA-IST FRA IST flight-to 1950 {"cost":675}
+cedge IST-FRA IST FRA flight-to 1225 {"cost":413}
+cedge FRA-BEY FRA BEY flight-to 2425 {"cost":346}
+cedge BEY-FRA BEY FRA flight-to 1575 {"cost":416}
+cedge FRA-TIP FRA TIP flight-to 1225 {"cost":619}
+cedge TIP-FRA TIP FRA flight-to 1525 {"cost":686}
+cedge FRA-ALG FRA ALG flight-to 850 {"cost":335}
+cedge ALG-FRA ALG FRA flight-to 1875 {"cost":526}
+cedge FRA-TUN FRA TUN flight-to 600 {"cost":259}
+cedge TUN-FRA TUN FRA flight-to 1825 {"cost":775}
+cedge FRA-CMN FRA CMN flight-to 625 {"cost":661}
+cedge CMN-FRA CMN FRA flight-to 2850 {"cost":688}
+cedge FRA-BUD FRA BUD flight-to 650 {"cost":610}
+cedge BUD-FRA BUD FRA flight-to 700 {"cost":621}
+cedge FRA-WAW FRA WAW flight-to 900 {"cost":762}
+cedge WAW-FRA WAW FRA flight-to 925 {"cost":536}
+cedge FRA-KTW FRA KTW flight-to 825 {"cost":544}
+cedge KTW-FRA KTW FRA flight-to 650 {"cost":618}
+cedge FRA-KRK FRA KRK flight-to 850 {"cost":401}
+cedge KRK-FRA KRK FRA flight-to 900 {"cost":565}
+cedge FRA-WRO FRA WRO flight-to 800 {"cost":691}
+cedge WRO-FRA WRO FRA flight-to 800 {"cost":505}
+cedge FRA-GDN FRA GDN flight-to 625 {"cost":786}
+cedge GDN-FRA GDN FRA flight-to 675 {"cost":762}
+cedge FRA-RZE FRA RZE flight-to 675 {"cost":638}
+cedge RZE-FRA RZE FRA flight-to 925 {"cost":625}
+cedge FRA-POZ FRA POZ flight-to 600 {"cost":378}
+cedge POZ-FRA POZ FRA flight-to 825 {"cost":655}
+cedge FRA-PRG FRA PRG flight-to 500 {"cost":661}
+cedge PRG-FRA PRG FRA flight-to 750 {"cost":721}
+cedge FRA-NUE FRA NUE flight-to 400 {"cost":440}
+cedge FRA-BEG FRA BEG flight-to 925 {"cost":535}
+cedge BEG-FRA BEG FRA flight-to 1000 {"cost":334}
+cedge FRA-SPU FRA SPU flight-to 900 {"cost":537}
+cedge SPU-FRA SPU FRA flight-to 750 {"cost":702}
+cedge FRA-ZAG FRA ZAG flight-to 600 {"cost":703}
+cedge ZAG-FRA ZAG FRA flight-to 650 {"cost":423}
+cedge FRA-OTP FRA OTP flight-to 1575 {"cost":787}
+cedge OTP-FRA OTP FRA flight-to 650 {"cost":429}
+cedge FRA-SOF FRA SOF flight-to 1550 {"cost":433}
+cedge SOF-FRA SOF FRA flight-to 825 {"cost":761}
+cedge NUE-FRA NUE FRA flight-to 450 {"cost":289}
+cedge FRA-DME FRA DME flight-to 2750 {"cost":320}
+cedge DME-FRA DME FRA flight-to 800 {"cost":571}
+cedge FRA-LED FRA LED flight-to 2400 {"cost":661}
+cedge LED-FRA LED FRA flight-to 475 {"cost":282}
+cedge FRA-PEE FRA PEE flight-to 7150 {"cost":307}
+cedge FRA-GOJ FRA GOJ flight-to 2850 {"cost":404}
+cedge GOJ-PEE GOJ PEE flight-to 10175 {"cost":650}
+cedge PEE-FRA PEE FRA flight-to 975 {"cost":458}
+cedge PEE-GOJ PEE GOJ flight-to 150 {"cost":720}
+cedge GOJ-FRA GOJ FRA flight-to 900 {"cost":541}
+cedge FRA-KUF FRA KUF flight-to 9000 {"cost":714}
+cedge KUF-FRA KUF FRA flight-to 1075 {"cost":705}
+cedge FRA-KZN FRA KZN flight-to 9025 {"cost":502}
+cedge KZN-FRA KZN FRA flight-to 1025 {"cost":552}
+cedge FRA-ROV FRA ROV flight-to 2650 {"cost":530}
+cedge ROV-FRA ROV FRA flight-to 925 {"cost":631}
+cedge FRA-SVX FRA SVX flight-to 7825 {"cost":406}
+cedge SVX-FRA SVX FRA flight-to 525 {"cost":391}
+cedge FRA-MSQ FRA MSQ flight-to 1775 {"cost":552}
+cedge MSQ-FRA MSQ FRA flight-to 600 {"cost":597}
+cedge FRA-KBP FRA KBP flight-to 1800 {"cost":677}
+cedge KBP-FRA KBP FRA flight-to 725 {"cost":636}
+cedge FRA-LEJ FRA LEJ flight-to 475 {"cost":334}
+cedge LEJ-FRA LEJ FRA flight-to 500 {"cost":578}
+cedge MUC-WAW MUC WAW flight-to 850 {"cost":539}
+cedge WAW-MUC WAW MUC flight-to 900 {"cost":508}
+cedge MUC-KRK MUC KRK flight-to 900 {"cost":565}
+cedge KRK-MUC KRK MUC flight-to 900 {"cost":718}
+cedge MUC-WRO MUC WRO flight-to 800 {"cost":691}
+cedge WRO-MUC WRO MUC flight-to 800 {"cost":525}
+cedge MUC-POZ MUC POZ flight-to 650 {"cost":758}
+cedge POZ-MUC POZ MUC flight-to 650 {"cost":761}
+cedge MUC-GDN MUC GDN flight-to 625 {"cost":296}
+cedge GDN-MUC GDN MUC flight-to 675 {"cost":618}
+cedge MUC-OTP MUC OTP flight-to 1500 {"cost":794}
+cedge OTP-MUC OTP MUC flight-to 500 {"cost":353}
+cedge MUC-TSR MUC TSR flight-to 1325 {"cost":773}
+cedge TSR-MUC TSR MUC flight-to 350 {"cost":644}
+cedge MUC-SBZ MUC SBZ flight-to 1375 {"cost":562}
+cedge SBZ-MUC SBZ MUC flight-to 425 {"cost":692}
+cedge MUC-CLJ MUC CLJ flight-to 1400 {"cost":384}
+cedge CLJ-MUC CLJ MUC flight-to 400 {"cost":475}
+cedge MUC-BUD MUC BUD flight-to 575 {"cost":597}
+cedge BUD-MUC BUD MUC flight-to 800 {"cost":637}
+cedge FRA-TXL FRA TXL flight-to 525 {"cost":777}
+cedge MUC-PRG MUC PRG flight-to 500 {"cost":327}
+cedge PRG-MUC PRG MUC flight-to 500 {"cost":467}
+cedge MUC-SOF MUC SOF flight-to 1450 {"cost":383}
+cedge SOF-MUC SOF MUC flight-to 500 {"cost":468}
+cedge TXL-FRA TXL FRA flight-to 550 {"cost":770}
+cedge MUC-ZAG MUC ZAG flight-to 525 {"cost":731}
+cedge ZAG-MUC ZAG MUC flight-to 525 {"cost":344}
+cedge MUC-SPU MUC SPU flight-to 775 {"cost":605}
+cedge SPU-MUC SPU MUC flight-to 625 {"cost":264}
+cedge MUC-DBV MUC DBV flight-to 825 {"cost":673}
+cedge DBV-MUC DBV MUC flight-to 900 {"cost":343}
+cedge MUC-ZAD MUC ZAD flight-to 550 {"cost":522}
+cedge ZAD-MUC ZAD MUC flight-to 575 {"cost":437}
+cedge MUC-BEG MUC BEG flight-to 850 {"cost":261}
+cedge BEG-MUC BEG MUC flight-to 675 {"cost":413}
+cedge MUC-SJJ MUC SJJ flight-to 825 {"cost":712}
+cedge SJJ-MUC SJJ MUC flight-to 825 {"cost":769}
+cedge MUC-TIA MUC TIA flight-to 900 {"cost":374}
+cedge TIA-MUC TIA MUC flight-to 750 {"cost":759}
+cedge MUC-KIV MUC KIV flight-to 1500 {"cost":587}
+cedge KIV-MUC KIV MUC flight-to 775 {"cost":367}
+cedge MUC-ATH MUC ATH flight-to 1825 {"cost":312}
+cedge ATH-MUC ATH MUC flight-to 650 {"cost":559}
+cedge MUC-LCA MUC LCA flight-to 9900 {"cost":761}
+cedge LCA-MUC LCA MUC flight-to 1175 {"cost":624}
+cedge MUC-AYT MUC AYT flight-to 2000 {"cost":451}
+cedge AYT-MUC AYT MUC flight-to 1075 {"cost":345}
+cedge MUC-IST MUC IST flight-to 1875 {"cost":299}
+cedge IST-MUC IST MUC flight-to 725 {"cost":799}
+cedge MUC-ADB MUC ADB flight-to 1650 {"cost":732}
+cedge ADB-MUC ADB MUC flight-to 900 {"cost":276}
+cedge MUC-ESB MUC ESB flight-to 1950 {"cost":325}
+cedge ESB-MUC ESB MUC flight-to 1000 {"cost":399}
+cedge MUC-YEI MUC YEI flight-to 10150 {"cost":410}
+cedge YEI-MUC YEI MUC flight-to 725 {"cost":544}
+cedge MUC-LIS MUC LIS flight-to 1050 {"cost":368}
+cedge LIS-MUC LIS MUC flight-to 1975 {"cost":340}
+cedge MUC-MAD MUC MAD flight-to 1400 {"cost":639}
+cedge MAD-MUC MAD MUC flight-to 1175 {"cost":724}
+cedge MUC-BCN MUC BCN flight-to 1000 {"cost":355}
+cedge BCN-MUC BCN MUC flight-to 1000 {"cost":511}
+cedge MUC-BIO MUC BIO flight-to 1050 {"cost":267}
+cedge BIO-MUC BIO MUC flight-to 1050 {"cost":628}
+cedge MUC-PMI MUC PMI flight-to 1225 {"cost":698}
+cedge PMI-MUC PMI MUC flight-to 1025 {"cost":278}
+cedge MUC-AGP MUC AGP flight-to 1475 {"cost":791}
+cedge AGP-MUC AGP MUC flight-to 1425 {"cost":610}
+cedge MUC-FAO MUC FAO flight-to 1075 {"cost":798}
+cedge FAO-MUC FAO MUC flight-to 2025 {"cost":365}
+cedge MUC-FCO MUC FCO flight-to 850 {"cost":569}
+cedge FCO-MUC FCO MUC flight-to 900 {"cost":584}
+cedge MUC-MXP MUC MXP flight-to 550 {"cost":482}
+cedge MXP-MUC MXP MUC flight-to 750 {"cost":631}
+cedge MUC-BLQ MUC BLQ flight-to 600 {"cost":343}
+cedge BLQ-MUC BLQ MUC flight-to 625 {"cost":442}
+cedge MUC-FLR MUC FLR flight-to 575 {"cost":454}
+cedge FLR-MUC FLR MUC flight-to 775 {"cost":544}
+cedge MUC-TRN MUC TRN flight-to 825 {"cost":538}
+cedge TRN-MUC TRN MUC flight-to 875 {"cost":504}
+cedge MUC-VCE MUC VCE flight-to 750 {"cost":542}
+cedge VCE-MUC VCE MUC flight-to 800 {"cost":470}
+cedge MUC-VRN MUC VRN flight-to 750 {"cost":530}
+cedge VRN-MUC VRN MUC flight-to 600 {"cost":618}
+cedge MUC-NAP MUC NAP flight-to 875 {"cost":620}
+cedge NAP-MUC NAP MUC flight-to 700 {"cost":690}
+cedge MUC-TRS MUC TRS flight-to 550 {"cost":362}
+cedge TRS-MUC TRS MUC flight-to 750 {"cost":739}
+cedge MUC-GOA MUC GOA flight-to 675 {"cost":781}
+cedge GOA-MUC GOA MUC flight-to 700 {"cost":751}
+cedge MUC-PSA MUC PSA flight-to 900 {"cost":662}
+cedge PSA-MUC PSA MUC flight-to 725 {"cost":335}
+cedge MUC-AOI MUC AOI flight-to 875 {"cost":462}
+cedge AOI-MUC AOI MUC flight-to 725 {"cost":679}
+cedge MUC-CAG MUC CAG flight-to 950 {"cost":714}
+cedge CAG-MUC CAG MUC flight-to 775 {"cost":359}
+cedge MUC-CTA MUC CTA flight-to 1025 {"cost":708}
+cedge CTA-MUC CTA MUC flight-to 1050 {"cost":705}
+cedge MUC-OLB MUC OLB flight-to 675 {"cost":720}
+cedge OLB-MUC OLB MUC flight-to 675 {"cost":705}
+cedge MUC-BRI MUC BRI flight-to 700 {"cost":269}
+cedge BRI-MUC BRI MUC flight-to 925 {"cost":488}
+cedge MUC-PMO MUC PMO flight-to 1025 {"cost":489}
+cedge PMO-MUC PMO MUC flight-to 1025 {"cost":501}
+cedge MUC-MLA MUC MLA flight-to 1275 {"cost":318}
+cedge MLA-MUC MLA MUC flight-to 1125 {"cost":582}
+cedge MUC-CGN MUC CGN flight-to 525 {"cost":694}
+cedge CGN-MUC CGN MUC flight-to 525 {"cost":523}
+cedge MUC-DUS MUC DUS flight-to 550 {"cost":325}
+cedge DUS-MUC DUS MUC flight-to 550 {"cost":431}
+cedge MUC-TXL MUC TXL flight-to 525 {"cost":777}
+cedge TXL-MUC TXL MUC flight-to 550 {"cost":618}
+cedge FRA-DRS FRA DRS flight-to 475 {"cost":651}
+cedge DRS-FRA DRS FRA flight-to 525 {"cost":507}
+cedge MUC-HAM MUC HAM flight-to 575 {"cost":436}
+cedge HAM-MUC HAM MUC flight-to 575 {"cost":471}
+cedge MUC-HAJ MUC HAJ flight-to 525 {"cost":397}
+cedge HAJ-MUC HAJ MUC flight-to 550 {"cost":548}
+cedge MUC-BRE MUC BRE flight-to 550 {"cost":409}
+cedge BRE-MUC BRE MUC flight-to 800 {"cost":377}
+cedge MUC-DRS MUC DRS flight-to 475 {"cost":499}
+cedge DRS-MUC DRS MUC flight-to 475 {"cost":270}
+cedge MUC-FMO MUC FMO flight-to 550 {"cost":463}
+cedge FMO-MUC FMO MUC flight-to 525 {"cost":711}
+cedge MUC-STR MUC STR flight-to 450 {"cost":700}
+cedge STR-MUC STR MUC flight-to 250 {"cost":376}
+cedge MUC-NUE MUC NUE flight-to 200 {"cost":270}
+cedge NUE-MUC NUE MUC flight-to 200 {"cost":607}
+cedge MUC-LEJ MUC LEJ flight-to 475 {"cost":280}
+cedge LEJ-MUC LEJ MUC flight-to 525 {"cost":741}
+cedge MUC-RLG MUC RLG flight-to 825 {"cost":511}
+cedge RLG-MUC RLG MUC flight-to 825 {"cost":299}
+cedge FRA-RLG FRA RLG flight-to 550 {"cost":429}
+cedge RLG-FRA RLG FRA flight-to 550 {"cost":750}
+cedge MUC-TLS MUC TLS flight-to 725 {"cost":551}
+cedge TLS-MUC TLS MUC flight-to 700 {"cost":498}
+cedge MUC-CDG MUC CDG flight-to 875 {"cost":532}
+cedge CDG-MUC CDG MUC flight-to 850 {"cost":444}
+cedge MUC-LYS MUC LYS flight-to 575 {"cost":771}
+cedge LYS-MUC LYS MUC flight-to 600 {"cost":608}
+cedge MUC-MRS MUC MRS flight-to 875 {"cost":626}
+cedge MRS-MUC MRS MUC flight-to 875 {"cost":748}
+cedge MUC-NCE MUC NCE flight-to 825 {"cost":426}
+cedge NCE-MUC NCE MUC flight-to 825 {"cost":477}
+cedge MUC-BRU MUC BRU flight-to 800 {"cost":455}
+cedge BRU-MUC BRU MUC flight-to 800 {"cost":612}
+cedge FRA-FCO FRA FCO flight-to 925 {"cost":698}
+cedge MUC-AMS MUC AMS flight-to 850 {"cost":602}
+cedge AMS-MUC AMS MUC flight-to 825 {"cost":360}
+cedge FCO-FRA FCO FRA flight-to 1025 {"cost":306}
+cedge MUC-LUX MUC LUX flight-to 550 {"cost":729}
+cedge LUX-MUC LUX MUC flight-to 525 {"cost":610}
+cedge MUC-VIE MUC VIE flight-to 525 {"cost":326}
+cedge VIE-MUC VIE MUC flight-to 475 {"cost":391}
+cedge MUC-GRZ MUC GRZ flight-to 525 {"cost":520}
+cedge GRZ-MUC GRZ MUC flight-to 550 {"cost":777}
+cedge MUC-KLU MUC KLU flight-to 500 {"cost":518}
+cedge KLU-MUC KLU MUC flight-to 500 {"cost":541}
+cedge MUC-ZRH MUC ZRH flight-to 475 {"cost":583}
+cedge ZRH-MUC ZRH MUC flight-to 475 {"cost":548}
+cedge MUC-GVA MUC GVA flight-to 750 {"cost":481}
+cedge GVA-MUC GVA MUC flight-to 775 {"cost":294}
+cedge MUC-BSL MUC BSL flight-to 525 {"cost":597}
+cedge BSL-MUC BSL MUC flight-to 525 {"cost":660}
+cedge MUC-ARN MUC ARN flight-to 1025 {"cost":795}
+cedge ARN-MUC ARN MUC flight-to 1250 {"cost":347}
+cedge MUC-GOT MUC GOT flight-to 950 {"cost":357}
+cedge GOT-MUC GOT MUC flight-to 975 {"cost":526}
+cedge MUC-TLL MUC TLL flight-to 1600 {"cost":542}
+cedge TLL-MUC TLL MUC flight-to 625 {"cost":328}
+cedge MUC-CPH MUC CPH flight-to 850 {"cost":333}
+cedge CPH-MUC CPH MUC flight-to 900 {"cost":367}
+cedge MUC-OSL MUC OSL flight-to 1025 {"cost":275}
+cedge OSL-MUC OSL MUC flight-to 1275 {"cost":509}
+cedge FRA-MXP FRA MXP flight-to 550 {"cost":595}
+cedge MUC-HEL MUC HEL flight-to 1825 {"cost":481}
+cedge HEL-MUC HEL MUC flight-to 650 {"cost":321}
+cedge MXP-FRA MXP FRA flight-to 600 {"cost":492}
+cedge MUC-LHR MUC LHR flight-to 500 {"cost":282}
+cedge LHR-MUC LHR MUC flight-to 1450 {"cost":431}
+cedge MUC-LCY MUC LCY flight-to 475 {"cost":548}
+cedge LCY-MUC LCY MUC flight-to 1200 {"cost":761}
+cedge MUC-MAN MUC MAN flight-to 525 {"cost":791}
+cedge MAN-MUC MAN MUC flight-to 1275 {"cost":625}
+cedge MUC-BHX MUC BHX flight-to 500 {"cost":352}
+cedge BHX-MUC BHX MUC flight-to 1250 {"cost":511}
+cedge MUC-DUB MUC DUB flight-to 625 {"cost":602}
+cedge DUB-MUC DUB MUC flight-to 1575 {"cost":620}
+cedge MUC-DME MUC DME flight-to 2500 {"cost":251}
+cedge DME-MUC DME MUC flight-to 550 {"cost":384}
+cedge MUC-LED MUC LED flight-to 2225 {"cost":368}
+cedge LED-MUC LED MUC flight-to 225 {"cost":482}
+cedge MUC-DOK MUC DOK flight-to 1950 {"cost":428}
+cedge DOK-MUC DOK MUC flight-to 1000 {"cost":716}
+cedge MUC-KBP MUC KBP flight-to 1550 {"cost":342}
+cedge KBP-MUC KBP MUC flight-to 625 {"cost":422}
+cedge MUC-LWO MUC LWO flight-to 1450 {"cost":263}
+cedge LWO-MUC LWO MUC flight-to 475 {"cost":449}
+cedge MUC-TBS MUC TBS flight-to 9075 {"cost":699}
+cedge TBS-MUC TBS MUC flight-to 775 {"cost":555}
+cedge FRA-VRN FRA VRN flight-to 775 {"cost":528}
+cedge VRN-FRA VRN FRA flight-to 850 {"cost":782}
+cedge FRA-LIN FRA LIN flight-to 550 {"cost":673}
+cedge DUS-HAM DUS HAM flight-to 475 {"cost":553}
+cedge HAM-DUS HAM DUS flight-to 475 {"cost":490}
+cedge LIN-FRA LIN FRA flight-to 600 {"cost":467}
+cedge DUS-TXL DUS TXL flight-to 525 {"cost":785}
+cedge TXL-DUS TXL DUS flight-to 525 {"cost":562}
+cedge DUS-STR DUS STR flight-to 500 {"cost":710}
+cedge STR-DUS STR DUS flight-to 500 {"cost":266}
+cedge DUS-DRS DUS DRS flight-to 525 {"cost":743}
+cedge DRS-DUS DRS DUS flight-to 525 {"cost":458}
+cedge DUS-LEJ DUS LEJ flight-to 500 {"cost":778}
+cedge LEJ-DUS LEJ DUS flight-to 500 {"cost":734}
+cedge DUS-NUE DUS NUE flight-to 500 {"cost":283}
+cedge NUE-DUS NUE DUS flight-to 475 {"cost":329}
+cedge HAM-CGN HAM CGN flight-to 275 {"cost":444}
+cedge CGN-HAM CGN HAM flight-to 500 {"cost":635}
+cedge HAM-STR HAM STR flight-to 750 {"cost":700}
+cedge STR-HAM STR HAM flight-to 550 {"cost":446}
+cedge FRA-BLQ FRA BLQ flight-to 575 {"cost":769}
+cedge BLQ-FRA BLQ FRA flight-to 875 {"cost":267}
+cedge HAM-NUE HAM NUE flight-to 500 {"cost":679}
+cedge NUE-HAM NUE HAM flight-to 500 {"cost":397}
+cedge STR-TXL STR TXL flight-to 550 {"cost":733}
+cedge TXL-STR TXL STR flight-to 550 {"cost":771}
+cedge STR-BRE STR BRE flight-to 525 {"cost":570}
+cedge BRE-STR BRE STR flight-to 525 {"cost":746}
+cedge TXL-CGN TXL CGN flight-to 500 {"cost":420}
+cedge CGN-TXL CGN TXL flight-to 525 {"cost":468}
+cedge TXL-NUE TXL NUE flight-to 275 {"cost":500}
+cedge NUE-TXL NUE TXL flight-to 475 {"cost":698}
+cedge DUS-ARN DUS ARN flight-to 975 {"cost":449}
+cedge ARN-DUS ARN DUS flight-to 1000 {"cost":373}
+cedge HAM-ARN HAM ARN flight-to 625 {"cost":451}
+cedge ARN-HAM ARN HAM flight-to 650 {"cost":690}
+cedge DUS-GOT DUS GOT flight-to 625 {"cost":591}
+cedge GOT-DUS GOT DUS flight-to 650 {"cost":435}
+cedge HAM-GOT HAM GOT flight-to 500 {"cost":451}
+cedge GOT-HAM GOT HAM flight-to 500 {"cost":500}
+cedge DUS-OSL DUS OSL flight-to 950 {"cost":451}
+cedge OSL-DUS OSL DUS flight-to 950 {"cost":394}
+cedge HAM-OSL HAM OSL flight-to 800 {"cost":708}
+cedge OSL-HAM OSL HAM flight-to 625 {"cost":429}
+cedge FRA-TRN FRA TRN flight-to 775 {"cost":328}
+cedge HAM-BGO HAM BGO flight-to 625 {"cost":741}
+cedge BGO-HAM BGO HAM flight-to 850 {"cost":508}
+cedge DUS-BGO DUS BGO flight-to 975 {"cost":522}
+cedge BGO-DUS BGO DUS flight-to 775 {"cost":575}
+cedge TRN-FRA TRN FRA flight-to 825 {"cost":407}
+cedge DUS-DME DUS DME flight-to 2575 {"cost":719}
+cedge DME-DUS DME DUS flight-to 850 {"cost":544}
+cedge TXL-DME TXL DME flight-to 2225 {"cost":424}
+cedge DME-TXL DME TXL flight-to 450 {"cost":597}
+cedge HAM-DME HAM DME flight-to 2400 {"cost":691}
+cedge DME-HAM DME HAM flight-to 500 {"cost":357}
+cedge DUS-LED DUS LED flight-to 2225 {"cost":568}
+cedge LED-DUS LED DUS flight-to 450 {"cost":460}
+cedge DUS-KBP DUS KBP flight-to 1700 {"cost":302}
+cedge KBP-DUS KBP DUS flight-to 900 {"cost":739}
+cedge DUS-WAW DUS WAW flight-to 900 {"cost":679}
+cedge WAW-DUS WAW DUS flight-to 725 {"cost":553}
+cedge DUS-KTW DUS KTW flight-to 875 {"cost":637}
+cedge KTW-DUS KTW DUS flight-to 875 {"cost":328}
+cedge DUS-WRO DUS WRO flight-to 650 {"cost":677}
+cedge WRO-DUS WRO DUS flight-to 600 {"cost":287}
+cedge DUS-GDN DUS GDN flight-to 675 {"cost":768}
+cedge GDN-DUS GDN DUS flight-to 675 {"cost":467}
+cedge DUS-PRG DUS PRG flight-to 575 {"cost":473}
+cedge PRG-DUS PRG DUS flight-to 550 {"cost":419}
+cedge DUS-BUD DUS BUD flight-to 925 {"cost":717}
+cedge BUD-DUS BUD DUS flight-to 925 {"cost":675}
+cedge DUS-DBV DUS DBV flight-to 1050 {"cost":563}
+cedge DBV-DUS DBV DUS flight-to 1100 {"cost":624}
+cedge FRA-FLR FRA FLR flight-to 825 {"cost":303}
+cedge DUS-OTP DUS OTP flight-to 1675 {"cost":641}
+cedge OTP-DUS OTP DUS flight-to 900 {"cost":565}
+cedge DUS-SOF DUS SOF flight-to 1625 {"cost":562}
+cedge SOF-DUS SOF DUS flight-to 850 {"cost":363}
+cedge DUS-VIE DUS VIE flight-to 675 {"cost":339}
+cedge VIE-DUS VIE DUS flight-to 625 {"cost":719}
+cedge FLR-FRA FLR FRA flight-to 875 {"cost":282}
+cedge HAM-VIE HAM VIE flight-to 650 {"cost":633}
+cedge VIE-HAM VIE HAM flight-to 625 {"cost":343}
+cedge DUS-ZRH DUS ZRH flight-to 550 {"cost":630}
+cedge ZRH-DUS ZRH DUS flight-to 550 {"cost":524}
+cedge HAM-ZRH HAM ZRH flight-to 600 {"cost":451}
+cedge ZRH-HAM ZRH HAM flight-to 625 {"cost":397}
+cedge DUS-GVA DUS GVA flight-to 800 {"cost":735}
+cedge GVA-DUS GVA DUS flight-to 550 {"cost":503}
+cedge HAM-GVA HAM GVA flight-to 650 {"cost":336}
+cedge GVA-HAM GVA HAM flight-to 675 {"cost":613}
+cedge DUS-BSL DUS BSL flight-to 525 {"cost":256}
+cedge BSL-DUS BSL DUS flight-to 525 {"cost":723}
+cedge DUS-MXP DUS MXP flight-to 850 {"cost":692}
+cedge MXP-DUS MXP DUS flight-to 625 {"cost":683}
+cedge HAM-MXP HAM MXP flight-to 675 {"cost":760}
+cedge MXP-HAM MXP HAM flight-to 675 {"cost":659}
+cedge STR-MXP STR MXP flight-to 500 {"cost":349}
+cedge MXP-STR MXP STR flight-to 475 {"cost":433}
+cedge DUS-FCO DUS FCO flight-to 1000 {"cost":278}
+cedge FCO-DUS FCO DUS flight-to 1025 {"cost":265}
+cedge DUS-TRN DUS TRN flight-to 650 {"cost":308}
+cedge TRN-DUS TRN DUS flight-to 625 {"cost":592}
+cedge DUS-OLB DUS OLB flight-to 1025 {"cost":640}
+cedge OLB-DUS OLB DUS flight-to 1050 {"cost":361}
+cedge DUS-VCE DUS VCE flight-to 850 {"cost":433}
+cedge VCE-DUS VCE DUS flight-to 850 {"cost":404}
+cedge DUS-NAP DUS NAP flight-to 1050 {"cost":673}
+cedge NAP-DUS NAP DUS flight-to 1300 {"cost":547}
+cedge DUS-CDG DUS CDG flight-to 550 {"cost":494}
+cedge CDG-DUS CDG DUS flight-to 725 {"cost":592}
+cedge HAM-CDG HAM CDG flight-to 650 {"cost":579}
+cedge CDG-HAM CDG HAM flight-to 625 {"cost":327}
+cedge FRA-VCE FRA VCE flight-to 575 {"cost":686}
+cedge TXL-CDG TXL CDG flight-to 700 {"cost":408}
+cedge CDG-TXL CDG TXL flight-to 875 {"cost":602}
+cedge VCE-FRA VCE FRA flight-to 625 {"cost":336}
+cedge DUS-LYS DUS LYS flight-to 825 {"cost":556}
+cedge LYS-DUS LYS DUS flight-to 575 {"cost":536}
+cedge DUS-NCE DUS NCE flight-to 775 {"cost":590}
+cedge NCE-DUS NCE DUS flight-to 875 {"cost":642}
+cedge HAM-NCE HAM NCE flight-to 975 {"cost":349}
+cedge NCE-HAM NCE HAM flight-to 1000 {"cost":597}
+cedge DUS-MAD DUS MAD flight-to 1375 {"cost":564}
+cedge MAD-DUS MAD DUS flight-to 1150 {"cost":791}
+cedge HAM-MAD HAM MAD flight-to 1500 {"cost":479}
+cedge MAD-HAM MAD HAM flight-to 1500 {"cost":524}
+cedge DUS-BCN DUS BCN flight-to 1050 {"cost":650}
+cedge BCN-DUS BCN DUS flight-to 1050 {"cost":579}
+cedge DUS-BIO DUS BIO flight-to 1050 {"cost":708}
+cedge BIO-DUS BIO DUS flight-to 975 {"cost":678}
+cedge STR-BIO STR BIO flight-to 1225 {"cost":595}
+cedge BIO-STR BIO STR flight-to 1000 {"cost":766}
+cedge DUS-VLC DUS VLC flight-to 1150 {"cost":469}
+cedge VLC-DUS VLC DUS flight-to 1400 {"cost":434}
+cedge DUS-PMI DUS PMI flight-to 1100 {"cost":326}
+cedge PMI-DUS PMI DUS flight-to 1325 {"cost":652}
+cedge HAM-PMI HAM PMI flight-to 1350 {"cost":589}
+cedge PMI-HAM PMI HAM flight-to 1400 {"cost":750}
+cedge STR-PMI STR PMI flight-to 1025 {"cost":398}
+cedge PMI-STR PMI STR flight-to 1000 {"cost":282}
+cedge DUS-LIS DUS LIS flight-to 975 {"cost":542}
+cedge LIS-DUS LIS DUS flight-to 1950 {"cost":728}
+cedge HAM-AMS HAM AMS flight-to 500 {"cost":360}
+cedge AMS-HAM AMS HAM flight-to 475 {"cost":427}
+cedge FRA-NAP FRA NAP flight-to 950 {"cost":335}
+cedge NAP-FRA NAP FRA flight-to 1025 {"cost":712}
+cedge STR-BRU STR BRU flight-to 500 {"cost":514}
+cedge BRU-STR BRU STR flight-to 525 {"cost":642}
+cedge FRA-OLB FRA OLB flight-to 750 {"cost":447}
+cedge OLB-FRA OLB FRA flight-to 1000 {"cost":304}
+cedge FRA-PMO FRA PMO flight-to 1100 {"cost":483}
+cedge DUS-LHR DUS LHR flight-to 125 {"cost":547}
+cedge LHR-DUS LHR DUS flight-to 1075 {"cost":651}
+cedge PMO-FRA PMO FRA flight-to 1125 {"cost":798}
+cedge HAM-LHR HAM LHR flight-to 425 {"cost":538}
+cedge LHR-HAM LHR HAM flight-to 1350 {"cost":329}
+cedge STR-LHR STR LHR flight-to 425 {"cost":521}
+cedge LHR-STR LHR STR flight-to 1175 {"cost":387}
+cedge FRA-GOA FRA GOA flight-to 825 {"cost":659}
+cedge DRS-LHR DRS LHR flight-to 450 {"cost":428}
+cedge LHR-DRS LHR DRS flight-to 1450 {"cost":265}
+cedge GOA-FRA GOA FRA flight-to 625 {"cost":453}
+cedge CGN-LHR CGN LHR flight-to 325 {"cost":394}
+cedge LHR-CGN LHR CGN flight-to 1325 {"cost":484}
+cedge STR-MAN STR MAN flight-to 450 {"cost":637}
+cedge MAN-STR MAN STR flight-to 1425 {"cost":470}
+cedge DUS-MAN DUS MAN flight-to 350 {"cost":336}
+cedge MAN-DUS MAN DUS flight-to 1300 {"cost":426}
+cedge HAM-MAN HAM MAN flight-to 175 {"cost":420}
+cedge MAN-HAM MAN HAM flight-to 1150 {"cost":485}
+cedge DUS-BHX DUS BHX flight-to 300 {"cost":458}
+cedge BHX-DUS BHX DUS flight-to 1275 {"cost":712}
+cedge DUS-NCL DUS NCL flight-to 325 {"cost":412}
+cedge NCL-DUS NCL DUS flight-to 1300 {"cost":568}
+cedge DUS-EDI DUS EDI flight-to 200 {"cost":339}
+cedge EDI-DUS EDI DUS flight-to 1175 {"cost":498}
+cedge DUS-ATH DUS ATH flight-to 2000 {"cost":479}
+cedge ATH-DUS ATH DUS flight-to 1025 {"cost":604}
+cedge MXP-CTA MXP CTA flight-to 900 {"cost":339}
+cedge CTA-MXP CTA MXP flight-to 775 {"cost":677}
+cedge MXP-NAP MXP NAP flight-to 825 {"cost":658}
+cedge NAP-MXP NAP MXP flight-to 825 {"cost":573}
+cedge MXP-BRI MXP BRI flight-to 850 {"cost":424}
+cedge BRI-MXP BRI MXP flight-to 650 {"cost":508}
+cedge MXP-PMO MXP PMO flight-to 875 {"cost":570}
+cedge PMO-MXP PMO MXP flight-to 875 {"cost":712}
+cedge MXP-CDG MXP CDG flight-to 625 {"cost":588}
+cedge CDG-MXP CDG MXP flight-to 650 {"cost":291}
+cedge MXP-BCN MXP BCN flight-to 625 {"cost":299}
+cedge BCN-MXP BCN MXP flight-to 850 {"cost":446}
+cedge MXP-MAD MXP MAD flight-to 1050 {"cost":470}
+cedge MAD-MXP MAD MXP flight-to 1025 {"cost":314}
+cedge MXP-LIS MXP LIS flight-to 950 {"cost":649}
+cedge LIS-MXP LIS MXP flight-to 1675 {"cost":614}
+cedge MXP-ARN MXP ARN flight-to 1425 {"cost":549}
+cedge ARN-MXP ARN MXP flight-to 1425 {"cost":486}
+cedge MXP-PRG MXP PRG flight-to 850 {"cost":284}
+cedge PRG-MXP PRG MXP flight-to 850 {"cost":636}
+cedge MXP-BUD MXP BUD flight-to 650 {"cost":662}
+cedge BUD-MXP BUD MXP flight-to 875 {"cost":455}
+cedge MXP-WAW MXP WAW flight-to 1225 {"cost":320}
+cedge WAW-MXP WAW MXP flight-to 1025 {"cost":320}
+cedge MXP-LHR MXP LHR flight-to 475 {"cost":366}
+cedge LHR-MXP LHR MXP flight-to 1450 {"cost":483}
+cedge FRA-JFK FRA JFK flight-to 1100 {"cost":639}
+cedge JFK-FRA JFK FRA flight-to 5125 {"cost":456}
+cedge FRA-EWR FRA EWR flight-to 1125 {"cost":731}
+cedge EWR-FRA EWR FRA flight-to 5125 {"cost":318}
+cedge DUS-EWR DUS EWR flight-to 1150 {"cost":259}
+cedge EWR-DUS EWR DUS flight-to 5125 {"cost":270}
+cedge MUC-JFK MUC JFK flight-to 1525 {"cost":746}
+cedge JFK-MUC JFK MUC flight-to 4700 {"cost":668}
+cedge MUC-EWR MUC EWR flight-to 1475 {"cost":594}
+cedge EWR-MUC EWR MUC flight-to 5000 {"cost":369}
+cedge MUC-IAD MUC IAD flight-to 1600 {"cost":376}
+cedge IAD-MUC IAD MUC flight-to 4700 {"cost":363}
+cedge FRA-IAD FRA IAD flight-to 1200 {"cost":280}
+cedge IAD-FRA IAD FRA flight-to 4975 {"cost":714}
+cedge FRA-BOS FRA BOS flight-to 1075 {"cost":405}
+cedge BOS-FRA BOS FRA flight-to 5425 {"cost":329}
+cedge MUC-BOS MUC BOS flight-to 1375 {"cost":360}
+cedge BOS-MUC BOS MUC flight-to 5350 {"cost":626}
+cedge FRA-PHL FRA PHL flight-to 1725 {"cost":394}
+cedge PHL-FRA PHL FRA flight-to 4925 {"cost":760}
+cedge MUC-CLT MUC CLT flight-to 1950 {"cost":439}
+cedge CLT-MUC CLT MUC flight-to 4575 {"cost":693}
+cedge FRA-ORD FRA ORD flight-to 975 {"cost":445}
+cedge ORD-FRA ORD FRA flight-to 4450 {"cost":474}
+cedge MUC-ORD MUC ORD flight-to 1400 {"cost":528}
+cedge ORD-MUC ORD MUC flight-to 4100 {"cost":307}
+cedge DUS-ORD DUS ORD flight-to 1250 {"cost":679}
+cedge ORD-DUS ORD DUS flight-to 4450 {"cost":599}
+cedge FRA-DFW FRA DFW flight-to 2000 {"cost":378}
+cedge DFW-FRA DFW FRA flight-to 3500 {"cost":796}
+cedge FRA-IAH FRA IAH flight-to 1700 {"cost":281}
+cedge IAH-FRA IAH FRA flight-to 3775 {"cost":767}
+cedge FRA-DTW FRA DTW flight-to 1500 {"cost":451}
+cedge DTW-FRA DTW FRA flight-to 4925 {"cost":763}
+cedge FRA-ATL FRA ATL flight-to 2225 {"cost":285}
+cedge ATL-FRA ATL FRA flight-to 4250 {"cost":461}
+cedge FRA-DEN FRA DEN flight-to 1225 {"cost":784}
+cedge DEN-FRA DEN FRA flight-to 3350 {"cost":781}
+cedge MUC-LAX MUC LAX flight-to 1800 {"cost":328}
+cedge LAX-MUC LAX MUC flight-to 1900 {"cost":577}
+cedge FRA-SFO FRA SFO flight-to 1300 {"cost":350}
+cedge SFO-FRA SFO FRA flight-to 2075 {"cost":454}
+cedge FRA-LAX FRA LAX flight-to 1400 {"cost":691}
+cedge LAX-FRA LAX FRA flight-to 2100 {"cost":380}
+cedge MUC-SFO MUC SFO flight-to 1475 {"cost":368}
+cedge SFO-MUC SFO MUC flight-to 1950 {"cost":295}
+cedge MUC-MIA MUC MIA flight-to 2400 {"cost":460}
+cedge MIA-MUC MIA MUC flight-to 4350 {"cost":478}
+cedge FRA-MIA FRA MIA flight-to 1975 {"cost":671}
+cedge MIA-FRA MIA FRA flight-to 4500 {"cost":604}
+cedge FRA-MCO FRA MCO flight-to 2000 {"cost":438}
+cedge MCO-FRA MCO FRA flight-to 4525 {"cost":310}
+cedge DUS-MIA DUS MIA flight-to 2000 {"cost":497}
+cedge MIA-DUS MIA DUS flight-to 4475 {"cost":633}
+cedge FRA-YYZ FRA YYZ flight-to 1400 {"cost":535}
+cedge YYZ-FRA YYZ FRA flight-to 5050 {"cost":775}
+cedge DUS-YYZ DUS YYZ flight-to 1075 {"cost":691}
+cedge YYZ-DUS YYZ DUS flight-to 5150 {"cost":413}
+cedge MUC-YUL MUC YUL flight-to 1300 {"cost":573}
+cedge YUL-MUC YUL MUC flight-to 5325 {"cost":268}
+cedge FRA-SEA FRA SEA flight-to 850 {"cost":409}
+cedge SEA-FRA SEA FRA flight-to 2475 {"cost":605}
+cedge FRA-YVR FRA YVR flight-to 525 {"cost":786}
+cedge YVR-FRA YVR FRA flight-to 2525 {"cost":610}
+cedge FRA-YYC FRA YYC flight-to 875 {"cost":567}
+cedge YYC-FRA YYC FRA flight-to 3225 {"cost":270}
+cedge FRA-MEX FRA MEX flight-to 1750 {"cost":271}
+cedge MEX-FRA MEX FRA flight-to 2525 {"cost":551}
+cedge MUC-GRU MUC GRU flight-to 8125 {"cost":251}
+cedge GRU-MUC GRU MUC flight-to 3525 {"cost":350}
+cedge FRA-GRU FRA GRU flight-to 8575 {"cost":327}
+cedge GRU-FRA GRU FRA flight-to 3850 {"cost":351}
+cedge FRA-EZE FRA EZE flight-to 7575 {"cost":555}
+cedge EZE-FRA EZE FRA flight-to 2950 {"cost":768}
+cedge FRA-CCS FRA CCS flight-to 1950 {"cost":482}
+cedge CCS-FRA CCS FRA flight-to 3850 {"cost":673}
+cedge FRA-BOG FRA BOG flight-to 2375 {"cost":263}
+cedge BOG-FRA BOG FRA flight-to 2950 {"cost":693}
+cedge FRA-LAD FRA LAD flight-to 8425 {"cost":351}
+cedge LAD-FRA LAD FRA flight-to 7375 {"cost":685}
+cedge FRA-SSG FRA SSG flight-to 3525 {"cost":496}
+cedge FRA-ABV FRA ABV flight-to 2475 {"cost":539}
+cedge ABV-SSG ABV SSG flight-to 825 {"cost":745}
+cedge SSG-FRA SSG FRA flight-to 7100 {"cost":744}
+cedge SSG-ABV SSG ABV flight-to 650 {"cost":372}
+cedge ABV-FRA ABV FRA flight-to 8500 {"cost":480}
+cedge FRA-LOS FRA LOS flight-to 2625 {"cost":718}
+cedge LOS-FRA LOS FRA flight-to 8175 {"cost":262}
+cedge FRA-ACC FRA ACC flight-to 2125 {"cost":643}
+cedge ACC-FRA ACC FRA flight-to 7675 {"cost":491}
+cedge FRA-PHC FRA PHC flight-to 3425 {"cost":281}
+cedge ABV-PHC ABV PHC flight-to 525 {"cost":251}
+cedge PHC-FRA PHC FRA flight-to 7400 {"cost":296}
+cedge PHC-ABV PHC ABV flight-to 550 {"cost":267}
+cedge FRA-JNB FRA JNB flight-to 6675 {"cost":612}
+cedge JNB-FRA JNB FRA flight-to 6625 {"cost":614}
+cedge FRA-CAI FRA CAI flight-to 2000 {"cost":287}
+cedge CAI-FRA CAI FRA flight-to 2325 {"cost":634}
+cedge MUC-CAI MUC CAI flight-to 1925 {"cost":364}
+cedge CAI-MUC CAI MUC flight-to 2000 {"cost":289}
+cedge FRA-PNR FRA PNR flight-to 4325 {"cost":734}
+cedge FRA-LBV FRA LBV flight-to 3300 {"cost":441}
+cedge LBV-PNR LBV PNR flight-to 600 {"cost":391}
+cedge PNR-FRA PNR FRA flight-to 6625 {"cost":488}
+cedge PNR-LBV PNR LBV flight-to 800 {"cost":408}
+cedge LBV-FRA LBV FRA flight-to 7950 {"cost":623}
+cedge FRA-KRT FRA KRT flight-to 3425 {"cost":361}
+cedge KRT-FRA KRT FRA flight-to 2550 {"cost":422}
+cedge FRA-ASM FRA ASM flight-to 4475 {"cost":515}
+cedge FRA-JED FRA JED flight-to 3350 {"cost":462}
+cedge JED-ASM JED ASM flight-to 650 {"cost":306}
+cedge ASM-FRA ASM FRA flight-to 8375 {"cost":762}
+cedge ASM-JED ASM JED flight-to 11375 {"cost":752}
+cedge JED-FRA JED FRA flight-to 2425 {"cost":251}
+cedge FRA-ADD FRA ADD flight-to 3925 {"cost":705}
+cedge ADD-FRA ADD FRA flight-to 8925 {"cost":323}
+cedge FRA-IKA FRA IKA flight-to 8425 {"cost":481}
+cedge EMA-BHX EMA BHX flight-to 1000 {"cost":623}
+cedge EMA-MAN EMA MAN flight-to 9000 {"cost":336}
+cedge EMA-LHR EMA LHR flight-to 9500 {"cost":324}
+cedge IKA-FRA IKA FRA flight-to 1175 {"cost":314}
+cedge MAN-EMA MAN EMA flight-to 8000 {"cost":367}
+cedge MAN-BHX MAN BHX flight-to 9000 {"cost":326}
+cedge MAN-GLA MAN GLA flight-to 5000 {"cost":360}
+cedge MAN-EDI MAN EDI flight-to 5000 {"cost":385}
+cedge MAN-ABZ MAN ABZ flight-to 7000 {"cost":688}
+cedge MAN-LHR MAN LHR flight-to 10000 {"cost":724}
+cedge MAN-BFS MAN BFS flight-to 1500 {"cost":423}
+cedge MAN-DUB MAN DUB flight-to 3000 {"cost":521}
+cedge BHX-LHR BHX LHR flight-to 10500 {"cost":287}
+cedge BHX-MAN BHX MAN flight-to 10500 {"cost":462}
+cedge LHR-EMA LHR EMA flight-to 3495 {"cost":455}
+cedge LHR-MAN LHR MAN flight-to 2000 {"cost":479}
+cedge LHR-DUB LHR DUB flight-to 500 {"cost":603}
+cedge LHR-ORK LHR ORK flight-to 1150 {"cost":693}
+cedge LHR-SNN LHR SNN flight-to 1150 {"cost":637}
+cedge GLA-MAN GLA MAN flight-to 9000 {"cost":426}
+cedge GLA-LHR GLA LHR flight-to 6000 {"cost":253}
+cedge MUC-RUH MUC RUH flight-to 3275 {"cost":259}
+cedge EDI-MAN EDI MAN flight-to 7500 {"cost":691}
+cedge EDI-GLA EDI GLA flight-to 1075 {"cost":466}
+cedge RUH-MUC RUH MUC flight-to 2425 {"cost":315}
+cedge ABZ-MAN ABZ MAN flight-to 7150 {"cost":653}
+cedge ABZ-LHR ABZ LHR flight-to 4150 {"cost":417}
+cedge DUB-SNN DUB SNN flight-to 5000 {"cost":316}
+cedge DUB-ORK DUB ORK flight-to 5000 {"cost":558}
+cedge DUB-LHR DUB LHR flight-to 5500 {"cost":491}
+cedge DUB-MAN DUB MAN flight-to 7500 {"cost":548}
+cedge FRA-ASB FRA ASB flight-to 4900 {"cost":380}
+cedge FRA-GYD FRA GYD flight-to 3625 {"cost":577}
+cedge GYD-ASB GYD ASB flight-to 825 {"cost":622}
+cedge SNN-MAN SNN MAN flight-to 9500 {"cost":445}
+cedge SNN-DUB SNN DUB flight-to 6850 {"cost":695}
+cedge ASB-FRA ASB FRA flight-to 2100 {"cost":698}
+cedge ASB-GYD ASB GYD flight-to 675 {"cost":556}
+cedge GYD-FRA GYD FRA flight-to 950 {"cost":279}
+cedge ORK-DUB ORK DUB flight-to 7000 {"cost":586}
+cedge BFS-MAN BFS MAN flight-to 6350 {"cost":479}
+cedge ANR-BRU ANR BRU flight-to 650 {"cost":452}
+cedge CDG-LIL CDG LIL flight-to 6500 {"cost":307}
+cedge LIL-CDG LIL CDG flight-to 8500 {"cost":517}
+cedge CDG-RNS CDG RNS flight-to 5500 {"cost":665}
+cedge CDG-NTE CDG NTE flight-to 7000 {"cost":512}
+cedge NTE-RNS NTE RNS flight-to 850 {"cost":746}
+cedge RNS-CDG RNS CDG flight-to 7000 {"cost":467}
+cedge RNS-NTE RNS NTE flight-to 650 {"cost":405}
+cedge NTE-CDG NTE CDG flight-to 8000 {"cost":583}
+cedge CDG-MPL CDG MPL flight-to 3500 {"cost":643}
+cedge CDG-MRS CDG MRS flight-to 5000 {"cost":409}
+cedge MRS-MPL MRS MPL flight-to 1000 {"cost":592}
+cedge MPL-CDG MPL CDG flight-to 3500 {"cost":534}
+cedge MPL-MRS MPL MRS flight-to 1000 {"cost":625}
+cedge MRS-CDG MRS CDG flight-to 6000 {"cost":658}
+cedge CDG-NCE CDG NCE flight-to 4500 {"cost":386}
+cedge NCE-CDG NCE CDG flight-to 4850 {"cost":793}
+cedge CDG-BOD CDG BOD flight-to 6500 {"cost":725}
+cedge BOD-CDG BOD CDG flight-to 8000 {"cost":695}
+cedge CDG-TLS CDG TLS flight-to 6000 {"cost":483}
+cedge TLS-CDG TLS CDG flight-to 7500 {"cost":472}
+cedge FRA-MCT FRA MCT flight-to 5025 {"cost":274}
+cedge FRA-AUH FRA AUH flight-to 4050 {"cost":259}
+cedge AUH-MCT AUH MCT flight-to 525 {"cost":294}
+cedge CDG-ORY CDG ORY flight-to 6000 {"cost":470}
+cedge ORY-CDG ORY CDG flight-to 9000 {"cost":705}
+cedge MCT-FRA MCT FRA flight-to 8575 {"cost":743}
+cedge MCT-AUH MCT AUH flight-to 11525 {"cost":776}
+cedge AUH-FRA AUH FRA flight-to 2425 {"cost":735}
+cedge FRA-DOH FRA DOH flight-to 4150 {"cost":528}
+cedge FRA-RUH FRA RUH flight-to 3075 {"cost":455}
+cedge RUH-DOH RUH DOH flight-to 575 {"cost":386}
+cedge DOH-FRA DOH FRA flight-to 3620 {"cost":586}
+cedge DOH-RUH DOH RUH flight-to 570 {"cost":722}
+cedge RUH-FRA RUH FRA flight-to 2475 {"cost":250}
+cedge RIX-HEL RIX HEL flight-to 1500 {"cost":297}
+cedge RIX-TLL RIX TLL flight-to 3000 {"cost":668}
+cedge TLL-HEL TLL HEL flight-to 5000 {"cost":468}
+cedge IST-ESB IST ESB flight-to 6000 {"cost":453}
+cedge ESB-IST ESB IST flight-to 6500 {"cost":451}
+cedge IST-ADB IST ADB flight-to 6000 {"cost":311}
+cedge ADB-IST ADB IST flight-to 4500 {"cost":612}
+cedge FRA-BAH FRA BAH flight-to 3450 {"cost":793}
+cedge BAH-FRA BAH FRA flight-to 2575 {"cost":595}
+cedge FRA-DMM FRA DMM flight-to 3250 {"cost":437}
+cedge DMM-BAH DMM BAH flight-to 150 {"cost":651}
+cedge ATH-SKG ATH SKG flight-to 5150 {"cost":732}
+cedge SKG-ATH SKG ATH flight-to 6150 {"cost":429}
+cedge BAH-DMM BAH DMM flight-to 200 {"cost":575}
+cedge DMM-FRA DMM FRA flight-to 2775 {"cost":626}
+cedge FRA-DXB FRA DXB flight-to 4025 {"cost":662}
+cedge VBS-LIN VBS LIN flight-to 1500 {"cost":798}
+cedge MLA-MXP MLA MXP flight-to 1000 {"cost":651}
+cedge MLA-CTA MLA CTA flight-to 425 {"cost":672}
+cedge DXB-FRA DXB FRA flight-to 2375 {"cost":291}
+cedge CTA-FRA CTA FRA flight-to 1425 {"cost":321}
+cedge MLA-DUS MLA DUS flight-to 1475 {"cost":577}
+cedge BCN-MAD BCN MAD flight-to 5000 {"cost":784}
+cedge MAD-BCN MAD BCN flight-to 7000 {"cost":296}
+cedge BCN-BIO BCN BIO flight-to 5000 {"cost":511}
+cedge BIO-BCN BIO BCN flight-to 7350 {"cost":512}
+cedge BCN-ALC BCN ALC flight-to 5000 {"cost":501}
+cedge ALC-BCN ALC BCN flight-to 6650 {"cost":647}
+cedge BCN-VLC BCN VLC flight-to 3500 {"cost":297}
+cedge VLC-BCN VLC BCN flight-to 8000 {"cost":423}
+cedge FRA-KWI FRA KWI flight-to 3275 {"cost":648}
+cedge KWI-FRA KWI FRA flight-to 2425 {"cost":345}
+cedge MUC-DXB MUC DXB flight-to 8025 {"cost":291}
+cedge DUS-AMS DUS AMS flight-to 9150 {"cost":315}
+cedge DUS-EIN DUS EIN flight-to 1500 {"cost":548}
+cedge EIN-AMS EIN AMS flight-to 11000 {"cost":492}
+cedge AMS-DUS AMS DUS flight-to 1925 {"cost":377}
+cedge DXB-MUC DXB MUC flight-to 2325 {"cost":360}
+cedge VIE-WAW VIE WAW flight-to 2850 {"cost":485}
+cedge VIE-KRK VIE KRK flight-to 3850 {"cost":722}
+cedge KRK-KTW KRK KTW flight-to 650 {"cost":547}
+cedge KTW-WAW KTW WAW flight-to 2650 {"cost":335}
+cedge VIE-KTW VIE KTW flight-to 5000 {"cost":654}
+cedge KRK-WAW KRK WAW flight-to 1500 {"cost":726}
+cedge WAW-VIE WAW VIE flight-to 7650 {"cost":661}
+cedge WAW-KTW WAW KTW flight-to 2150 {"cost":480}
+cedge KTW-KRK KTW KRK flight-to 850 {"cost":588}
+cedge KRK-VIE KRK VIE flight-to 3650 {"cost":658}
+cedge WAW-KRK WAW KRK flight-to 3500 {"cost":331}
+cedge KTW-VIE KTW VIE flight-to 5000 {"cost":459}
+cedge VNO-RIX VNO RIX flight-to 2000 {"cost":699}
+cedge VIE-VNO VIE VNO flight-to 3000 {"cost":402}
+cedge VIE-RIX VIE RIX flight-to 3000 {"cost":786}
+cedge VIE-PRG VIE PRG flight-to 2995 {"cost":682}
+cedge PRG-VIE PRG VIE flight-to 9000 {"cost":449}
+cedge LEJ-BTS LEJ BTS flight-to 5275 {"cost":496}
+cedge VIE-BTS VIE BTS flight-to 1000 {"cost":393}
+cedge BTS-VIE BTS VIE flight-to 500 {"cost":701}
+cedge MUC-TAS MUC TAS flight-to 7500 {"cost":343}
+cedge VIE-BUD VIE BUD flight-to 6500 {"cost":441}
+cedge BUD-VIE BUD VIE flight-to 9495 {"cost":324}
+cedge VIE-LJU VIE LJU flight-to 6000 {"cost":741}
+cedge LJU-VIE LJU VIE flight-to 7995 {"cost":536}
+cedge VIE-BEG VIE BEG flight-to 6850 {"cost":365}
+cedge BEG-VIE BEG VIE flight-to 4000 {"cost":256}
+cedge TAS-MUC TAS MUC flight-to 1925 {"cost":283}
+cedge VIE-ZAG VIE ZAG flight-to 4150 {"cost":607}
+cedge ZAG-VIE ZAG VIE flight-to 7995 {"cost":383}
+cedge VIE-SJJ VIE SJJ flight-to 4000 {"cost":393}
+cedge ZAG-SJJ ZAG SJJ flight-to 2500 {"cost":292}
+cedge FRA-ALA FRA ALA flight-to 6000 {"cost":305}
+cedge FRA-TSE FRA TSE flight-to 4850 {"cost":691}
+cedge TSE-ALA TSE ALA flight-to 11100 {"cost":378}
+cedge VIE-OTP VIE OTP flight-to 7000 {"cost":710}
+cedge VIE-TSR VIE TSR flight-to 6500 {"cost":616}
+cedge TSR-OTP TSR OTP flight-to 1500 {"cost":789}
+cedge SOF-SKP SOF SKP flight-to 6000 {"cost":389}
+cedge VIE-SOF VIE SOF flight-to 2000 {"cost":403}
+cedge SOF-VIE SOF VIE flight-to 2000 {"cost":646}
+cedge OTP-SOF OTP SOF flight-to 2000 {"cost":471}
+cedge FLR-VIE FLR VIE flight-to 9350 {"cost":613}
+cedge ALA-FRA ALA FRA flight-to 1500 {"cost":544}
+cedge BLQ-VIE BLQ VIE flight-to 2650 {"cost":623}
+cedge BLQ-VCE BLQ VCE flight-to 10645 {"cost":599}
+cedge VCE-VIE VCE VIE flight-to 4000 {"cost":426}
+cedge VIE-SWK VIE SWK flight-to 5000 {"cost":272}
+cedge SWK-VIE SWK VIE flight-to 7550 {"cost":295}
+cedge SWK-VBS SWK VBS flight-to 925 {"cost":570}
+cedge VBS-VIE VBS VIE flight-to 6125 {"cost":723}
+cedge TRN-SWK TRN SWK flight-to 1500 {"cost":388}
+cedge STR-VIE STR VIE flight-to 5850 {"cost":761}
+cedge VIE-STR VIE STR flight-to 5975 {"cost":797}
+cedge TXL-LHR TXL LHR flight-to 500 {"cost":329}
+cedge ALA-TSE ALA TSE flight-to 725 {"cost":497}
+cedge TSE-FRA TSE FRA flight-to 1000 {"cost":362}
+cedge BRU-VIE BRU VIE flight-to 0 {"cost":336}
+cedge ZRH-VIE ZRH VIE flight-to 4150 {"cost":531}
+cedge NUE-VIE NUE VIE flight-to 6850 {"cost":720}
+cedge VIE-NUE VIE NUE flight-to 5350 {"cost":470}
+cedge SHJ-XZF SHJ XZF flight-to 6000 {"cost":675}
+cedge SHJ-BAH SHJ BAH flight-to 6000 {"cost":762}
+cedge SHJ-DXB SHJ DXB flight-to 11100 {"cost":525}
+cedge SHJ-AUH SHJ AUH flight-to 9000 {"cost":565}
+cedge SHJ-KWI SHJ KWI flight-to 6000 {"cost":339}
+cedge DXB-AUH DXB AUH flight-to 1000 {"cost":435}
+cedge DXB-SHJ DXB SHJ flight-to 11100 {"cost":380}
+cedge DXB-MCT DXB MCT flight-to 3850 {"cost":328}
+cedge DXB-ZJF DXB ZJF flight-to 775 {"cost":575}
+cedge JNB-CPT JNB CPT flight-to 500 {"cost":534}
+cedge CPT-JNB CPT JNB flight-to 500 {"cost":724}
+cedge JNB-DUR JNB DUR flight-to 5000 {"cost":796}
+cedge JNB-PLZ JNB PLZ flight-to 2000 {"cost":346}
+cedge PVG-SZV PVG SZV flight-to 1500 {"cost":468}
+cedge PVG-NKG PVG NKG flight-to 8500 {"cost":619}
+cedge PVG-HGH PVG HGH flight-to 10000 {"cost":695}
+cedge PVG-NGB PVG NGB flight-to 8350 {"cost":645}
+cedge SZX-FOC SZX FOC flight-to 3000 {"cost":641}
+cedge SZX-HKG SZX HKG flight-to 1500 {"cost":740}
+cedge NGO-NRT NGO NRT flight-to 8150 {"cost":415}
+cedge NGO-KIX NGO KIX flight-to 8150 {"cost":564}
+cedge KIX-NRT KIX NRT flight-to 5500 {"cost":328}
+cedge PEN-SIN PEN SIN flight-to 225 {"cost":376}
+cedge SVO-GOJ SVO GOJ flight-to 0 {"cost":560}
+cedge SVO-KUF SVO KUF flight-to 500 {"cost":407}
+cedge SVO-SVX SVO SVX flight-to 0 {"cost":623}
+cedge SVO-LED SVO LED flight-to 0 {"cost":672}
+cedge SVO-PEE SVO PEE flight-to 0 {"cost":494}
+cedge YUL-YYZ YUL YYZ flight-to 5150 {"cost":353}
+cedge YYZ-ORD YYZ ORD flight-to 5000 {"cost":592}
+cedge YYZ-YUL YYZ YUL flight-to 6500 {"cost":714}
+cedge YYC-YEG YYC YEG flight-to 1500 {"cost":778}
+cedge YEG-YYC YEG YYC flight-to 850 {"cost":553}
+cedge BOS-JFK BOS JFK flight-to 9000 {"cost":439}
+cedge JFK-BDL JFK BDL flight-to 4500 {"cost":542}
+cedge JFK-BOS JFK BOS flight-to 4000 {"cost":643}
+cedge JFK-BWI JFK BWI flight-to 4000 {"cost":624}
+cedge JFK-CLE JFK CLE flight-to 4000 {"cost":673}
+cedge JFK-EWR JFK EWR flight-to 3500 {"cost":721}
+cedge JFK-IAD JFK IAD flight-to 4000 {"cost":398}
+cedge JFK-ORF JFK ORF flight-to 4500 {"cost":406}
+cedge JFK-PHL JFK PHL flight-to 3500 {"cost":645}
+cedge JFK-PIT JFK PIT flight-to 4500 {"cost":394}
+cedge JFK-RIC JFK RIC flight-to 4500 {"cost":503}
+cedge JFK-YUL JFK YUL flight-to 3500 {"cost":312}
+cedge JFK-GSP JFK GSP flight-to 3500 {"cost":763}
+cedge BWI-JFK BWI JFK flight-to 4500 {"cost":397}
+cedge CLE-JFK CLE JFK flight-to 5850 {"cost":708}
+cedge PIT-JFK PIT JFK flight-to 5500 {"cost":603}
+cedge EWR-JFK EWR JFK flight-to 5000 {"cost":337}
+cedge EWR-GSP EWR GSP flight-to 4000 {"cost":322}
+cedge PIT-EWR PIT EWR flight-to 5500 {"cost":366}
+cedge PHL-EWR PHL EWR flight-to 5850 {"cost":416}
+cedge PHL-JFK PHL JFK flight-to 7500 {"cost":448}
+cedge PHL-MDT PHL MDT flight-to 7000 {"cost":677}
+cedge PHL-PIT PHL PIT flight-to 7000 {"cost":574}
+cedge PHL-IAD PHL IAD flight-to 6000 {"cost":270}
+cedge BWI-PHL BWI PHL flight-to 5500 {"cost":549}
+cedge PIT-PHL PIT PHL flight-to 6500 {"cost":267}
+cedge IAD-ATL IAD ATL flight-to 4500 {"cost":373}
+cedge IAD-BWI IAD BWI flight-to 1000 {"cost":340}
+cedge IAD-CLT IAD CLT flight-to 4500 {"cost":731}
+cedge IAD-EWR IAD EWR flight-to 5000 {"cost":351}
+cedge IAD-JFK IAD JFK flight-to 4000 {"cost":644}
+cedge PMI-BCN PMI BCN flight-to 450 {"cost":370}
+cedge IAD-ORF IAD ORF flight-to 3500 {"cost":644}
+cedge IAD-PHL IAD PHL flight-to 3000 {"cost":486}
+cedge IAD-GSP IAD GSP flight-to 4775 {"cost":745}
+cedge IAD-RDU IAD RDU flight-to 2500 {"cost":516}
+cedge IAD-RIC IAD RIC flight-to 6000 {"cost":407}
+cedge IAD-PVD IAD PVD flight-to 5500 {"cost":342}
+cedge CLE-IAD CLE IAD flight-to 7000 {"cost":673}
+cedge CVG-IAD CVG IAD flight-to 6500 {"cost":251}
+cedge BWI-IAD BWI IAD flight-to 4500 {"cost":486}
+cedge ORF-IAD ORF IAD flight-to 5000 {"cost":375}
+cedge RIC-IAD RIC IAD flight-to 6000 {"cost":314}
+cedge CLT-ATL CLT ATL flight-to 4500 {"cost":449}
+cedge CLT-GSO CLT GSO flight-to 6000 {"cost":523}
+cedge CLT-GSP CLT GSP flight-to 6000 {"cost":772}
+cedge CLT-RDU CLT RDU flight-to 6000 {"cost":252}
+cedge CLT-IAD CLT IAD flight-to 4000 {"cost":611}
+cedge RDU-CLT RDU CLT flight-to 5000 {"cost":293}
+cedge ATL-BNA ATL BNA flight-to 3000 {"cost":369}
+cedge ATL-CHS ATL CHS flight-to 3500 {"cost":777}
+cedge ATL-CLT ATL CLT flight-to 4075 {"cost":491}
+cedge ATL-DFW ATL DFW flight-to 2000 {"cost":796}
+cedge ATL-GSO ATL GSO flight-to 5075 {"cost":550}
+cedge ATL-GSP ATL GSP flight-to 3000 {"cost":512}
+cedge ATL-IAH ATL IAH flight-to 3575 {"cost":545}
+cedge ATL-JAX ATL JAX flight-to 4575 {"cost":568}
+cedge ATL-MCO ATL MCO flight-to 2000 {"cost":636}
+cedge ATL-MEM ATL MEM flight-to 3000 {"cost":636}
+cedge ATL-MIA ATL MIA flight-to 2500 {"cost":498}
+cedge ATL-MOB ATL MOB flight-to 3500 {"cost":737}
+cedge ATL-MSY ATL MSY flight-to 4575 {"cost":479}
+cedge ATL-RDU ATL RDU flight-to 3000 {"cost":619}
+cedge ATL-TPA ATL TPA flight-to 3000 {"cost":581}
+cedge ATL-IAD ATL IAD flight-to 4000 {"cost":716}
+cedge TPA-ATL TPA ATL flight-to 4500 {"cost":563}
+cedge RDU-ATL RDU ATL flight-to 6000 {"cost":296}
+cedge MCO-ATL MCO ATL flight-to 4650 {"cost":323}
+cedge MCO-MIA MCO MIA flight-to 4500 {"cost":656}
+cedge MCO-GSP MCO GSP flight-to 6000 {"cost":720}
+cedge TPA-MCO TPA MCO flight-to 4500 {"cost":324}
+cedge MIA-ATL MIA ATL flight-to 4000 {"cost":342}
+cedge MIA-GSP MIA GSP flight-to 3500 {"cost":295}
+cedge MIA-MCO MIA MCO flight-to 4500 {"cost":389}
+cedge MIA-TPA MIA TPA flight-to 4500 {"cost":541}
+cedge DTW-CLE DTW CLE flight-to 5500 {"cost":568}
+cedge DTW-CMH DTW CMH flight-to 3000 {"cost":360}
+cedge DTW-CVG DTW CVG flight-to 3000 {"cost":543}
+cedge DTW-DAY DTW DAY flight-to 2500 {"cost":379}
+cedge DTW-ORD DTW ORD flight-to 3000 {"cost":403}
+cedge ORD-CLE ORD CLE flight-to 4500 {"cost":663}
+cedge ORD-CMH ORD CMH flight-to 4500 {"cost":355}
+cedge ORD-CVG ORD CVG flight-to 4500 {"cost":645}
+cedge ORD-DAY ORD DAY flight-to 4500 {"cost":658}
+cedge ORD-DEN ORD DEN flight-to 4500 {"cost":656}
+cedge ORD-DTW ORD DTW flight-to 4000 {"cost":356}
+cedge ORD-IND ORD IND flight-to 3500 {"cost":403}
+cedge ORD-MCI ORD MCI flight-to 3000 {"cost":423}
+cedge ORD-MKE ORD MKE flight-to 3500 {"cost":742}
+cedge ORD-IAD ORD IAD flight-to 3500 {"cost":789}
+cedge ORD-MSP ORD MSP flight-to 2500 {"cost":672}
+cedge ORD-OMA ORD OMA flight-to 3000 {"cost":679}
+cedge ORD-SDF ORD SDF flight-to 3000 {"cost":468}
+cedge ORD-STL ORD STL flight-to 3500 {"cost":491}
+cedge CLE-ORD CLE ORD flight-to 6000 {"cost":459}
+cedge CMH-ORD CMH ORD flight-to 6500 {"cost":383}
+cedge CVG-ORD CVG ORD flight-to 6500 {"cost":253}
+cedge IND-ORD IND ORD flight-to 6500 {"cost":506}
+cedge MSP-ORD MSP ORD flight-to 6500 {"cost":457}
+cedge DEN-ORD DEN ORD flight-to 1000 {"cost":660}
+cedge DEN-SLC DEN SLC flight-to 5000 {"cost":425}
+cedge SLC-DEN SLC DEN flight-to 5000 {"cost":531}
+cedge FRA-TLV FRA TLV flight-to 2425 {"cost":752}
+cedge DFW-ABQ DFW ABQ flight-to 6000 {"cost":470}
+cedge DFW-AUS DFW AUS flight-to 5500 {"cost":670}
+cedge DFW-ELP DFW ELP flight-to 4500 {"cost":493}
+cedge DFW-IAH DFW IAH flight-to 2500 {"cost":789}
+cedge DFW-LRD DFW LRD flight-to 5000 {"cost":781}
+cedge DFW-MFE DFW MFE flight-to 5500 {"cost":787}
+cedge DFW-MSY DFW MSY flight-to 3500 {"cost":367}
+cedge DFW-OKC DFW OKC flight-to 3500 {"cost":384}
+cedge DFW-SAT DFW SAT flight-to 5500 {"cost":649}
+cedge DFW-TUL DFW TUL flight-to 3500 {"cost":473}
+cedge TLV-FRA TLV FRA flight-to 1775 {"cost":779}
+cedge DFW-MTY DFW MTY flight-to 1500 {"cost":507}
+cedge DFW-GDL DFW GDL flight-to 4500 {"cost":329}
+cedge DFW-IAD DFW IAD flight-to 5000 {"cost":335}
+cedge AUS-DFW AUS DFW flight-to 4500 {"cost":660}
+cedge ELP-DFW ELP DFW flight-to 3285 {"cost":503}
+cedge TUL-DFW TUL DFW flight-to 5000 {"cost":277}
+cedge MUC-TLV MUC TLV flight-to 2400 {"cost":648}
+cedge IAH-ATL IAH ATL flight-to 5000 {"cost":374}
+cedge IAH-DFW IAH DFW flight-to 5000 {"cost":706}
+cedge IAH-ELP IAH ELP flight-to 4500 {"cost":316}
+cedge IAH-LRD IAH LRD flight-to 5000 {"cost":615}
+cedge IAH-MFE IAH MFE flight-to 6000 {"cost":364}
+cedge IAH-MSY IAH MSY flight-to 5000 {"cost":450}
+cedge IAH-SAT IAH SAT flight-to 5000 {"cost":619}
+cedge IAH-IAD IAH IAD flight-to 5000 {"cost":620}
+cedge TLV-MUC TLV MUC flight-to 1500 {"cost":657}
+cedge SEA-YVR SEA YVR flight-to 5500 {"cost":478}
+cedge SEA-LAX SEA LAX flight-to 5500 {"cost":796}
+cedge SEA-PDX SEA PDX flight-to 3500 {"cost":388}
+cedge PDX-SEA PDX SEA flight-to 7500 {"cost":430}
+cedge SFO-LAX SFO LAX flight-to 7000 {"cost":466}
+cedge SFO-RNO SFO RNO flight-to 5500 {"cost":258}
+cedge SFO-SEA SFO SEA flight-to 7000 {"cost":673}
+cedge SFO-SMF SFO SMF flight-to 5500 {"cost":454}
+cedge LAX-LAS LAX LAS flight-to 6500 {"cost":789}
+cedge LAX-PDX LAX PDX flight-to 7000 {"cost":659}
+cedge LAX-PHX LAX PHX flight-to 6500 {"cost":572}
+cedge LAX-RNO LAX RNO flight-to 4000 {"cost":372}
+cedge LAX-SAN LAX SAN flight-to 6500 {"cost":508}
+cedge LAX-SEA LAX SEA flight-to 7000 {"cost":796}
+cedge LAX-SFO LAX SFO flight-to 6500 {"cost":351}
+cedge LAX-SLC LAX SLC flight-to 4000 {"cost":765}
+cedge LAX-SMF LAX SMF flight-to 5000 {"cost":325}
+cedge LAX-TUS LAX TUS flight-to 6500 {"cost":437}
+cedge FRA-AMM FRA AMM flight-to 9475 {"cost":624}
+cedge LAX-YVR LAX YVR flight-to 6500 {"cost":578}
+cedge LAX-ELP LAX ELP flight-to 3000 {"cost":464}
+cedge PDX-LAX PDX LAX flight-to 5500 {"cost":472}
+cedge PHX-LAX PHX LAX flight-to 5500 {"cost":702}
+cedge SLC-LAX SLC LAX flight-to 4000 {"cost":370}
+cedge AMM-FRA AMM FRA flight-to 1850 {"cost":538}
+cedge IAH-MTY IAH MTY flight-to 1500 {"cost":517}
+cedge IAH-GDL IAH GDL flight-to 4500 {"cost":484}
+cedge FRA-EBL FRA EBL flight-to 2800 {"cost":738}
+cedge VCP-POA VCP POA flight-to 4000 {"cost":336}
+cedge VCP-GIG VCP GIG flight-to 2500 {"cost":304}
+cedge VCP-CNF VCP CNF flight-to 2500 {"cost":595}
+cedge VCP-CWB VCP CWB flight-to 4000 {"cost":564}
+cedge GIG-VCP GIG VCP flight-to 5500 {"cost":300}
+cedge EBL-FRA EBL FRA flight-to 1950 {"cost":733}
+cedge GRU-NVT GRU NVT flight-to 3500 {"cost":744}
+cedge GRU-CNF GRU CNF flight-to 5000 {"cost":516}
+cedge GRU-CWB GRU CWB flight-to 5000 {"cost":741}
+cedge GRU-FLN GRU FLN flight-to 3500 {"cost":617}
+cedge GRU-JOI GRU JOI flight-to 3500 {"cost":720}
+cedge POA-GRU POA GRU flight-to 4150 {"cost":729}
+cedge EZE-MVD EZE MVD flight-to 1500 {"cost":475}
+cedge MVD-EZE MVD EZE flight-to 4000 {"cost":492}
+cedge HAM-HAJ HAM HAJ flight-to 1000 {"cost":301}
+cedge HAM-LEJ HAM LEJ flight-to 8350 {"cost":734}
+cedge HAJ-HAM HAJ HAM flight-to 1000 {"cost":488}
+cedge BRE-HAJ BRE HAJ flight-to 650 {"cost":403}
+cedge BRE-DUS BRE DUS flight-to 8350 {"cost":698}
+cedge HAJ-DUS HAJ DUS flight-to 9350 {"cost":563}
+cedge TXL-LEJ TXL LEJ flight-to 1150 {"cost":591}
+cedge FRA-NRT FRA NRT flight-to 1700 {"cost":521}
+cedge FRA-ICN FRA ICN flight-to 3200 {"cost":340}
+cedge ICN-NRT ICN NRT flight-to 1000 {"cost":255}
+cedge FRA-CGN FRA CGN flight-to 3825 {"cost":744}
+cedge DUS-CGN DUS CGN flight-to 775 {"cost":793}
+cedge NRT-FRA NRT FRA flight-to 3675 {"cost":375}
+cedge NRT-ICN NRT ICN flight-to 1000 {"cost":482}
+cedge ICN-FRA ICN FRA flight-to 2150 {"cost":510}
+cedge CGN-DUS CGN DUS flight-to 575 {"cost":610}
+cedge MUC-NRT MUC NRT flight-to 2675 {"cost":420}
+cedge MUC-ICN MUC ICN flight-to 3425 {"cost":596}
+cedge NRT-MUC NRT MUC flight-to 2525 {"cost":665}
+cedge ICN-MUC ICN MUC flight-to 2350 {"cost":765}
+cedge CGN-FRA CGN FRA flight-to 1350 {"cost":359}
+cedge MUC-PUS MUC PUS flight-to 2300 {"cost":715}
+cedge ICN-PUS ICN PUS flight-to 550 {"cost":698}
+cedge PUS-MUC PUS MUC flight-to 3550 {"cost":303}
+cedge PUS-ICN PUS ICN flight-to 525 {"cost":430}
+cedge FRA-PEK FRA PEK flight-to 4450 {"cost":638}
+cedge PEK-FRA PEK FRA flight-to 2050 {"cost":670}
+cedge MUC-PEK MUC PEK flight-to 4125 {"cost":350}
+cedge STR-LEJ STR LEJ flight-to 7500 {"cost":567}
+cedge PEK-MUC PEK MUC flight-to 2150 {"cost":345}
+cedge MUC-PVG MUC PVG flight-to 3575 {"cost":593}
+cedge PVG-MUC PVG MUC flight-to 9000 {"cost":619}
+cedge FRA-PVG FRA PVG flight-to 3875 {"cost":278}
+cedge PVG-FRA PVG FRA flight-to 2925 {"cost":280}
+cedge MUC-HKG MUC HKG flight-to 3250 {"cost":773}
+cedge HKG-MUC HKG MUC flight-to 8875 {"cost":727}
+cedge LEJ-DRS LEJ DRS flight-to 1000 {"cost":593}
+cedge DRS-LEJ DRS LEJ flight-to 1000 {"cost":563}
+cedge FRA-CPH FRA CPH flight-to 4775 {"cost":448}
+cedge FRA-MMX FRA MMX flight-to 2725 {"cost":684}
+cedge CPH-MMX CPH MMX flight-to 2000 {"cost":569}
+cedge CPH-FRA CPH FRA flight-to 6000 {"cost":391}
+cedge MMX-FRA MMX FRA flight-to 4150 {"cost":676}
+cedge MMX-CPH MMX CPH flight-to 350 {"cost":694}
+cedge BLL-MUC BLL MUC flight-to 875 {"cost":624}
+cedge FRA-BLL FRA BLL flight-to 5500 {"cost":385}
+cedge BLL-FRA BLL FRA flight-to 7350 {"cost":504}
+cedge FRA-NGO FRA NGO flight-to 2900 {"cost":794}
+cedge NGO-FRA NGO FRA flight-to 2575 {"cost":731}
+cedge FRA-OSL FRA OSL flight-to 225 {"cost":368}
+cedge OSL-FRA OSL FRA flight-to 1000 {"cost":759}
+cedge SVG-BGO SVG BGO flight-to 3000 {"cost":290}
+cedge FRA-SVG FRA SVG flight-to 3000 {"cost":283}
+cedge FRA-BGO FRA BGO flight-to 150 {"cost":656}
+cedge BGO-FRA BGO FRA flight-to 6000 {"cost":344}
+cedge SVG-FRA SVG FRA flight-to 8350 {"cost":464}
+cedge FRA-HKG FRA HKG flight-to 3500 {"cost":493}
+cedge ARN-FRA ARN FRA flight-to 10025 {"cost":765}
+cedge FRA-ARN FRA ARN flight-to 2850 {"cost":564}
+cedge HKG-FRA HKG FRA flight-to 3050 {"cost":260}
+cedge FRA-GOT FRA GOT flight-to 1975 {"cost":309}
+cedge MMX-GOT MMX GOT flight-to 2500 {"cost":356}
+cedge GOT-FRA GOT FRA flight-to 575 {"cost":629}
+cedge GOT-MMX GOT MMX flight-to 7925 {"cost":338}
+cedge GOT-BLL GOT BLL flight-to 7575 {"cost":387}
+cedge GOT-OSL GOT OSL flight-to 7000 {"cost":602}
+cedge FRA-KIX FRA KIX flight-to 2975 {"cost":264}
+cedge KIX-FRA KIX FRA flight-to 2750 {"cost":730}
+cedge FRA-HEL FRA HEL flight-to 1275 {"cost":364}
+cedge HEL-FRA HEL FRA flight-to 4000 {"cost":462}
+cedge POZ-WAW POZ WAW flight-to 3000 {"cost":613}
+cedge WAW-POZ WAW POZ flight-to 8975 {"cost":684}
+cedge WRO-KTW WRO KTW flight-to 1975 {"cost":604}
+cedge WRO-KRK WRO KRK flight-to 3475 {"cost":489}
+cedge KTW-WRO KTW WRO flight-to 10000 {"cost":578}
+cedge KRK-WRO KRK WRO flight-to 8500 {"cost":427}
+cedge FRA-LJU FRA LJU flight-to 1000 {"cost":624}
+cedge MUC-LJU MUC LJU flight-to 5500 {"cost":281}
+cedge LJU-FRA LJU FRA flight-to 1850 {"cost":421}
+cedge LJU-MUC LJU MUC flight-to 6500 {"cost":555}
+cedge FRA-RIX FRA RIX flight-to 2150 {"cost":400}
+cedge FRA-TLL FRA TLL flight-to 6500 {"cost":380}
+cedge TLL-RIX TLL RIX flight-to 2500 {"cost":596}
+cedge RIX-FRA RIX FRA flight-to 3850 {"cost":433}
+cedge TLL-FRA TLL FRA flight-to 5000 {"cost":786}
+cedge OTP-VIE OTP VIE flight-to 1725 {"cost":690}
+cedge FCO-AOI FCO AOI flight-to 2275 {"cost":647}
+cedge FLR-SWK FLR SWK flight-to 8150 {"cost":479}
+cedge SWK-FLR SWK FLR flight-to 3000 {"cost":654}
+cedge SWK-MUC SWK MUC flight-to 4725 {"cost":411}
+cedge SWK-FRA SWK FRA flight-to 7000 {"cost":489}
+cedge FRA-CCU FRA CCU flight-to 6300 {"cost":714}
+cedge MUC-LIN MUC LIN flight-to 7350 {"cost":518}
+cedge MUC-SWK MUC SWK flight-to 4000 {"cost":318}
+cedge VBS-MUC VBS MUC flight-to 4675 {"cost":252}
+cedge CCU-FRA CCU FRA flight-to 3350 {"cost":655}
+cedge FRA-SWK FRA SWK flight-to 3625 {"cost":670}
+cedge FRA-VBS FRA VBS flight-to 1000 {"cost":267}
+cedge VBS-SWK VBS SWK flight-to 1000 {"cost":585}
+cedge MXP-SWK MXP SWK flight-to 500 {"cost":785}
+cedge FRA-HYD FRA HYD flight-to 6275 {"cost":480}
+cedge GOA-SWK GOA SWK flight-to 1350 {"cost":398}
+cedge TRS-VCE TRS VCE flight-to 1000 {"cost":668}
+cedge FRA-TRS FRA TRS flight-to 205 {"cost":284}
+cedge TRS-FRA TRS FRA flight-to 5075 {"cost":637}
+cedge HYD-FRA HYD FRA flight-to 3025 {"cost":445}
+cedge VRN-VCE VRN VCE flight-to 1000 {"cost":462}
+cedge VCE-VRN VCE VRN flight-to 1000 {"cost":461}
+cedge VRN-BLQ VRN BLQ flight-to 1150 {"cost":476}
+cedge FRA-BLR FRA BLR flight-to 5950 {"cost":633}
+cedge FCO-FLR FCO FLR flight-to 3000 {"cost":767}
+cedge LIN-BLQ LIN BLQ flight-to 4350 {"cost":627}
+cedge BLQ-FLR BLQ FLR flight-to 1850 {"cost":763}
+cedge LIN-FLR LIN FLR flight-to 2000 {"cost":562}
+cedge BLR-FRA BLR FRA flight-to 2975 {"cost":259}
+cedge FRA-BOM FRA BOM flight-to 6150 {"cost":749}
+cedge BOM-FRA BOM FRA flight-to 2500 {"cost":452}
+cedge FRA-MAA FRA MAA flight-to 6200 {"cost":657}
+cedge ZRH-BSL ZRH BSL flight-to 650 {"cost":427}
+cedge BSL-ZRH BSL ZRH flight-to 850 {"cost":306}
+cedge MAA-FRA MAA FRA flight-to 3375 {"cost":267}
+cedge BRN-FRA BRN FRA flight-to 6000 {"cost":667}
+cedge LUG-MUC LUG MUC flight-to 6495 {"cost":771}
+cedge LUG-FRA LUG FRA flight-to 6000 {"cost":535}
+cedge LUG-DUS LUG DUS flight-to 6000 {"cost":735}
+cedge FRA-DEL FRA DEL flight-to 6550 {"cost":773}
+cedge FRA-BRN FRA BRN flight-to 3150 {"cost":390}
+cedge BRN-GVA BRN GVA flight-to 1075 {"cost":604}
+cedge GVA-AMS GVA AMS flight-to 500 {"cost":791}
+cedge BRN-BSL BRN BSL flight-to 850 {"cost":726}
+cedge DEL-FRA DEL FRA flight-to 2425 {"cost":588}
+cedge FRA-VLC FRA VLC flight-to 7125 {"cost":470}
+cedge FRA-ALC FRA ALC flight-to 8575 {"cost":323}
+cedge VLC-ALC VLC ALC flight-to 1500 {"cost":456}
+cedge ALC-FRA ALC FRA flight-to 3650 {"cost":504}
+cedge ALC-VLC ALC VLC flight-to 1500 {"cost":711}
+cedge VLC-FRA VLC FRA flight-to 5650 {"cost":651}
+cedge MUC-DEL MUC DEL flight-to 6575 {"cost":716}
+cedge MAD-BIO MAD BIO flight-to 2995 {"cost":371}
+cedge BIO-MAD BIO MAD flight-to 3000 {"cost":327}
+cedge DEL-MUC DEL MUC flight-to 2425 {"cost":549}
+cedge OPO-BCN OPO BCN flight-to 650 {"cost":337}
+cedge OPO-LIS OPO LIS flight-to 10000 {"cost":704}
+cedge LIS-BCN LIS BCN flight-to 8850 {"cost":512}
+cedge MUC-BOM MUC BOM flight-to 6000 {"cost":650}
+cedge CDG-BRU CDG BRU flight-to 8000 {"cost":714}
+cedge FRA-LIL FRA LIL flight-to 7250 {"cost":460}
+cedge BOM-MUC BOM MUC flight-to 2450 {"cost":301}
+cedge TLS-BOD TLS BOD flight-to 1645 {"cost":570}
+cedge BOD-FRA BOD FRA flight-to 9850 {"cost":638}
+cedge MRS-NCE MRS NCE flight-to 1500 {"cost":358}
+cedge NCE-MRS NCE MRS flight-to 1150 {"cost":588}
+cedge FRA-MLH FRA MLH flight-to 2325 {"cost":504}
+cedge MLH-FRA MLH FRA flight-to 9150 {"cost":328}
+cedge FRA-SXB FRA SXB flight-to 2925 {"cost":323}
+cedge SXB-FRA SXB FRA flight-to 2000 {"cost":438}
+cedge FRA-LUX FRA LUX flight-to 2300 {"cost":301}
+cedge LUX-FRA LUX FRA flight-to 10000 {"cost":463}
+cedge FRA-PNQ FRA PNQ flight-to 6225 {"cost":793}
+cedge PNQ-FRA PNQ FRA flight-to 3150 {"cost":291}
+cedge PNQ-TBS PNQ TBS flight-to 1900 {"cost":388}
+cedge TBS-FRA TBS FRA flight-to 1100 {"cost":581}
+cedge AMS-LEJ AMS LEJ flight-to 6000 {"cost":511}
+cedge FRA-EIN FRA EIN flight-to 4000 {"cost":462}
+cedge FRA-MST FRA MST flight-to 2150 {"cost":787}
+cedge MST-EIN MST EIN flight-to 1350 {"cost":766}
+cedge EIN-FRA EIN FRA flight-to 8650 {"cost":372}
+cedge AMS-MST AMS MST flight-to 1500 {"cost":637}
+cedge MST-FRA MST FRA flight-to 9200 {"cost":682}
+cedge FRA-RTM FRA RTM flight-to 5925 {"cost":493}
+cedge EIN-RTM EIN RTM flight-to 850 {"cost":715}
+cedge MST-RTM MST RTM flight-to 2275 {"cost":430}
+cedge RTM-FRA RTM FRA flight-to 7000 {"cost":581}
+cedge RTM-AMS RTM AMS flight-to 500 {"cost":619}
+cedge AMS-RTM AMS RTM flight-to 500 {"cost":693}
+cedge FRA-SGN FRA SGN flight-to 2975 {"cost":430}
+cedge FRA-BKK FRA BKK flight-to 4175 {"cost":532}
+cedge BKK-SGN BKK SGN flight-to 675 {"cost":352}
+cedge RTM-DUS RTM DUS flight-to 8500 {"cost":482}
+cedge FRA-LHR FRA LHR flight-to 3700 {"cost":302}
+cedge LHR-FRA LHR FRA flight-to 2500 {"cost":740}
+cedge FRA-MAN FRA MAN flight-to 450 {"cost":590}
+cedge MAN-FRA MAN FRA flight-to 1425 {"cost":640}
+cedge SGN-FRA SGN FRA flight-to 7525 {"cost":443}
+cedge SGN-BKK SGN BKK flight-to 625 {"cost":669}
+cedge BKK-FRA BKK FRA flight-to 8725 {"cost":713}
+cedge FRA-DUB FRA DUB flight-to 5500 {"cost":632}
+cedge FRA-CGK FRA CGK flight-to 2050 {"cost":720}
+cedge FRA-SIN FRA SIN flight-to 3025 {"cost":376}
+cedge SIN-CGK SIN CGK flight-to 225 {"cost":624}
+cedge CGK-FRA CGK FRA flight-to 6825 {"cost":761}
+cedge CGK-SIN CGK SIN flight-to 1225 {"cost":515}
+cedge SIN-FRA SIN FRA flight-to 8850 {"cost":404}
+cedge FRA-NKG FRA NKG flight-to 3625 {"cost":472}
+cedge NKG-FRA NKG FRA flight-to 2750 {"cost":727}
+cedge FRA-KUL FRA KUL flight-to 2150 {"cost":391}
+cedge BKK-KUL BKK KUL flight-to 1500 {"cost":438}
+cedge KUL-FRA KUL FRA flight-to 7625 {"cost":298}
+cedge KUL-BKK KUL BKK flight-to 525 {"cost":778}
+cedge FRA-CAN FRA CAN flight-to 2700 {"cost":319}
+cedge CAN-FRA CAN FRA flight-to 8275 {"cost":542}
+cedge MUC-SIN MUC SIN flight-to 2925 {"cost":693}
+cedge SIN-MUC SIN MUC flight-to 8775 {"cost":500}
+cedge FRA-TPE FRA TPE flight-to 1400 {"cost":322}
+cedge FRA-HAN FRA HAN flight-to 3650 {"cost":511}
+cedge HAN-TPE HAN TPE flight-to 1250 {"cost":392}
+cedge DEL-TPE DEL TPE flight-to 4200 {"cost":503}
+cedge TPE-FRA TPE FRA flight-to 5425 {"cost":793}
+cedge TPE-DEL TPE DEL flight-to 2400 {"cost":494}
+cedge ORD-LAX ORD LAX flight-to 1350 {"cost":736}
+cedge PEK-PVG PEK PVG flight-to 1350 {"cost":294}
+cedge PVG-PEK PVG PEK flight-to 1150 {"cost":434}
+cedge LIM-EZE LIM EZE flight-to 3150 {"cost":526}
+cedge FRA-SCL FRA SCL flight-to 6000 {"cost":685}
+cedge FRA-VCP FRA VCP flight-to 8450 {"cost":628}
+cedge VCP-SCL VCP SCL flight-to 1450 {"cost":394}
+cedge FRA-LHE FRA LHE flight-to 5050 {"cost":597}
+cedge LHE-HKG LHE HKG flight-to 4375 {"cost":460}
+cedge BKK-SIN BKK SIN flight-to 1850 {"cost":314}
+cedge BKK-LEJ BKK LEJ flight-to 8275 {"cost":724}
+cedge SIN-DEL SIN DEL flight-to 1525 {"cost":284}
+cedge DEL-LEJ DEL LEJ flight-to 2400 {"cost":275}
+cedge BKK-DEL BKK DEL flight-to 4875 {"cost":438}
+cedge SIN-LEJ SIN LEJ flight-to 4925 {"cost":439}
+cedge LEJ-SIN LEJ SIN flight-to 125 {"cost":497}
+cedge LEJ-BAH LEJ BAH flight-to 3150 {"cost":364}
+cedge BAH-BKK BAH BKK flight-to 6600 {"cost":580}
+cedge BAH-SIN BAH SIN flight-to 4025 {"cost":686}
+cedge LEJ-BKK LEJ BKK flight-to 2450 {"cost":412}
+cedge LEJ-HKG LEJ HKG flight-to 1450 {"cost":558}
+cedge LEJ-SHJ LEJ SHJ flight-to 8000 {"cost":755}
+cedge SHJ-HKG SHJ HKG flight-to 5900 {"cost":704}
+cedge ALA-HKG ALA HKG flight-to 7975 {"cost":450}
+cedge LEJ-BRU LEJ BRU flight-to 650 {"cost":455}
+cedge BRU-BAH BRU BAH flight-to 8500 {"cost":777}
+cedge BAH-HKG BAH HKG flight-to 5500 {"cost":711}
+cedge BRU-HKG BRU HKG flight-to 10975 {"cost":597}
+cedge HKG-LEJ HKG LEJ flight-to 4925 {"cost":480}
+cedge HKG-DXB HKG DXB flight-to 1975 {"cost":704}
+cedge DXB-LEJ DXB LEJ flight-to 2100 {"cost":291}
+cedge FRA-TAS FRA TAS flight-to 4500 {"cost":415}
+cedge TAS-PVG TAS PVG flight-to 7200 {"cost":749}
+cedge PVG-ICN PVG ICN flight-to 1550 {"cost":476}
+cedge TAS-ICN TAS ICN flight-to 4500 {"cost":692}
+cedge ALA-PVG ALA PVG flight-to 8075 {"cost":633}
+cedge ALA-ICN ALA ICN flight-to 5525 {"cost":303}
+cedge PVG-LEJ PVG LEJ flight-to 5100 {"cost":286}
+cedge ICN-LEJ ICN LEJ flight-to 2100 {"cost":430}
+cedge FRA-EMA FRA EMA flight-to 475 {"cost":513}
+cedge EMA-SHJ EMA SHJ flight-to 5025 {"cost":350}
+cedge SHJ-PVG SHJ PVG flight-to 5975 {"cost":353}
+cedge FRA-SHJ FRA SHJ flight-to 3800 {"cost":548}
+cedge SHJ-ICN SHJ ICN flight-to 3350 {"cost":375}
+cedge EMA-ICN EMA ICN flight-to 3025 {"cost":541}
+cedge EMA-PVG EMA PVG flight-to 400 {"cost":737}
+cedge LEJ-ICN LEJ ICN flight-to 7350 {"cost":623}
+cedge LEJ-EMA LEJ EMA flight-to 500 {"cost":655}
+cedge EMA-BAH EMA BAH flight-to 4150 {"cost":516}
+cedge BAH-PVG BAH PVG flight-to 5100 {"cost":508}
+cedge BAH-ICN BAH ICN flight-to 2475 {"cost":267}
+cedge LEJ-PVG LEJ PVG flight-to 9975 {"cost":273}
+cedge FRA-TSN FRA TSN flight-to 7650 {"cost":463}
+cedge EIN-ATH EIN ATH flight-to 2100 {"cost":722}
+cedge EIN-LIS EIN LIS flight-to 1000 {"cost":474}
+cedge DUB-FCO DUB FCO flight-to 2000 {"cost":668}
+cedge CMB-CCS CMB CCS flight-to 4000 {"cost":699}
+cedge CMB-DXB CMB DXB flight-to 1500 {"cost":385}
+cedge DXB-LGG DXB LGG flight-to 9850 {"cost":465}
+cedge LGG-SMA LGG SMA flight-to 1000 {"cost":378}
+cedge SMA-CCS SMA CCS flight-to 1000 {"cost":288}
+cedge CMB-LGG CMB LGG flight-to 7500 {"cost":506}
+cedge CMB-SMA CMB SMA flight-to 5650 {"cost":544}
+cedge DXB-SMA DXB SMA flight-to 8000 {"cost":788}
+cedge DXB-CCS DXB CCS flight-to 6350 {"cost":732}
+cedge LGG-CCS LGG CCS flight-to 2650 {"cost":435}
+cedge SZX-XQN SZX XQN flight-to 4150 {"cost":621}
+cedge HKG-XQN HKG XQN flight-to 495 {"cost":786}
+cedge SZX-XOM SZX XOM flight-to 1350 {"cost":471}
+cedge HKG-XOM HKG XOM flight-to 5995 {"cost":251}
+cedge HKG-XYS HKG XYS flight-to 495 {"cost":499}
+cedge SZX-XYS SZX XYS flight-to 4150 {"cost":571}
+cedge WAW-LEJ WAW LEJ flight-to 850 {"cost":354}
+cedge JFK-MAN JFK MAN flight-to 5950 {"cost":797}
+cedge YYZ-ATL YYZ ATL flight-to 1025 {"cost":697}
+cedge DFW-MAN DFW MAN flight-to 7425 {"cost":646}
+cedge ORD-MEX ORD MEX flight-to 2050 {"cost":733}
+cedge DFW-MEX DFW MEX flight-to 1125 {"cost":520}
+cedge MEX-DFW MEX DFW flight-to 1825 {"cost":501}
+cedge FRA-BQN FRA BQN flight-to 525 {"cost":449}
+cedge FRA-DKR FRA DKR flight-to 9975 {"cost":778}
+cedge DKR-VCP DKR VCP flight-to 1900 {"cost":519}
+cedge MAO-UIO MAO UIO flight-to 1025 {"cost":473}
+cedge BOG-BQN BOG BQN flight-to 1975 {"cost":441}
+cedge MAO-BOG MAO BOG flight-to 2525 {"cost":440}
+cedge MAO-BQN MAO BQN flight-to 5150 {"cost":697}
+cedge UIO-BQN UIO BQN flight-to 3475 {"cost":309}
+cedge VCP-BQN VCP BQN flight-to 7100 {"cost":338}
+cedge VCP-BOG VCP BOG flight-to 4475 {"cost":281}
+cedge VCP-UIO VCP UIO flight-to 2975 {"cost":524}
+cedge DKR-BQN DKR BQN flight-to 10000 {"cost":466}
+cedge DKR-BOG DKR BOG flight-to 7375 {"cost":320}
+cedge DKR-UIO DKR UIO flight-to 5875 {"cost":780}
+cedge DKR-MAO DKR MAO flight-to 4075 {"cost":761}
+cedge FRA-UIO FRA UIO flight-to 3600 {"cost":308}
+cedge FRA-MAO FRA MAO flight-to 5400 {"cost":712}
+cedge BQN-FRA BQN FRA flight-to 3125 {"cost":395}
+cedge BQN-AMS BQN AMS flight-to 4525 {"cost":679}
+cedge VCP-EZE VCP EZE flight-to 1450 {"cost":697}
+cedge DKR-EZE DKR EZE flight-to 4425 {"cost":616}
+cedge VCP-FRA VCP FRA flight-to 775 {"cost":680}
+cedge EZE-DKR EZE DKR flight-to 6175 {"cost":396}
+cedge DKR-FRA DKR FRA flight-to 4000 {"cost":387}
+cedge VCP-DKR VCP DKR flight-to 3725 {"cost":785}
+cedge FRA-CWB FRA CWB flight-to 6025 {"cost":392}
+cedge DKR-CWB DKR CWB flight-to 3500 {"cost":284}
+cedge CWB-FRA CWB FRA flight-to 675 {"cost":631}
+cedge CWB-VCP CWB VCP flight-to 500 {"cost":325}
+cedge CWB-DKR CWB DKR flight-to 3975 {"cost":554}
+cedge CWB-UIO CWB UIO flight-to 1950 {"cost":331}
+cedge CWB-BQN CWB BQN flight-to 6225 {"cost":524}
+cedge CWB-BOG CWB BOG flight-to 3475 {"cost":532}
+cedge FRA-NBO FRA NBO flight-to 4200 {"cost":600}
+cedge NBO-JNB NBO JNB flight-to 1500 {"cost":747}
+cedge JNB-NBO JNB NBO flight-to 2500 {"cost":724}
+cedge NBO-FRA NBO FRA flight-to 8500 {"cost":791}
+cedge VBS-FRA VBS FRA flight-to 800 {"cost":643}
+cedge IQQ-HAJ IQQ HAJ flight-to 11000 {"cost":783}
+cedge IQQ-DKR IQQ DKR flight-to 5775 {"cost":328}
+cedge DKR-HAJ DKR HAJ flight-to 4000 {"cost":675}
+cedge FRA-KJA FRA KJA flight-to 6400 {"cost":506}
+cedge KJA-KIX KJA KIX flight-to 3300 {"cost":545}
+cedge KIX-TSN KIX TSN flight-to 1000 {"cost":746}
+cedge KJA-TSN KJA TSN flight-to 6625 {"cost":486}
+cedge FRA-SVO FRA SVO flight-to 2500 {"cost":505}
+cedge SVO-KIX SVO KIX flight-to 7050 {"cost":253}
+cedge SVO-TSN SVO TSN flight-to 2875 {"cost":398}
+cedge TSN-KJA TSN KJA flight-to 1950 {"cost":651}
+cedge KJA-FRA KJA FRA flight-to 550 {"cost":682}
+cedge KIX-KJA KIX KJA flight-to 3975 {"cost":295}
+cedge TSN-FRA TSN FRA flight-to 4100 {"cost":467}
+cedge KJA-NRT KJA NRT flight-to 3500 {"cost":562}
+cedge NRT-KIX NRT KIX flight-to 850 {"cost":441}
+cedge SVO-NRT SVO NRT flight-to 7275 {"cost":604}
+cedge NRT-KJA NRT KJA flight-to 8000 {"cost":547}
+cedge KJA-PVG KJA PVG flight-to 2500 {"cost":583}
+cedge PVG-KJA PVG KJA flight-to 2675 {"cost":639}
+cedge DEL-CAN DEL CAN flight-to 3825 {"cost":377}
+cedge CAN-KJA CAN KJA flight-to 3000 {"cost":658}
+cedge BLR-MAA BLR MAA flight-to 525 {"cost":392}
+cedge MAA-SHJ MAA SHJ flight-to 1150 {"cost":458}
+cedge SHJ-FRA SHJ FRA flight-to 2375 {"cost":382}
+cedge BLR-SHJ BLR SHJ flight-to 2600 {"cost":675}
+cedge BOM-HYD BOM HYD flight-to 625 {"cost":258}
+cedge HYD-SHJ HYD SHJ flight-to 1025 {"cost":328}
+cedge BOM-SHJ BOM SHJ flight-to 2550 {"cost":598}
+cedge BOM-DEL BOM DEL flight-to 1025 {"cost":799}
+cedge FRA-DAC FRA DAC flight-to 8850 {"cost":722}
+cedge BOM-DAC BOM DAC flight-to 2325 {"cost":580}
+cedge DAC-FRA DAC FRA flight-to 8075 {"cost":327}
+cedge DAC-DEL DAC DEL flight-to 550 {"cost":597}
+cedge MAA-DEL MAA DEL flight-to 1425 {"cost":286}
+cedge BLR-DEL BLR DEL flight-to 9075 {"cost":623}
+cedge SHJ-BKK SHJ BKK flight-to 4625 {"cost":542}
+cedge BKK-HKG BKK HKG flight-to 10275 {"cost":523}
+cedge HKG-ALA HKG ALA flight-to 2150 {"cost":328}
+cedge BKK-ALA BKK ALA flight-to 6875 {"cost":545}
+cedge BOM-HKG BOM HKG flight-to 7650 {"cost":671}
+cedge DOH-SHJ DOH SHJ flight-to 1050 {"cost":729}
+cedge DOH-HKG DOH HKG flight-to 4150 {"cost":427}
+cedge CAI-SHJ CAI SHJ flight-to 2875 {"cost":716}
+cedge CAI-HKG CAI HKG flight-to 2925 {"cost":395}
+cedge JED-SHJ JED SHJ flight-to 1925 {"cost":740}
+cedge JED-HKG JED HKG flight-to 3875 {"cost":356}
+cedge RUH-SHJ RUH SHJ flight-to 1225 {"cost":750}
+cedge RUH-HKG RUH HKG flight-to 2875 {"cost":486}
+cedge RUH-BKK RUH BKK flight-to 5450 {"cost":690}
+cedge SZX-FRA SZX FRA flight-to 4950 {"cost":589}
+cedge SZX-DEL SZX DEL flight-to 1475 {"cost":614}
+cedge FRA-SZX FRA SZX flight-to 1400 {"cost":547}
+cedge RUH-SZX RUH SZX flight-to 5400 {"cost":731}
+cedge SZX-CCU SZX CCU flight-to 875 {"cost":272}
+cedge CCU-SZX CCU SZX flight-to 8975 {"cost":680}
+cedge FRA-TRD FRA TRD flight-to 1325 {"cost":606}
+cedge TRD-FRA TRD FRA flight-to 1325 {"cost":280}
+cedge FRA-VNO FRA VNO flight-to 1500 {"cost":758}
+cedge VNO-FRA VNO FRA flight-to 525 {"cost":403}
+cedge FRA-LCY FRA LCY flight-to 325 {"cost":279}
+cedge LCY-FRA LCY FRA flight-to 1325 {"cost":680}
+cedge FRA-BHX FRA BHX flight-to 350 {"cost":734}
+cedge BHX-FRA BHX FRA flight-to 1375 {"cost":357}
+cedge FRA-EDI FRA EDI flight-to 275 {"cost":476}
+cedge EDI-FRA EDI FRA flight-to 1475 {"cost":770}
+cedge DUB-FRA DUB FRA flight-to 1275 {"cost":731}
+cedge ORD-AMS ORD AMS flight-to 4650 {"cost":769}
+cedge SZX-AMS SZX AMS flight-to 5000 {"cost":492}
+cedge SZX-PVG SZX PVG flight-to 1075 {"cost":258}
+cedge PVG-AMS PVG AMS flight-to 2925 {"cost":514}
+cedge BOM-SZX BOM SZX flight-to 7975 {"cost":362}
+cedge PVG-BCN PVG BCN flight-to 3250 {"cost":738}
+cedge SZX-BCN SZX BCN flight-to 5525 {"cost":692}
+cedge PVG-VBS PVG VBS flight-to 9050 {"cost":277}
+cedge BCN-SZX BCN SZX flight-to 1300 {"cost":333}
+cedge BCN-DEL BCN DEL flight-to 6000 {"cost":631}
+cedge DEL-SZX DEL SZX flight-to 3700 {"cost":384}
+cedge AMS-SZX AMS SZX flight-to 1025 {"cost":283}
+cedge AMS-DXB AMS DXB flight-to 7650 {"cost":317}
+cedge DXB-SZX DXB SZX flight-to 5625 {"cost":273}
+cedge AMS-PVG AMS PVG flight-to 1150 {"cost":622}
+cedge AMS-GVA AMS GVA flight-to 850 {"cost":681}
+cedge GVA-PVG GVA PVG flight-to 3500 {"cost":571}
+cedge VIE-AMS VIE AMS flight-to 975 {"cost":553}
+cedge AMS-ICN AMS ICN flight-to 2550 {"cost":703}
+cedge CTU-HKG CTU HKG flight-to 1100 {"cost":450}
+cedge HKG-CTU HKG CTU flight-to 1100 {"cost":358}
+cedge LUX-PVG LUX PVG flight-to 3625 {"cost":734}
+cedge TSN-ICN TSN ICN flight-to 1175 {"cost":408}
+cedge DLC-NRT DLC NRT flight-to 1775 {"cost":512}
+cedge NRT-PEK NRT PEK flight-to 1500 {"cost":763}
+cedge VIE-BKK VIE BKK flight-to 4500 {"cost":287}
+cedge BKK-VIE BKK VIE flight-to 9100 {"cost":445}
+cedge VIE-DEL VIE DEL flight-to 6550 {"cost":320}
+cedge DEL-VIE DEL VIE flight-to 2250 {"cost":514}
+cedge VIE-BOM VIE BOM flight-to 5875 {"cost":414}
+cedge BOM-VIE BOM VIE flight-to 2400 {"cost":250}
+cedge VIE-MLE VIE MLE flight-to 6100 {"cost":483}
+cedge MLE-VIE MLE VIE flight-to 3175 {"cost":657}
+cedge VIE-NRT VIE NRT flight-to 1950 {"cost":259}
+cedge VIE-PEK VIE PEK flight-to 4475 {"cost":747}
+cedge PEK-NRT PEK NRT flight-to 2025 {"cost":769}
+cedge NRT-VIE NRT VIE flight-to 3900 {"cost":747}
+cedge PEK-VIE PEK VIE flight-to 1975 {"cost":638}
+cedge VIE-YYZ VIE YYZ flight-to 1625 {"cost":797}
+cedge YYZ-VIE YYZ VIE flight-to 4875 {"cost":280}
+cedge VIE-JFK VIE JFK flight-to 1525 {"cost":469}
+cedge JFK-VIE JFK VIE flight-to 4625 {"cost":380}
+cedge VIE-IAD VIE IAD flight-to 1925 {"cost":313}
+cedge IAD-VIE IAD VIE flight-to 4475 {"cost":536}
+cedge VIE-CGN VIE CGN flight-to 650 {"cost":404}
+cedge CGN-VIE CGN VIE flight-to 875 {"cost":686}
+cedge GRZ-DUS GRZ DUS flight-to 650 {"cost":416}
+cedge DUS-GRZ DUS GRZ flight-to 650 {"cost":725}
+cedge LNZ-DUS LNZ DUS flight-to 825 {"cost":438}
+cedge DUS-LNZ DUS LNZ flight-to 825 {"cost":319}
+cedge VIE-LEJ VIE LEJ flight-to 575 {"cost":374}
+cedge LEJ-VIE LEJ VIE flight-to 575 {"cost":547}
+cedge GRZ-STR GRZ STR flight-to 575 {"cost":252}
+cedge STR-GRZ STR GRZ flight-to 575 {"cost":532}
+cedge SZG-FRA SZG FRA flight-to 575 {"cost":258}
+cedge FRA-SZG FRA SZG flight-to 525 {"cost":766}
+cedge VIE-TXL VIE TXL flight-to 575 {"cost":570}
+cedge TXL-VIE TXL VIE flight-to 625 {"cost":453}
+cedge VIE-CPH VIE CPH flight-to 925 {"cost":285}
+cedge CPH-VIE CPH VIE flight-to 725 {"cost":284}
+cedge VIE-ARN VIE ARN flight-to 1275 {"cost":618}
+cedge ARN-VIE ARN VIE flight-to 1300 {"cost":285}
+cedge VIE-GOT VIE GOT flight-to 1000 {"cost":517}
+cedge GOT-VIE GOT VIE flight-to 1000 {"cost":474}
+cedge VIE-OSL VIE OSL flight-to 1350 {"cost":294}
+cedge OSL-VIE OSL VIE flight-to 1400 {"cost":464}
+cedge VIE-HEL VIE HEL flight-to 1650 {"cost":443}
+cedge HEL-VIE HEL VIE flight-to 900 {"cost":792}
+cedge VIE-BRU VIE BRU flight-to 725 {"cost":301}
+cedge AMS-VIE AMS VIE flight-to 975 {"cost":439}
+cedge VIE-LWO VIE LWO flight-to 1100 {"cost":271}
+cedge LWO-VIE LWO VIE flight-to 350 {"cost":520}
+cedge VIE-BCN VIE BCN flight-to 1125 {"cost":570}
+cedge BCN-VIE BCN VIE flight-to 1350 {"cost":335}
+cedge VIE-LYS VIE LYS flight-to 725 {"cost":256}
+cedge LYS-VIE LYS VIE flight-to 750 {"cost":725}
+cedge VIE-FNC VIE FNC flight-to 1700 {"cost":771}
+cedge FNC-VIE FNC VIE flight-to 2650 {"cost":423}
+cedge VIE-CDG VIE CDG flight-to 1050 {"cost":649}
+cedge CDG-VIE CDG VIE flight-to 1025 {"cost":408}
+cedge LNZ-PRN LNZ PRN flight-to 1625 {"cost":492}
+cedge LNZ-VIE LNZ VIE flight-to 425 {"cost":774}
+cedge VIE-PRN VIE PRN flight-to 1000 {"cost":706}
+cedge PRN-LNZ PRN LNZ flight-to 1825 {"cost":495}
+cedge PRN-VIE PRN VIE flight-to 1025 {"cost":505}
+cedge VIE-LNZ VIE LNZ flight-to 400 {"cost":714}
+cedge VIE-NCE VIE NCE flight-to 925 {"cost":460}
+cedge NCE-VIE NCE VIE flight-to 950 {"cost":275}
+cedge VIE-LHR VIE LHR flight-to 850 {"cost":367}
+cedge LHR-VIE LHR VIE flight-to 1800 {"cost":496}
+cedge VIE-BSL VIE BSL flight-to 675 {"cost":309}
+cedge BSL-VIE BSL VIE flight-to 900 {"cost":735}
+cedge KBP-VIE KBP VIE flight-to 750 {"cost":532}
+cedge VIE-KBP VIE KBP flight-to 1500 {"cost":577}
+cedge VIE-FCO VIE FCO flight-to 900 {"cost":409}
+cedge FCO-VIE FCO VIE flight-to 950 {"cost":577}
+cedge VIE-MXP VIE MXP flight-to 625 {"cost":791}
+cedge MXP-VIE MXP VIE flight-to 650 {"cost":602}
+cedge VIE-VCE VIE VCE flight-to 575 {"cost":568}
+cedge VIE-FLR VIE FLR flight-to 825 {"cost":291}
+cedge VIE-BLQ VIE BLQ flight-to 575 {"cost":792}
+cedge FLR-BLQ FLR BLQ flight-to 350 {"cost":590}
+cedge VIE-LIN VIE LIN flight-to 825 {"cost":562}
+cedge LIN-VIE LIN VIE flight-to 850 {"cost":562}
+cedge VIE-ZRH VIE ZRH flight-to 625 {"cost":675}
+cedge VIE-GVA VIE GVA flight-to 700 {"cost":569}
+cedge GVA-VIE GVA VIE flight-to 700 {"cost":486}
+cedge VIE-DME VIE DME flight-to 2250 {"cost":645}
+cedge DME-VIE DME VIE flight-to 475 {"cost":742}
+cedge VIE-KRR VIE KRR flight-to 2450 {"cost":334}
+cedge KRR-VIE KRR VIE flight-to 525 {"cost":253}
+cedge VIE-LED VIE LED flight-to 2425 {"cost":434}
+cedge LED-VIE LED VIE flight-to 450 {"cost":307}
+cedge VIE-AER VIE AER flight-to 9525 {"cost":709}
+cedge AER-VIE AER VIE flight-to 550 {"cost":680}
+cedge VIE-DOK VIE DOK flight-to 1650 {"cost":563}
+cedge DOK-VIE DOK VIE flight-to 925 {"cost":623}
+cedge VIE-EVN VIE EVN flight-to 8925 {"cost":339}
+cedge EVN-VIE EVN VIE flight-to 400 {"cost":589}
+cedge VIE-GYD VIE GYD flight-to 3500 {"cost":740}
+cedge GYD-VIE GYD VIE flight-to 775 {"cost":586}
+cedge VIE-IAS VIE IAS flight-to 1450 {"cost":648}
+cedge IAS-VIE IAS VIE flight-to 475 {"cost":675}
+cedge TSR-VIE TSR VIE flight-to 25 {"cost":317}
+cedge VIE-MSQ VIE MSQ flight-to 7000 {"cost":424}
+cedge MSQ-VIE MSQ VIE flight-to 3000 {"cost":284}
+cedge VIE-KIV VIE KIV flight-to 1400 {"cost":644}
+cedge HOH-VIE HOH VIE flight-to 6000 {"cost":415}
+cedge FRA-HOH FRA HOH flight-to 4500 {"cost":636}
+cedge HOH-FRA HOH FRA flight-to 7000 {"cost":411}
+cedge HOH-MUC HOH MUC flight-to 1650 {"cost":456}
+cedge KIV-VIE KIV VIE flight-to 475 {"cost":628}
+cedge MUC-LNZ MUC LNZ flight-to 2000 {"cost":752}
+cedge LNZ-MUC LNZ MUC flight-to 8000 {"cost":769}
+cedge VIE-GRZ VIE GRZ flight-to 2495 {"cost":389}
+cedge GRZ-VIE GRZ VIE flight-to 1350 {"cost":626}
+cedge INN-MUC INN MUC flight-to 9075 {"cost":538}
+cedge MUC-INN MUC INN flight-to 1650 {"cost":625}
+cedge MUC-SZG MUC SZG flight-to 1500 {"cost":470}
+cedge SZG-MUC SZG MUC flight-to 10500 {"cost":480}
+cedge VIE-INN VIE INN flight-to 7500 {"cost":710}
+cedge VIE-SZG VIE SZG flight-to 3350 {"cost":474}
+cedge LNZ-SZG LNZ SZG flight-to 1000 {"cost":664}
+cedge SZG-VIE SZG VIE flight-to 9500 {"cost":768}
+cedge SZG-LNZ SZG LNZ flight-to 850 {"cost":382}
+cedge VIE-ROV VIE ROV flight-to 2450 {"cost":543}
+cedge ROV-VIE ROV VIE flight-to 500 {"cost":530}
+cedge KBP-LWO KBP LWO flight-to 4000 {"cost":755}
+cedge LWO-KBP LWO KBP flight-to 0 {"cost":633}
+cedge VIE-DNK VIE DNK flight-to 1600 {"cost":318}
+cedge DNK-VIE DNK VIE flight-to 850 {"cost":695}
+cedge KBP-ODS KBP ODS flight-to 3000 {"cost":418}
+cedge ODS-KBP ODS KBP flight-to 3000 {"cost":717}
+cedge VIE-TSE VIE TSE flight-to 7425 {"cost":570}
+cedge TSE-VIE TSE VIE flight-to 975 {"cost":486}
+cedge KBP-DNK KBP DNK flight-to 3000 {"cost":341}
+cedge DNK-KBP DNK KBP flight-to 3000 {"cost":604}
+cedge VIE-TGD VIE TGD flight-to 875 {"cost":329}
+cedge TGD-VIE TGD VIE flight-to 700 {"cost":506}
+cedge VIE-DBV VIE DBV flight-to 800 {"cost":440}
+cedge DBV-VIE DBV VIE flight-to 850 {"cost":491}
+cedge VIE-KSC VIE KSC flight-to 500 {"cost":713}
+cedge KSC-VIE KSC VIE flight-to 500 {"cost":268}
+cedge VIE-SPU VIE SPU flight-to 575 {"cost":442}
+cedge SPU-VIE SPU VIE flight-to 600 {"cost":682}
+cedge VIE-HRK VIE HRK flight-to 1625 {"cost":407}
+cedge HRK-VIE HRK VIE flight-to 875 {"cost":268}
+cedge SJJ-VIE SJJ VIE flight-to 800 {"cost":419}
+cedge VIE-VAR VIE VAR flight-to 1450 {"cost":783}
+cedge VAR-VIE VAR VIE flight-to 500 {"cost":488}
+cedge VIE-SKP VIE SKP flight-to 11125 {"cost":649}
+cedge SKP-VIE SKP VIE flight-to 875 {"cost":692}
+cedge VIE-SBZ VIE SBZ flight-to 1350 {"cost":713}
+cedge SBZ-VIE SBZ VIE flight-to 150 {"cost":513}
+cedge VIE-ATH VIE ATH flight-to 1575 {"cost":660}
+cedge ATH-VIE ATH VIE flight-to 625 {"cost":294}
+cedge VIE-SKG VIE SKG flight-to 1425 {"cost":256}
+cedge SKG-VIE SKG VIE flight-to 475 {"cost":389}
+cedge VIE-IST VIE IST flight-to 1600 {"cost":800}
+cedge IST-VIE IST VIE flight-to 825 {"cost":640}
+cedge VIE-EBL VIE EBL flight-to 2200 {"cost":458}
+cedge EBL-VIE EBL VIE flight-to 1525 {"cost":695}
+cedge VIE-LCA VIE LCA flight-to 2025 {"cost":258}
+cedge LCA-VIE LCA VIE flight-to 1125 {"cost":375}
+cedge VNO-VIE VNO VIE flight-to 475 {"cost":465}
+cedge VIE-DXB VIE DXB flight-to 3900 {"cost":494}
+cedge DXB-VIE DXB VIE flight-to 2025 {"cost":467}
+cedge VIE-DAM VIE DAM flight-to 2125 {"cost":269}
+cedge DAM-VIE DAM VIE flight-to 1425 {"cost":574}
+cedge VIE-TIA VIE TIA flight-to 11350 {"cost":723}
+cedge TIA-VIE TIA VIE flight-to 875 {"cost":459}
+cedge VIE-AMM VIE AMM flight-to 2175 {"cost":264}
+cedge AMM-VIE AMM VIE flight-to 1500 {"cost":636}
+cedge VIE-TLV VIE TLV flight-to 2125 {"cost":477}
+cedge TLV-VIE TLV VIE flight-to 1250 {"cost":457}
+cedge VIE-CAI VIE CAI flight-to 1850 {"cost":517}
+cedge CAI-VIE CAI VIE flight-to 1950 {"cost":635}
+cedge VIE-IKA VIE IKA flight-to 8550 {"cost":475}
+cedge MLA-VIE MLA VIE flight-to 1075 {"cost":687}
+cedge IKA-VIE IKA VIE flight-to 1225 {"cost":617}
+cedge VIE-TIP VIE TIP flight-to 1450 {"cost":714}
+cedge TIP-VIE TIP VIE flight-to 1500 {"cost":536}
+cedge VIE-HER VIE HER flight-to 1850 {"cost":509}
+cedge HER-VIE HER VIE flight-to 650 {"cost":626}
+cedge INN-VIE INN VIE flight-to 500 {"cost":799}
+cedge VIE-RHO VIE RHO flight-to 1875 {"cost":368}
+cedge RHO-VIE RHO VIE flight-to 700 {"cost":671}
+cedge VIE-FUE VIE FUE flight-to 2575 {"cost":255}
+cedge VIE-ACE VIE ACE flight-to 2000 {"cost":508}
+cedge ACE-FUE ACE FUE flight-to 150 {"cost":671}
+cedge ACE-VIE ACE VIE flight-to 3275 {"cost":645}
+cedge FUE-VIE FUE VIE flight-to 2700 {"cost":717}
+cedge VIE-LPA VIE LPA flight-to 2025 {"cost":566}
+cedge LPA-VIE LPA VIE flight-to 2925 {"cost":654}
+cedge VIE-REU VIE REU flight-to 1250 {"cost":292}
+cedge REU-VIE REU VIE flight-to 1375 {"cost":781}
+cedge INN-REU INN REU flight-to 1000 {"cost":347}
+cedge REU-INN REU INN flight-to 750 {"cost":509}
+cedge SZG-REU SZG REU flight-to 1225 {"cost":800}
+cedge REU-SZG REU SZG flight-to 1000 {"cost":671}
+cedge VIE-TFS VIE TFS flight-to 2025 {"cost":432}
+cedge TFS-VIE TFS VIE flight-to 2775 {"cost":459}
+cedge GRZ-REU GRZ REU flight-to 1325 {"cost":686}
+cedge REU-GRZ REU GRZ flight-to 1100 {"cost":267}
+cedge VIE-AYT VIE AYT flight-to 1700 {"cost":687}
+cedge AYT-VIE AYT VIE flight-to 11025 {"cost":343}
+cedge LNZ-AYT LNZ AYT flight-to 2500 {"cost":535}
+cedge LNZ-GRZ LNZ GRZ flight-to 400 {"cost":522}
+cedge GRZ-AYT GRZ AYT flight-to 1675 {"cost":568}
+cedge AYT-LNZ AYT LNZ flight-to 1225 {"cost":421}
+cedge INN-AYT INN AYT flight-to 1975 {"cost":338}
+cedge AYT-INN AYT INN flight-to 1100 {"cost":481}
+cedge SZG-AYT SZG AYT flight-to 1725 {"cost":707}
+cedge AYT-SZG AYT SZG flight-to 975 {"cost":598}
+cedge VIE-DLM VIE DLM flight-to 1850 {"cost":307}
+cedge DLM-VIE DLM VIE flight-to 700 {"cost":706}
+cedge VIE-BWK VIE BWK flight-to 1400 {"cost":716}
+cedge INN-BWK INN BWK flight-to 575 {"cost":729}
+cedge BWK-VIE BWK VIE flight-to 600 {"cost":711}
+cedge VIE-BEY VIE BEY flight-to 2075 {"cost":424}
+cedge BEY-VIE BEY VIE flight-to 1050 {"cost":599}
+cedge VIE-MCT VIE MCT flight-to 4025 {"cost":556}
+cedge MCT-VIE MCT VIE flight-to 2250 {"cost":341}
+cedge VIE-PSR VIE PSR flight-to 850 {"cost":364}
+cedge PSR-VIE PSR VIE flight-to 850 {"cost":409}
+cedge LNZ-PSR LNZ PSR flight-to 600 {"cost":383}
+cedge PSR-LNZ PSR LNZ flight-to 800 {"cost":345}
+cedge VIE-MAD VIE MAD flight-to 1475 {"cost":507}
+cedge MAD-VIE MAD VIE flight-to 1250 {"cost":642}
+cedge VIE-VST VIE VST flight-to 2275 {"cost":344}
+cedge INN-VST INN VST flight-to 1350 {"cost":378}
+cedge INN-KSC INN KSC flight-to 800 {"cost":273}
+cedge VIE-CTA VIE CTA flight-to 1250 {"cost":554}
+cedge CTA-VIE CTA VIE flight-to 775 {"cost":264}
+cedge VIE-NAP VIE NAP flight-to 950 {"cost":291}
+cedge NAP-VIE NAP VIE flight-to 900 {"cost":440}
+cedge AES-OSL AES OSL flight-to 275 {"cost":357}
+cedge KRS-OSL KRS OSL flight-to 450 {"cost":576}
+cedge BGO-OSL BGO OSL flight-to 475 {"cost":712}
+cedge OSL-BGO OSL BGO flight-to 275 {"cost":675}
+cedge KRS-CPH KRS CPH flight-to 500 {"cost":748}
+cedge HAU-OSL HAU OSL flight-to 450 {"cost":250}
+cedge OSL-TRD OSL TRD flight-to 275 {"cost":356}
+cedge TRD-OSL TRD OSL flight-to 475 {"cost":655}
+cedge OSL-SVG OSL SVG flight-to 450 {"cost":599}
+cedge CPH-BLL CPH BLL flight-to 1725 {"cost":414}
+cedge AYT-AMS AYT AMS flight-to 1525 {"cost":560}
+cedge AMS-AYT AMS AYT flight-to 2425 {"cost":515}
+cedge AYT-BSL AYT BSL flight-to 1175 {"cost":342}
+cedge BSL-AYT BSL AYT flight-to 2075 {"cost":471}
+cedge AYT-CGN AYT CGN flight-to 1250 {"cost":689}
+cedge CGN-AYT CGN AYT flight-to 2350 {"cost":691}
+cedge AYT-ZRH AYT ZRH flight-to 1175 {"cost":778}
+cedge ZRH-AYT ZRH AYT flight-to 2275 {"cost":780}
+cedge AYT-DUS AYT DUS flight-to 2125 {"cost":255}
+cedge AYT-SCN AYT SCN flight-to 1225 {"cost":387}
+cedge SCN-DUS SCN DUS flight-to 450 {"cost":363}
+cedge SCN-AYT SCN AYT flight-to 3100 {"cost":350}
+cedge DUS-AYT DUS AYT flight-to 2150 {"cost":645}
+cedge AYT-HAJ AYT HAJ flight-to 1400 {"cost":756}
+cedge HAJ-AYT HAJ AYT flight-to 9850 {"cost":445}
+cedge AYT-FRA AYT FRA flight-to 1450 {"cost":774}
+cedge FRA-AYT FRA AYT flight-to 2100 {"cost":780}
+cedge AYT-STR AYT STR flight-to 1175 {"cost":749}
+cedge STR-AYT STR AYT flight-to 2075 {"cost":788}
+cedge AYT-TXL AYT TXL flight-to 1125 {"cost":270}
+cedge TXL-AYT TXL AYT flight-to 2050 {"cost":389}
+cedge AYT-NUE AYT NUE flight-to 1100 {"cost":345}
+cedge NUE-AYT NUE AYT flight-to 2025 {"cost":597}
+cedge AYT-HAM AYT HAM flight-to 1250 {"cost":301}
+cedge HAM-AYT HAM AYT flight-to 2375 {"cost":771}
+cedge AYT-BRE AYT BRE flight-to 1475 {"cost":544}
+cedge BRE-AYT BRE AYT flight-to 9850 {"cost":302}
+cedge AYT-FMO AYT FMO flight-to 1250 {"cost":326}
+cedge FMO-AYT FMO AYT flight-to 2350 {"cost":398}
+cedge AYT-LEJ AYT LEJ flight-to 1150 {"cost":651}
+cedge LEJ-AYT LEJ AYT flight-to 2050 {"cost":491}
+cedge AYT-DRS AYT DRS flight-to 1275 {"cost":709}
+cedge DRS-AYT DRS AYT flight-to 2025 {"cost":365}
+cedge EZS-DUS EZS DUS flight-to 1600 {"cost":583}
+cedge DUS-EZS DUS EZS flight-to 2525 {"cost":380}
+cedge ESB-DUS ESB DUS flight-to 1425 {"cost":253}
+cedge DUS-ESB DUS ESB flight-to 2125 {"cost":474}
+cedge SZF-FRA SZF FRA flight-to 1250 {"cost":358}
+cedge FRA-SZF FRA SZF flight-to 2200 {"cost":784}
+cedge FRA-ADA FRA ADA flight-to 2200 {"cost":479}
+cedge AYT-ARN AYT ARN flight-to 1525 {"cost":495}
+cedge ARN-AYT ARN AYT flight-to 2475 {"cost":347}
+cedge GZT-FRA GZT FRA flight-to 1525 {"cost":580}
+cedge FRA-GZT FRA GZT flight-to 2250 {"cost":340}
+cedge TZX-FRA TZX FRA flight-to 1800 {"cost":302}
+cedge FRA-TZX FRA TZX flight-to 2275 {"cost":775}
+cedge ASR-FRA ASR FRA flight-to 1450 {"cost":313}
+cedge FRA-ASR FRA ASR flight-to 2175 {"cost":281}
+cedge MLX-FRA MLX FRA flight-to 1525 {"cost":724}
+cedge FRA-MLX FRA MLX flight-to 2225 {"cost":301}
+cedge EZS-FRA EZS FRA flight-to 1550 {"cost":301}
+cedge FRA-EZS FRA EZS flight-to 2475 {"cost":313}
+cedge ESB-HAM ESB HAM flight-to 1425 {"cost":396}
+cedge HAM-ESB HAM ESB flight-to 2100 {"cost":648}
+cedge ESB-FRA ESB FRA flight-to 1350 {"cost":364}
+cedge FRA-ESB FRA ESB flight-to 2100 {"cost":366}
+cedge ESB-STR ESB STR flight-to 1325 {"cost":392}
+cedge STR-ESB STR ESB flight-to 2025 {"cost":416}
+cedge SAW-FRA SAW FRA flight-to 1025 {"cost":443}
+cedge FRA-SAW FRA SAW flight-to 1975 {"cost":540}
+cedge ADB-HAM ADB HAM flight-to 1150 {"cost":266}
+cedge HAM-ADB HAM ADB flight-to 2175 {"cost":684}
+cedge ADB-AYT ADB AYT flight-to 500 {"cost":449}
+cedge ADB-NUE ADB NUE flight-to 11025 {"cost":382}
+cedge NUE-ADB NUE ADB flight-to 1900 {"cost":467}
+cedge ADB-AMS ADB AMS flight-to 1250 {"cost":579}
+cedge AMS-ADB AMS ADB flight-to 9675 {"cost":386}
+cedge ADB-TXL ADB TXL flight-to 1025 {"cost":691}
+cedge TXL-ADB TXL ADB flight-to 1950 {"cost":688}
+cedge ADB-DUS ADB DUS flight-to 1325 {"cost":369}
+cedge DUS-ADB DUS ADB flight-to 2100 {"cost":370}
+cedge ADB-ZRH ADB ZRH flight-to 1050 {"cost":382}
+cedge ZRH-ADB ZRH ADB flight-to 1975 {"cost":466}
+cedge ADB-FRA ADB FRA flight-to 1100 {"cost":701}
+cedge FRA-ADB FRA ADB flight-to 2025 {"cost":473}
+cedge ADB-STR ADB STR flight-to 1075 {"cost":519}
+cedge STR-ADB STR ADB flight-to 1975 {"cost":676}
+cedge ADB-HAJ ADB HAJ flight-to 10900 {"cost":536}
+cedge HAJ-ADB HAJ ADB flight-to 2050 {"cost":550}
+cedge ADB-VIE ADB VIE flight-to 850 {"cost":599}
+cedge VIE-ADB VIE ADB flight-to 1600 {"cost":587}
+cedge ADB-CGN ADB CGN flight-to 10675 {"cost":601}
+cedge CGN-ADB CGN ADB flight-to 2050 {"cost":662}
+cedge ADB-BRE ADB BRE flight-to 1100 {"cost":733}
+cedge BRE-ADB BRE ADB flight-to 2025 {"cost":449}
